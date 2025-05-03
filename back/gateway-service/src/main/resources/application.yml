@@ -11,11 +11,15 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
+          filters:
+            - AuthorizationHeaderFilter
 
         - id: restaurant-service
           uri: lb://RESTAURANT-SERVICE
           predicates:
             - Path=/restaurant-service/**
+          filters:
+            - AuthorizationHeaderFilter
 
         - id: review-service
           uri: lb://REVIEW-SERVICE
@@ -28,6 +32,9 @@ spring:
           uri: lb://POINT-SERVICE
           predicates:
             - Path=/point-service/**
+          filters:
+            - AuthorizationHeaderFilter
+
 jwt:
   expiration: 1
   secretKey: rI9KLc/nWq+0ehvbQXjST52lIHi+A4PurdKwAe0ZcN+0LE1QBv7p0qhFx8wzt8PaigtMXpJHdIl6p4ILsLDasA==
