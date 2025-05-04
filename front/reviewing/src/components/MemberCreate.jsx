@@ -46,7 +46,7 @@ const MemberCreate = () => {
       },
     };
 
-    const res = await fetch(`${API_BASE_URL}${USER}/create`, {
+    const res = await fetch(`${API_BASE_URL}${USER_SERVICE}/signup`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
