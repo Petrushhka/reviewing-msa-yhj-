@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 
 const CLIENT_ID = 'd5o30v9dw7';
 
-export default function NaverMapComponent() {
+export default function NaverMapComponent({
+  address,
+  width = '500px',
+  height = '500px',
+}) {
   const [loaded, setLoaded] = useState(false);
   // —— 1) ref 선언 ——
   const mapContainerRef = useRef(null);
@@ -68,7 +72,7 @@ export default function NaverMapComponent() {
   }, []);
   useEffect(() => {
     if (!loaded) return;
-    addressInputRef.current.value = '서울 서초구 서초대로50길 82 정원빌딩';
+    addressInputRef.current.value = address;
     submitButtonRef.current.click();
     // submitButtonRef.current.click();
   }, [loaded]);
@@ -196,11 +200,7 @@ export default function NaverMapComponent() {
       >
         검색
       </button>
-      <div
-        id='map'
-        ref={mapContainerRef}
-        style={{ width: '500px', height: '500px' }}
-      />
+      <div id='map' ref={mapContainerRef} style={{ width, height }} />
     </div>
   );
 }

@@ -11,7 +11,11 @@ const Home = () => {
       <Typography variant='body1' align='center'>
         This is the homepage of the application.
       </Typography>
-      <NaverMapComponent />
+      <NaverMapComponent
+        address='서울 서초구 서초대로50길 82 정원빌딩'
+        width='500px'
+        height='500px'
+      />
     </Container>
   );
 };
