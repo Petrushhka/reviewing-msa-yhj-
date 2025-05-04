@@ -21,7 +21,7 @@ public class SecurityConfig {
         // cross site request forgery
         http.csrf(csrf -> csrf.disable());
 
-        http.cors(Customizer.withDefaults());
+//        http.cors(Customizer.withDefaults());
 
         // 세션 관리 상태 안쓰고 STATELESS한 토큰 사용할게
         http.sessionManagement(session ->
