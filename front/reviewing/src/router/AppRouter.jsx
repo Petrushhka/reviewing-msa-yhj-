@@ -5,6 +5,7 @@ import LoginPage from '../components/LoginPage';
 // import MyPage from '../components/MyPage';
 import { Route, Routes } from 'react-router-dom';
 import PrivateRouter from './PrivateRouter';
+import ReviewCard from '../components/review-service/ReviewCard';
 
 const AppRouter = () => {
   return (
@@ -12,6 +13,7 @@ const AppRouter = () => {
       <Route path='/' element={<Home />} />
       <Route path='/member/create' element={<MemberCreate />} />
       <Route path='/login' element={<LoginPage />} />
+      <Route path='/review' element={<ReviewCard />} />
       {/* <Route path='/mypage' element={<PrivateRouter element={<MyPage />} />} /> */}
     </Routes>
   );
