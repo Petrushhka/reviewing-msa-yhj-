@@ -1,15 +1,13 @@
 package com.playdata.reviewservice.review.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-@Getter
+@Getter @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "tbl_review_image")
 public class ReviewImage {

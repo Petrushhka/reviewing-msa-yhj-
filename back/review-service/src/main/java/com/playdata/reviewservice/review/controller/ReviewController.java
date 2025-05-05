@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/review-service")
@@ -18,7 +20,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/review")
-    public ResponseEntity<?> createReview(ReviewRequestDto reviewRequestDto) {
+    public ResponseEntity<?> createReview(ReviewRequestDto reviewRequestDto) throws IOException {
         reviewService.createReview(reviewRequestDto);
         return ResponseEntity.ok().build();
     }

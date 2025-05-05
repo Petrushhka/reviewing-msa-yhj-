@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,6 +31,13 @@ public class Review {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReviewImage> images;
+    @Builder.Default
+    private List<ReviewImage> images = new ArrayList<>();
+
+    public void addImage(ReviewImage image) {
+        this.images.add(image);
+        image.setReview(this);
+        System.out.println("addImage 호출! 이미지 수: "+images.size());
+    }
 
 }
