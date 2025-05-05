@@ -29,7 +29,7 @@ const LoginPage = () => {
 
     try {
       const res = await axios.post(
-        `${API_BASE_URL}${USER_SERVICE}/login`,
+        `${API_BASE_URL}${USER_SERVICE}/user/login`,
         loginData,
       );
       alert('로그인 성공!');

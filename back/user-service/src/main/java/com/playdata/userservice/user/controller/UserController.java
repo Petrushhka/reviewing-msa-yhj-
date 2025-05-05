@@ -1,6 +1,7 @@
 package com.playdata.userservice.user.controller;
 
 import com.playdata.userservice.common.auth.JwtTokenProvider;
+import com.playdata.userservice.common.dto.CommonErrorDto;
 import com.playdata.userservice.common.dto.CommonResDto;
 import com.playdata.userservice.user.dto.UserLoginReqDto;
 import com.playdata.userservice.user.dto.UserResDto;
@@ -32,7 +33,7 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    @PostMapping("/signup")
+    @PostMapping("/users/signup")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserSaveReqDto dto) {
         UserResDto saved = userService.createUser(dto);
         CommonResDto resDto
@@ -42,7 +43,7 @@ public class UserController {
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     public ResponseEntity<?> login(@RequestBody UserLoginReqDto dto) {
         UserResDto user = userService.login(dto);
 
@@ -61,5 +62,29 @@ public class UserController {
                 = new CommonResDto(HttpStatus.OK,
                 "Login Success", loginInfo);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
+    @PostMapping("user/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> map) {
+        String id = map.get("id");
+        log.info("/user/refresh: POST, id: {}", id);
+        // redis에 해당 id로 조회되는 내용이 있는지 확인
+        Object obj = redisTemplate.opsForValue().get("user:refresh:" + id);
+        log.info("obj: {}", obj);
+        if (obj == null) { // refresh token이 수명이 다됨.
+            return new ResponseEntity<>(new CommonErrorDto(
+                    HttpStatus.UNAUTHORIZED, "EXPIRED_RT"),
+                    HttpStatus.UNAUTHORIZED);
+        }
+        // 새로운 access token을 발급
+        User user = userService.findById(id);
+        String newAccessToken
+                = jwtTokenProvider.createToken(user.getEmail(), user.getRole().toString());
+
+        Map<String, Object> info = new HashMap<>();
+        info.put("token", newAccessToken);
+        CommonResDto resDto
+                = new CommonResDto(HttpStatus.OK, "새 토큰 발급됨", info);
+        return ResponseEntity.ok().body(resDto);
     }
 }
