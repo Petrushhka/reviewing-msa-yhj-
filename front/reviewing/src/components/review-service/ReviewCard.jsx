@@ -1,4 +1,5 @@
 import React from 'react';
+import StarSvg from './StarSvg';
 
 const ReviewCard = () => {
   return (
@@ -15,7 +16,17 @@ const ReviewCard = () => {
           <div className='option'></div>
         </div>
         <div className='sup-top-wrap'>
-          <div className='rating'></div>
+          <div className='rating'>
+            <span>
+              <div style={{ display: 'flex' }}>
+                <StarSvg isGold={true} />
+                <StarSvg isGold={true} />
+                <StarSvg isGold={true} />
+                <StarSvg isGold={false} />
+                <StarSvg isGold={false} />
+              </div>
+            </span>
+          </div>
           <div className='uploaded-date'>2018.05.05</div>
         </div>
         <div className='content-wrap'>
