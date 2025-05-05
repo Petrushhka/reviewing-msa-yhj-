@@ -46,7 +46,7 @@ const MemberCreate = () => {
       },
     };
 
-    const res = await fetch(`${API_BASE_URL}${USER_SERVICE}/signup`, {
+    const res = await fetch(`${API_BASE_URL}${USER_SERVICE}/users/signup`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -61,29 +61,6 @@ const MemberCreate = () => {
     } else {
       alert(data.statusMessage);
     }
-
-    /*
-    fetch(`http://localhost:8181/user/create`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(registData),
-    })
-      .then((res) => {
-        if (res.status === 201) return res.json();
-        else {
-          alert('이메일이 중복되었습니다. 다른 이메일로 다시 시도해 보세요!');
-          return;
-        }
-      })
-      .then((data) => {
-        if (data) {
-          console.log('백엔드로부터 전달된 데이터: ', data);
-          alert(`${data.result}님 환영합니다!`);
-        }
-      });
-    */
   };
 
   return (
