@@ -1,0 +1,8 @@
+.profileWrap {
+  display: flex;
+  justify-content: space-between;
+
+  .moreBtn > svg {
+    cursor: pointer;
+  }
+}
