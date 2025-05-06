@@ -15,9 +15,9 @@ const ReviewSection = () => {
 
   return (
     <>
-      {isShowModal ? (
+      {isShowModal && (
         <ReviewModal handleCancelBtnClick={handleCancelBtnClick} />
-      ) : null}
+      )}
       <div className={styles.entireWrap}>
         <div className={styles.reviewWriteBtnWrap}>
           <button type='button' onClick={handleReviewBtnClick}>
