@@ -11,7 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/UserContext';
 
 const Header = () => {
-  const { isLoggedIn, onLogout, userRole } = useContext(AuthContext);
+  const { isLoggedIn, onLogout, userRole, userName } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -23,50 +23,48 @@ const Header = () => {
   return (
     <AppBar position='static'>
       <Toolbar>
-        <Container>
-          <Grid container alignItems='center'>
-            {/* 왼쪽 메뉴 (관리자용) */}
-            <Grid
-              item
-              xs={4}
-              style={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
-              {userRole === 'ADMIN' && (
-                <>
-                  <Button color='inherit' component={Link} to='/member/list'>
-                    회원관리
-                  </Button>
-                  <Button color='inherit' component={Link} to='/product/manage'>
-                    상품관리
-                  </Button>
-                  <Button color='inherit' href='/order/list'>
-                    실시간 주문 ()
-                  </Button>
-                </>
-              )}
-            </Grid>
-
-            {/* 가운데 로고 */}
-            <Grid item xs={4} style={{ textAlign: 'center' }}>
+        <Container maxWidth={false} disableGutters>
+          <Grid
+            container
+            alignItems='center'
+            justifyContent='space-between'
+            style={{ padding: '0 16px' }}
+          >
+            {/* 왼쪽: 로고 */}
+            <Grid item>
               <Button color='inherit' component={Link} to='/'>
-                <Typography variant='h6'>PlayData Shop</Typography>
+                <Typography variant='h6'>PlayData</Typography>
               </Button>
             </Grid>
 
-            {/* 오른쪽 메뉴 */}
+            {/* 가운데: 관리자 메뉴 (ADMIN인 경우만 표시) */}
+            {userRole === 'ADMIN' && (
+              <Grid item>
+                <Button color='inherit' component={Link} to='/member/list'>
+                  회원관리
+                </Button>
+                <Button color='inherit' component={Link} to='/product/manage'>
+                  상품관리
+                </Button>
+                <Button color='inherit' href='/order/list'>
+                  실시간 주문 ()
+                </Button>
+              </Grid>
+            )}
+
+            {/* 오른쪽: 로그인/로그아웃 */}
             <Grid
               item
-              xs={4}
-              style={{ display: 'flex', justifyContent: 'flex-end' }}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: 2,
+              }}
             >
               {isLoggedIn ? (
                 <>
-                  <Button color='inherit' component={Link} to='/order/cart'>
-                    장바구니
-                  </Button>
-                  <Button color='inherit' component={Link} to='/mypage'>
-                    마이페이지
-                  </Button>
+                  <Typography>{userName}님</Typography>
                   <Button color='inherit' onClick={handleLogout}>
                     로그아웃
                   </Button>

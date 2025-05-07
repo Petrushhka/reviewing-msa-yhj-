@@ -56,7 +56,9 @@ public class UserController {
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("token", token);
         loginInfo.put("id", user.getId());
+        loginInfo.put("name", user.getName());
         loginInfo.put("role", user.getRole().toString());
+
 
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.OK,

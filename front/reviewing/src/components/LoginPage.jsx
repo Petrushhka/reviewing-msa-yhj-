@@ -32,6 +32,7 @@ const LoginPage = () => {
         `${API_BASE_URL}${USER_SERVICE}/user/login`,
         loginData,
       );
+      console.log('로그인 응답 결과:', res.data);
       alert('로그인 성공!');
       onLogin(res.data.result);
       navigate('/');
