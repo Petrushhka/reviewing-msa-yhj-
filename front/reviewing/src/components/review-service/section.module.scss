@@ -1,0 +1,18 @@
+.entireWrap {
+  width: 360px;
+
+  .reviewWriteBtnWrap {
+    text-align: center;
+  }
+
+  .reviewsWrap {
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    ul > li {
+      border-bottom: 1px solid #d2d2d2;
+      padding: 15px 0;
+    }
+  }
+}
