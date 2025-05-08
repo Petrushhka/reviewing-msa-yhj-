@@ -31,7 +31,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
             "/user-service/users/signup",
             "/badges/assign",
             "/badges/user/*",
-            "/badges/user/*/icon");
+            "/badges/user/*/icon",
+            "/icons/**"
+    );
 
     @Override
     public GatewayFilter apply(Object config) {

@@ -5,13 +5,12 @@ import com.playdata.pointservice.badge.dto.UserBadgeResDto;
 import com.playdata.pointservice.badge.entity.UserBadgeMap;
 import com.playdata.pointservice.badge.service.BadgeService;
 import com.playdata.pointservice.common.dto.CommonResDto;
-import jakarta.ws.rs.GET;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.*;
+
 
 @RestController
 @RequestMapping("/badges")
@@ -42,15 +41,13 @@ public class BadgeController {
         return ResponseEntity.status(resDto.getStatusCode()).body(resDto);
     }
 
-    // [GET] /badges/user/{userId}/Icon
-    // 댓글 등 사용자 이름 옆에 표시할 배지 아이콘 정보 제공
-    // 배지명 + 아이콘 URL 포함
-    @GetMapping("/user/{userId}/icon")
-    public ResponseEntity<CommonResDto> getUserBadgeIcon(@PathVariable Long userId) {
-        log.info("유저 배지 아이콘 조회: {}", userId);
-        CommonResDto resDto = badgeService.getUserBadgeIcon(userId);
-        return ResponseEntity.status(resDto.getStatusCode()).body(resDto);
+    // FeignClient 전용 Api
+    @GetMapping("/user/{userId}")
+    public UserBadgeResDto getUserBadgeByUserId(@PathVariable Long userId) {
+        log.info("Feign용 유저 배지 조회: {}", userId);
+        return badgeService.getUserBadgeByUserId(userId); //이 메서드는 UserBadgeResDto를 반환
     }
+
 
 
 }

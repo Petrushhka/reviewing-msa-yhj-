@@ -49,6 +49,7 @@ spring:
           uri: lb://POINT-SERVICE
           predicates:
             - Path=/point-service/**
+            - Path=/badges/**
           filters:
             - AuthorizationHeaderFilter
             - RewritePath=/point-service/(?<segment>.*), /$\{segment}

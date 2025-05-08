@@ -32,7 +32,8 @@ public class SecurityConfig {
                 auth.requestMatchers(
                         "/badges/assign",
                         "/badges/user/*",
-                            "/badges/user/*/icon"
+                            "/badges/user/*/icon",
+                                "/icons/**"
                         ).permitAll()
                         .anyRequest().authenticated()
         );

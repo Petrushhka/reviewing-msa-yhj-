@@ -11,7 +11,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/UserContext';
 
 const Header = () => {
-  const { isLoggedIn, onLogout, userRole, userName } = useContext(AuthContext);
+  const { isLoggedIn, onLogout, userRole, userName, badge } =
+    useContext(AuthContext);
+  console.log('Badge Icon URL:', badge?.iconUrl);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -64,7 +66,25 @@ const Header = () => {
             >
               {isLoggedIn ? (
                 <>
-                  <Typography>{userName}님</Typography>
+                  <Typography
+                    component={Link}
+                    to='/mypage'
+                    sx={{
+                      cursor: 'pointer',
+                      color: 'inherit',
+                      textDecoration: 'none',
+                      '&:hover': { textDecoration: 'underline' },
+                    }}
+                  >
+                    {userName}님
+                  </Typography>
+                  {badge && badge.level && (
+                    <img
+                      src={`/icons/${badge.level.toLowerCase()}.png`}
+                      alt={badge.badgeName}
+                      style={{ width: '24px', marginLeft: '-15px' }}
+                    />
+                  )}
                   <Button color='inherit' onClick={handleLogout}>
                     로그아웃
                   </Button>

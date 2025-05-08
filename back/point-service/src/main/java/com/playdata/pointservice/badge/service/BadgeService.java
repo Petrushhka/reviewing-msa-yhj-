@@ -2,7 +2,6 @@ package com.playdata.pointservice.badge.service;
 
 
 import com.playdata.pointservice.badge.dto.AssignBadgeReqDto;
-import com.playdata.pointservice.badge.dto.BadgeIconResDto;
 import com.playdata.pointservice.badge.dto.UserBadgeResDto;
 import com.playdata.pointservice.badge.entity.Badge;
 import com.playdata.pointservice.badge.entity.BadgeLevel;
@@ -13,13 +12,12 @@ import com.playdata.pointservice.badge.repository.UserBadgeMapRepository;
 import com.playdata.pointservice.common.dto.CommonResDto;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+@Slf4j
 @Builder
 @Service
 @RequiredArgsConstructor
@@ -33,6 +31,7 @@ public class BadgeService {
 
     /**
      * 유저에게 포인트 기준으로 적절한 배지를 부여합니다.
+     *
      * @param request 유저 ID와 포인트 정보가 담긴 요청 DTO
      * @return 배지 부여 결과를 담은 공통 응답 객체
      */
@@ -49,7 +48,7 @@ public class BadgeService {
         // 해당 레벨의 최신 배지를 조회 (ID 기준으로 가장 최근)
         Badge badge = badgeRepository.findTopByLevelOrderByIdDesc(level);
         if (badge == null) {
-            return new CommonResDto(HttpStatus.NOT_FOUND,"해당 레벨의 메세지를 찾을 수 없습니다.", null);
+            return new CommonResDto(HttpStatus.NOT_FOUND, "해당 레벨의 메세지를 찾을 수 없습니다.", null);
         }
 
         // 배지와 유저 ID로 매핑 객체 생성 및 저장
@@ -70,7 +69,7 @@ public class BadgeService {
     public CommonResDto getUserBadge(Long userId) {
         // 유저가 가진 배지 중 아무거나 1개 (정렬 기준 없음)
         UserBadgeMap map = mapRepository.findFirstByUserId(userId);
-        if(map == null) {
+        if (map == null) {
             return new CommonResDto(HttpStatus.NOT_FOUND, "사용자에게 배지가 없습니다.", null);
         }
 
@@ -85,21 +84,42 @@ public class BadgeService {
         return new CommonResDto(HttpStatus.OK, "사용자 배지 조회 성공", resDto);
     }
 
-
-    public CommonResDto getUserBadgeIcon(Long userId) {
+    public UserBadgeResDto getUserBadgeByUserId(Long userId) {
         try {
-            int point = userPointClient.getUserPoint(userId); // Feign 통해 포인트 조회
-            BadgeLevel level = BadgeLevel.fromPoint(point);
+            UserBadgeMap badgeMap = mapRepository.findTopByUserIdOrderByBadgeLevelDesc(userId);
 
-            BadgeIconResDto dto = BadgeIconResDto.builder()
-                    .badgeName(level.getDisplayName())
-                    .iconUrl(level.getIconUrl())
+            Badge badge;
+            if (badgeMap != null) {
+                badge = badgeMap.getBadge();
+            } else {
+                // 포인트로 계산하거나, BEFINNER 로 fallback
+                int point = userPointClient.getUserPoint(userId);
+                BadgeLevel level = BadgeLevel.fromPoint(point);
+                badge = badgeRepository.findTopByLevelOrderByIdDesc(level);
+
+                if (badge == null) {
+                    return UserBadgeResDto.builder()
+                            .badgeName("입문자")
+                            .level("BEGINNER")
+                            .build();
+                }
+            }
+            return UserBadgeResDto.builder()
+                    .badgeName(badge.getName())
+                    .level(badge.getLevel().name())
                     .build();
 
-            return new CommonResDto(HttpStatus.OK, "유저 배지 아이콘 조회 성공", dto);
+
         } catch (Exception e) {
-            return new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "배지 조회 실패", null);
+            log.error("배지 조회 실패", e);
+            return UserBadgeResDto.builder()
+                    .badgeName("입문자")
+                    .level("BEGINNER")
+                    .build();
+
         }
 
     }
+
+
 }
