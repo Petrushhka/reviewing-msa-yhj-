@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
 
     // 상점 등록
-//    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @PostMapping("/restaurants")
     public ResponseEntity<?> createRestaurant(RestaurantReqDto restaurantReqDto) throws IOException {
         restaurantService.RestaurantCreate(restaurantReqDto);
@@ -50,7 +51,7 @@ public class RestaurantController {
     }
 
     // 상점 삭제
-//    @PreAuthorize("hasRole('OWNER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('OWNER') or hasRole('ADMIN')")
     @DeleteMapping("/restaurant/{id}")
     public ResponseEntity<?> deleteRestaurant(@PathVariable Long id) throws Exception {
         restaurantService.restaurantDelete(id);
