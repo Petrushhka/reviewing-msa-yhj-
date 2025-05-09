@@ -64,9 +64,18 @@ const MemberCreate = () => {
   };
 
   return (
-    <Grid container justifyContent='center'>
-      <Grid item xs={12} sm={8} md={6}>
-        <Card>
+    <Grid container justifyContent='center' marginTop={'50px'}>
+      <Grid item xs={12} sm={6} md={3}>
+        <Card
+          sx={{
+            maxWidth: 500,
+            margin: '0 auto',
+            padding: 2,
+            border: '2px solid rgba(0, 0, 0, 0.3)',
+            borderRadius: 2,
+            boxShadow: 1,
+          }}
+        >
           <CardHeader title='회원가입' style={{ textAlign: 'center' }} />
           <CardContent>
             <form onSubmit={memberCreate}>
@@ -120,7 +129,7 @@ const MemberCreate = () => {
               <CardActions>
                 <Button
                   type='submit'
-                  color='primary'
+                  color='grey'
                   variant='contained'
                   fullWidth
                 >

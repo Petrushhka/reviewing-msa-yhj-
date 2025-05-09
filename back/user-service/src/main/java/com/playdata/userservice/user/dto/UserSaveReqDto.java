@@ -1,8 +1,9 @@
 package com.playdata.userservice.user.dto;
 
-import com.playdata.userservice.common.auth.Role;
+import com.playdata.userservice.common.entity.Address;
 import com.playdata.userservice.user.entity.User;
 import jakarta.validation.constraints.NotEmpty;
+import com.playdata.userservice.common.auth.Role;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @AllArgsConstructor
 @Builder
 public class UserSaveReqDto {
+
     @NotEmpty(message = "이메일은 필수입니다!")
     private String email;
 
@@ -23,9 +25,11 @@ public class UserSaveReqDto {
 
     private String profileImageUrl;
 
+
     @NotEmpty(message = "비밀번호는 필수입니다!")
     @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
     private String password;
+
 
     @NotNull(message = "가입자 권한을 설정해주세요.(리뷰작성자, 사업자)")
     private Role role;

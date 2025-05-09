@@ -1,7 +1,9 @@
 package com.playdata.userservice.user.service;
 
-import com.playdata.userservice.common.config.AwsS3Config;
+
+import com.playdata.userservice.common.auth.TokenUserInfo;
 import com.playdata.userservice.user.dto.UserLoginReqDto;
+import com.playdata.userservice.common.config.AwsS3Config;
 import com.playdata.userservice.user.dto.UserRequestDto;
 import com.playdata.userservice.user.dto.UserResDto;
 import com.playdata.userservice.user.dto.UserSaveReqDto;
@@ -9,13 +11,18 @@ import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final AwsS3Config awsS3Config;
+
 
     public UserResDto createUser(UserSaveReqDto dto) {
         Optional<User> foundEmail
@@ -55,6 +63,13 @@ public class UserService {
         );
     }
 
+
+    // 임시 작성
+    public int getUserPoint(Long userId) {
+        return 5;
+    }
+
+
     public void uploadProfile(UserRequestDto userRequestDto) throws Exception {
         User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
                 () -> new EntityNotFoundException("User not found!")
@@ -62,8 +77,9 @@ public class UserService {
 
         // 1) 이전 프로필이 기본 url이 아니고, null도 아니라면 삭제
         String oldUrl = user.getProfileImage();
-        if(oldUrl != null && !oldUrl.isBlank()){
-            awsS3Config.deleteFromS3Bucket(oldUrl);;
+        if (oldUrl != null && !oldUrl.isBlank()) {
+            awsS3Config.deleteFromS3Bucket(oldUrl);
+            ;
         }
 
         //2) 새 파일 업로드
@@ -76,6 +92,7 @@ public class UserService {
         userRepository.save(user);
     }
 }
+
 
 
 

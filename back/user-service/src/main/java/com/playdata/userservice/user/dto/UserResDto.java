@@ -1,6 +1,8 @@
 package com.playdata.userservice.user.dto;
 
 import com.playdata.userservice.common.auth.Role;
+
+import com.playdata.userservice.common.entity.Address;
 import lombok.*;
 
 @Getter

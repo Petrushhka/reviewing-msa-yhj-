@@ -1,10 +1,12 @@
 package com.playdata.userservice.user.entity;
 
 import com.playdata.userservice.common.auth.Role;
+import com.playdata.userservice.common.entity.Address;
 import com.playdata.userservice.common.entity.BaseTimeEntity;
 import com.playdata.userservice.user.dto.UserResDto;
 import jakarta.persistence.*;
 import lombok.*;
+
 
 @Getter
 @ToString
@@ -12,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
+
 @Table(name = "tbl_user")
 public class User extends BaseTimeEntity {
     @Id
@@ -39,6 +42,7 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
 
     // DTO에 Entity 변환 메서드가 있는 거처럼
     // Entity에도 응답용 DTO 변환 메서드를 세팅해서 언제든 변환이 자유롭도록 작성.
