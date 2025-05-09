@@ -1,6 +1,4 @@
 package com.playdata.userservice.user.controller;
-
-
 import com.playdata.userservice.common.auth.JwtTokenProvider;
 import com.playdata.userservice.common.dto.CommonErrorDto;
 import com.playdata.userservice.common.dto.CommonResDto;
@@ -10,8 +8,10 @@ import com.playdata.userservice.user.dto.UserResDto;
 import com.playdata.userservice.user.dto.UserSaveReqDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.external.client.BadgeClient;
+import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.HEAD;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,6 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/user-service")
@@ -34,15 +39,29 @@ public class UserController {
     private final RedisTemplate<String, Object> redisTemplate;
     private final BadgeClient badgeClient;
 
+
     @PostMapping("/users/signup")
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserSaveReqDto dto) {
+    public ResponseEntity<?> createUser(
+            @Valid @RequestBody UserSaveReqDto dto) {
         UserResDto saved = userService.createUser(dto);
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.CREATED,
-                "User Created", saved.getName());
+                "User Created", saved.getNickName());
 
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
     }
+
+    @PostMapping("/user/profile")
+    public ResponseEntity<?> uploadProfile(
+            UserRequestDto dto) throws Exception {
+        userService.uploadProfile(dto);
+        CommonResDto resDto
+                = new CommonResDto(HttpStatus.OK,
+                "upload success", null);
+
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
 
     @PostMapping("/user/login")
     public ResponseEntity<?> login(@RequestBody UserLoginReqDto dto) {
@@ -52,6 +71,7 @@ public class UserController {
                 = jwtTokenProvider.createToken(user.getEmail(), user.getRole().toString());
         String refreshToken
                 = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole().toString());
+
         redisTemplate.opsForValue().set("user:refresh:" + user.getId(), refreshToken, 2, TimeUnit.MINUTES);
 
 
@@ -64,12 +84,16 @@ public class UserController {
             log.warn("배지 없음 또는 조회 실패: {}", e.getMessage());
         }
 
+
+
+
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("token", token);
         loginInfo.put("id", user.getId());
-        loginInfo.put("name", user.getName());
+        loginInfo.put("name", user.getNickName());
         loginInfo.put("role", user.getRole().toString());
         loginInfo.put("badge", badge);
+
 
 
         CommonResDto resDto
@@ -108,4 +132,28 @@ public class UserController {
         int point = userService.getUserPoint(userId);
         return ResponseEntity.ok(point);
     }
+
+
+    @PostMapping("/users")
+    public ResponseEntity<?> getUserForReivew(@RequestBody List<Integer> userIds) {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < userIds.size(); i++) {
+            users.add(userService.findById(String.valueOf(userIds.get(i))));
+        }
+
+        users.stream()
+                .map(user->UserResDto.builder()
+                        .id(user.getId())
+                        .email(user.getEmail())
+                        .nickName(user.getNickName())
+                        .profileImage(user.getProfileImage())
+                        .point(user.getPoint())
+                        .build()).collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(users);
+
+    }
+
+
+
 }

@@ -45,6 +45,7 @@ spring:
           filters:
             - AuthorizationHeaderFilter
 
+
         - id: point-service-api
           uri: lb://POINT-SERVICE
           predicates:
@@ -59,6 +60,7 @@ spring:
             - Path=/badges/**
           filters:
             - AuthorizationHeaderFilter
+
 
 jwt:
   expiration: 1

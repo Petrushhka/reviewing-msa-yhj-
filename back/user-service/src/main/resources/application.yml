@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 server:
   port: 0
 
@@ -33,3 +34,8 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka
     instance:
       instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+=======
+spring:
+  profiles:
+    active: local
+>>>>>>> 8536dc3db21a5aeb0534c647d23876583eaac35d

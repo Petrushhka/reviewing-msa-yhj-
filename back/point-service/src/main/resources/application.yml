@@ -36,6 +36,7 @@ feign:
       default:
         loggerLevel: full
 
+
 eureka:
   client:
     register-with-eureka: true

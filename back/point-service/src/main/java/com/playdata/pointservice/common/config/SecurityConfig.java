@@ -30,12 +30,10 @@ public class SecurityConfig {
         // url 요청 권한 설정
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers(
-                        "/badges/assign",
-                        "/badges/user/*",
-                            "/badges/user/*/icon",
                                 "/icons/**",
-                                        "/badges/**"
+                                "/badges/**"
                          ).permitAll()
+
                         .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
