@@ -49,5 +49,19 @@ public class BadgeController {
     }
 
 
+    /**
+     * 프론트에서 사용할 '배지 진행 상황' API
+     */
+    @GetMapping("/user/{userId}/progress")
+    public ResponseEntity<CommonResDto> getBadgeProgress(@PathVariable Long userId) {
+        log.info("배지 진행 상태 조회: {}", userId);
+        CommonResDto resDto = badgeService.getBadgeProgress(userId); // 서비스 로직 호출
+        return ResponseEntity.status(resDto.getStatusCode()).body(resDto);
+
+    }
+
+
+
+
 
 }

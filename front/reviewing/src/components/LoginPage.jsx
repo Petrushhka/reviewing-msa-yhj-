@@ -43,8 +43,18 @@ const LoginPage = () => {
   };
 
   return (
-    <Grid container justifyContent='center'>
-      <Grid item xs={12} sm={6} md={4}>
+    <Grid container justifyContent='center' marginTop={'100px'}>
+      <Grid
+        sx={{
+          border: '2px solid rgba(0, 0, 0, 0.3)', // 테두리: 두께 2px, 반투명 검정
+          borderRadius: 2, // 둥근 모서리
+          boxShadow: 1, // 약간의 그림자
+        }}
+        item
+        xs={12}
+        sm={6}
+        md={4}
+      >
         <Card>
           <CardHeader title='로그인' style={{ textAlign: 'center' }} />
           <CardContent>

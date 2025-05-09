@@ -12,15 +12,13 @@ import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.external.client.BadgeClient;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,5 +101,12 @@ public class UserController {
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.OK, "새 토큰 발급됨", info);
         return ResponseEntity.ok().body(resDto);
+
+    }
+
+    @GetMapping("/user/{userId}/point")
+    public ResponseEntity<?> getUserPoint(@PathVariable Long userId) {
+        int point = userService.getUserPoint(userId);
+        return ResponseEntity.ok(point);
     }
 }

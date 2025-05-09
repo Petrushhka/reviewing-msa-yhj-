@@ -13,6 +13,7 @@ const AuthContext = React.createContext({
 // 위에서 생성한 Context를 제공하는 Provider 선언.
 // 이 Provider를 통해 자식 컴포넌트(Consumer)에게 인증 상태와 관련된 값, 함수를 전달할 수 있음.
 export const AuthContextProvider = (props) => {
+  const [userId, setUserId] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState('');
   const [userName, setUserName] = useState('');
@@ -32,6 +33,7 @@ export const AuthContextProvider = (props) => {
     localStorage.setItem('USER_ICON', JSON.stringify(loginData.badge));
 
     setIsLoggedIn(true);
+    setUserId(loginData.id);
     setUserRole(loginData.role);
     setUserName(loginData.name);
     setBadge(loginData.badge);
@@ -53,6 +55,7 @@ export const AuthContextProvider = (props) => {
     if (localStorage.getItem('ACCESS_TOKEN')) {
       console.log('✅ ACCESS_TOKEN 발견됨 → 로그인 유지');
       setIsLoggedIn(true);
+      setUserId(localStorage.getItem('USER_ID'));
       setUserRole(localStorage.getItem('USER_ROLE'));
       setUserName(localStorage.getItem('USER_NAME'));
 
@@ -85,6 +88,7 @@ export const AuthContextProvider = (props) => {
         onLogout: logoutHandler,
         userRole,
         userName,
+        userId,
         badge,
         isInit,
       }}

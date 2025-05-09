@@ -50,4 +50,10 @@ public class UserService {
                 () -> new EntityNotFoundException("User not found!")
         );
     }
+    
+    
+    // 임시 작성
+    public int getUserPoint(Long userId) {
+        return 5;
+    }
 }

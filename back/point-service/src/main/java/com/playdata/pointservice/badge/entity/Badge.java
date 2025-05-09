@@ -28,6 +28,9 @@ public class Badge {
     @Enumerated(EnumType.STRING)
     private BadgeLevel level;
 
+    @Column(nullable = false)
+    private int threshold; // 이 배지를 받기 위한 최소 포인트 기준
+
 
 
 

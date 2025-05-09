@@ -33,8 +33,9 @@ public class SecurityConfig {
                         "/badges/assign",
                         "/badges/user/*",
                             "/badges/user/*/icon",
-                                "/icons/**"
-                        ).permitAll()
+                                "/icons/**",
+                                        "/badges/**"
+                         ).permitAll()
                         .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

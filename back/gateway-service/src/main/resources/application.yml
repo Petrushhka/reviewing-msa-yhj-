@@ -45,14 +45,20 @@ spring:
           filters:
             - AuthorizationHeaderFilter
 
-        - id: point-service
+        - id: point-service-api
           uri: lb://POINT-SERVICE
           predicates:
             - Path=/point-service/**
-            - Path=/badges/**
           filters:
             - AuthorizationHeaderFilter
             - RewritePath=/point-service/(?<segment>.*), /$\{segment}
+
+        - id: badge-api
+          uri: lb://POINT-SERVICE
+          predicates:
+            - Path=/badges/**
+          filters:
+            - AuthorizationHeaderFilter
 
 jwt:
   expiration: 1
