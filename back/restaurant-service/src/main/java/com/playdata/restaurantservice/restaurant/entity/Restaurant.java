@@ -25,8 +25,6 @@ public class Restaurant {
     private String name;
     private String description;
     private String address;
-    private Double latitude;
-    private Double longitude;
     private String phone;
     @CreationTimestamp
     @Column(updatable = false)
@@ -44,16 +42,20 @@ public class Restaurant {
     }
 
     public RestaurantResDto fromEntity() {
-        return RestaurantResDto.builder()
+        RestaurantResDto resDto = RestaurantResDto.builder()
                 .id(id)
                 .userId(userId)
                 .name(name)
                 .description(description)
                 .address(address)
-                .latitude(latitude)
-                .longitude(longitude)
                 .phone(phone)
                 .build();
+        List<String> imageUrls = new ArrayList<>();
+        for (RestaurantImage image : images) {
+            imageUrls.add(image.getUrl());
+        }
+        resDto.setImageUrls(imageUrls);
+        return resDto;
     }
 
 }

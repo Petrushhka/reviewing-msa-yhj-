@@ -15,8 +15,6 @@ public class RestaurantReqDto {
     private String name;
     private String description;
     private String address;
-    private Double latitude;
-    private Double longitude;
     private String phone;
     private Long userId; // 사장님 ID
 
@@ -27,8 +25,6 @@ public class RestaurantReqDto {
                 .name(name)
                 .description(description)
                 .address(address)
-                .latitude(latitude)
-                .longitude(longitude)
                 .phone(phone)
                 .userId(userId)
                 .build();

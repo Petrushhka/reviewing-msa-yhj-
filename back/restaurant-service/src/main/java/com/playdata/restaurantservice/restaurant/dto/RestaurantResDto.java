@@ -14,13 +14,9 @@ public class RestaurantResDto {
     private String name;
     private String description;
     private String address;
-    private Double latitude;
-    private Double longitude;
     private String phone;
     private Long userId;
 
     private List<String> imageUrls;
-    private Double averageRating;
-    private int reviewCount;
 
 }
