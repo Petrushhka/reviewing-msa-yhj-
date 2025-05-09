@@ -26,7 +26,14 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
     @Value("${jwt.secretKey}")
     private String secretKey;
 
-    private final List<String> allowedPaths = List.of("/user-service/users","/user-service/user/login", "/user-service/users/signup");
+    private final List<String> allowedPaths = List.of(
+            "/user-service/users",
+            "/user-service/user/login",
+            "/user-service/users/signup",
+            "/badges/**",
+            "/icons/**"
+    );
+
 
     @Override
     public GatewayFilter apply(Object config) {
@@ -56,6 +63,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
                     .header("X-User-Email", claims.getSubject())
                     .header("X-User-Role", claims.get("role", String.class))
                     .build();
+
 
             // 새로 만든 요청을 exchange에 갈아끼워 보내기
             return chain.filter(exchange.mutate().request(request).build());

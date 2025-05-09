@@ -29,7 +29,11 @@ public class SecurityConfig {
 
         // url 요청 권한 설정
         http.authorizeHttpRequests(auth ->
-                auth.requestMatchers("/point-service/test").permitAll()
+                auth.requestMatchers(
+                                "/icons/**",
+                                "/badges/**"
+                         ).permitAll()
+
                         .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

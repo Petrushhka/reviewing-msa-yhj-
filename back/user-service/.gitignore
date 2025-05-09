@@ -1,4 +1,4 @@
-
+application-local.yml
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -36,4 +36,3 @@ out/
 ### VS Code ###
 .vscode/
 
-application-local.yml
