@@ -3,18 +3,17 @@ package com.playdata.reviewservice.review.controller;
 import com.playdata.reviewservice.common.auth.TokenUserInfo;
 import com.playdata.reviewservice.common.dto.CommonResDto;
 import com.playdata.reviewservice.review.dto.ReviewRequestDto;
+import com.playdata.reviewservice.review.dto.ReviewResponseDto;
 import com.playdata.reviewservice.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,9 +31,23 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
-    @GetMapping("/review/{id}")
-    public String getReview() {
-        return "review";
+    @GetMapping("/reviews/restaurant/{restaurantId}")
+    public ResponseEntity<?> getRestaurantReviews(@PathVariable Long restaurantId) {
+        List<ReviewResponseDto> reviews = reviewService.getRestaurantReviews(restaurantId);
+
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK, "리뷰 얻어오기 성공!", reviews
+        );
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    @GetMapping("/reviews/user/{id}")
+    public ResponseEntity<?> getUserReviews(@PathVariable Long id) {
+        List<ReviewResponseDto> userReviews = reviewService.getUserReviews(id);
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK, "리뷰 얻어오기 성공!", userReviews
+        );
+        return ResponseEntity.ok().body(resDto);
     }
 
 

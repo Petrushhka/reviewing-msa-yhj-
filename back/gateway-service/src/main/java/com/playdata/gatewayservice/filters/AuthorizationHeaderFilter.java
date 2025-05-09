@@ -26,7 +26,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
     @Value("${jwt.secretKey}")
     private String secretKey;
 
-    private final List<String> allowedPaths = List.of("/user-service/user/login", "/user-service/users/signup");
+    private final List<String> allowedPaths = List.of("/user-service/user/login", "/user-service/users/signup", "/review-service/reviews/restaurant/*");
 
     @Override
     public GatewayFilter apply(Object config) {
