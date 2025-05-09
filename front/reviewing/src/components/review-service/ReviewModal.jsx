@@ -28,7 +28,7 @@ const ReviewModal = ({ handleCancelBtnClick }) => {
     reviewBody.append('userId', localStorage.getItem('USER_ID'));
     reviewBody.append('restaurantId', 1);
     reviewBody.append('rating', rating);
-    reviewBody.append('reviewContent', reviewContent);
+    reviewBody.append('content', reviewContent);
     const files = reviewImages;
     for (let i = 0; i < files.length; i++) {
       reviewBody.append('images', files[i]);
