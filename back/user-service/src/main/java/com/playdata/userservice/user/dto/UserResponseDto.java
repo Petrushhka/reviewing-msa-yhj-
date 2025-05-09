@@ -9,11 +9,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserResDto {
+public class UserResponseDto {
     private Long id;
     private String email;
     private String nickName;
     private String profileImage;
     private int point;
-    private Role role;
+
 }
