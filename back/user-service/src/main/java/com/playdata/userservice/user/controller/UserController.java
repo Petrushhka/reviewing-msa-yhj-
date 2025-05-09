@@ -12,7 +12,6 @@ import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.external.client.BadgeClient;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
