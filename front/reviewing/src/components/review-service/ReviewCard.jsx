@@ -9,7 +9,7 @@ const ReviewCard = ({ reviewInfo }) => {
         <div className={styles.profileWrap}>
           <div className={styles.profileImage}></div>
           <div className={styles.profileInfo}>
-            <div className={styles.nickname}>녹색걷기</div>
+            <div className={styles.nickname}>녹색걷기{reviewInfo.id}</div>
             <div className={styles.detailedInfo}>
               <span>지역 가이드 리뷰 3,172개 사진 44831장</span>
             </div>
@@ -32,23 +32,24 @@ const ReviewCard = ({ reviewInfo }) => {
           <div className='rating'>
             <span>
               <div style={{ display: 'flex' }}>
-                <StarSvg isGold={true} />
-                <StarSvg isGold={true} />
-                <StarSvg isGold={true} />
-                <StarSvg isGold={false} />
-                <StarSvg isGold={false} />
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <StarSvg
+                    isGold={+reviewInfo.rating >= value ? true : false}
+                  />
+                ))}
               </div>
             </span>
           </div>
           <div className='uploaded-date'>2018.05.05</div>
         </div>
         <div className='content-wrap'>
-          <p>
-            버스도 꽤 많고 좋아요. 시설은 그냥 무난한데 화장실이나 몇몇 시설들을
-            깜끔하게 보수했으면 합니다.
-          </p>
+          <p>{reviewInfo && reviewInfo.content}</p>
         </div>
-        <div className='image-wrap'></div>
+        <div className='image-wrap'>
+          {reviewInfo.images.map((imageUrl) => (
+            <img src={imageUrl} alt='' width='60px' />
+          ))}
+        </div>
         <div className='sup-bottom-wrap'></div>
       </div>
     </>
