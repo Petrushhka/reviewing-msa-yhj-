@@ -41,6 +41,9 @@ dependencies {
 
     // 쿼리 파라미터 추가 외부 로그 남기기 (콘솔에서 sql 자세히 보기)
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
+    // S3 파일 연동
+    implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.2'
 }
 
 dependencyManagement {
