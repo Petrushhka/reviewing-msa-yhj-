@@ -33,7 +33,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
             "/user-service/user/profile",
             "/badges/**",
             "/icons/**",
-            "/review-service/reviews/restaurant/*"
+            "/review-service/reviews/restaurant/*",
+            "/restaurant-service/restaurant/list",
+            "/restaurant-service/restaurants/*"
     );
 
     @Override
