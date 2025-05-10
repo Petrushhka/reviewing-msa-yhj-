@@ -90,7 +90,7 @@ public class UserController {
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("token", token);
         loginInfo.put("id", user.getId());
-        loginInfo.put("name", user.getNickName());
+        loginInfo.put("nickName", user.getNickName());
         loginInfo.put("role", user.getRole().toString());
         loginInfo.put("badge", badge);
 

@@ -11,6 +11,7 @@ import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -51,6 +52,9 @@ public class UserService {
                 () -> new EntityNotFoundException("User not found!")
         );
 
+        log.info("🔍 로그인된 사용자: id={}, email={}, nickName={}",
+                user.getId(), user.getEmail(), user.getNickName());
+
         if (!encoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -74,6 +78,7 @@ public class UserService {
         User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
                 () -> new EntityNotFoundException("User not found!")
         );
+
 
         // 1) 이전 프로필이 기본 url이 아니고, null도 아니라면 삭제
         String oldUrl = user.getProfileImage();

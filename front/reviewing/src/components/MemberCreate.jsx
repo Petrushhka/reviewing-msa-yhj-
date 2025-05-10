@@ -6,6 +6,7 @@ import {
   CardHeader,
   Grid,
   TextField,
+  MenuItem,
 } from '@mui/material';
 import React, { useContext, useState } from 'react';
 import { replace, useNavigate } from 'react-router-dom';
@@ -13,37 +14,27 @@ import { API_BASE_URL, USER_SERVICE } from '../configs/host-config';
 import AuthContext from '../context/UserContext';
 
 const MemberCreate = () => {
-  const [name, setName] = useState('');
+  const [nickName, setNickName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [city, setCity] = useState('');
-  const [street, setStreet] = useState('');
-  const [zipcode, setZipcode] = useState('');
+  const [role, setRole] = useState('');
 
-  // react router dom에서 제공하는 훅 useNavigate
-  // 사용자가 특정 요소를 누르지 않아도 이벤트 등에서 페이지를 이동시킬 때 사용하는 훅
-  // 리턴받은 함수를 통해 원하는 url을 문자열로 전달합니다.
   const navigate = useNavigate();
-
   const { isLoggedIn } = useContext(AuthContext);
+
   if (isLoggedIn) {
-    alert('여기 왜왔죠');
+    alert('이미 로그인되어 있습니다.');
     navigate('/', replace);
   }
 
   const memberCreate = async (e) => {
     e.preventDefault();
 
-    // 백엔드에게 전송할 데이터 형태를 만들자 (DTO 형태대로)
     const registData = {
-      name,
+      nickName,
       email,
       password,
-      address: {
-        city,
-        street,
-        zipCode: zipcode,
-      },
+      role,
     };
 
     const res = await fetch(`${API_BASE_URL}${USER_SERVICE}/users/signup`, {
@@ -59,12 +50,12 @@ const MemberCreate = () => {
       alert(`${data.result}님 환영합니다!`);
       navigate('/');
     } else {
-      alert(data.statusMessage);
+      alert(data.statusMessage || '회원가입에 실패했습니다.');
     }
   };
 
   return (
-    <Grid container justifyContent='center' marginTop={'50px'}>
+    <Grid container justifyContent='center' marginTop='50px'>
       <Grid item xs={12} sm={6} md={3}>
         <Card
           sx={{
@@ -80,9 +71,9 @@ const MemberCreate = () => {
           <CardContent>
             <form onSubmit={memberCreate}>
               <TextField
-                label='이름'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                label='닉네임'
+                value={nickName}
+                onChange={(e) => setNickName(e.target.value)}
                 fullWidth
                 margin='normal'
                 required
@@ -104,32 +95,25 @@ const MemberCreate = () => {
                 fullWidth
                 margin='normal'
                 required
+                inputProps={{ minLength: 8 }}
               />
               <TextField
-                label='도시'
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
+                label='회원 권한'
+                select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
                 fullWidth
                 margin='normal'
-              />
-              <TextField
-                label='상세주소'
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-                fullWidth
-                margin='normal'
-              />
-              <TextField
-                label='우편번호'
-                value={zipcode}
-                onChange={(e) => setZipcode(e.target.value)}
-                fullWidth
-                margin='normal'
-              />
+                required
+              >
+                <MenuItem value=''>선택하세요</MenuItem>
+                <MenuItem value='REVIEWER'>리뷰 작성자</MenuItem>
+                <MenuItem value='OWNER'>사업자</MenuItem>
+              </TextField>
               <CardActions>
                 <Button
                   type='submit'
-                  color='grey'
+                  color='primary'
                   variant='contained'
                   fullWidth
                 >

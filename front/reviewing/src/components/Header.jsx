@@ -17,6 +17,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/UserContext';
 import BadgeProgressModal from './BadgeProgressModal';
+import { API_BASE_URL } from '../configs/host-config';
 
 // (자동완성 샘플, 실제로는 서버에서 fetch)
 const sampleOptions = ['리액트', '스프링 부트', 'JPA', 'MSA', 'JWT'];
@@ -25,7 +26,6 @@ const Header = () => {
   const { isLoggedIn, onLogout, userRole, userName, badge, userId } =
     useContext(AuthContext);
   const navigate = useNavigate();
-
   const [searchValue, setSearchValue] = useState('');
   const [options, setOptions] = useState(sampleOptions);
   const [progress, setProgress] = useState(null);
@@ -34,7 +34,7 @@ const Header = () => {
   const handleBadgeClick = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/badges/user/${userId}/progress`,
+        `${API_BASE_URL}/badges/user/${userId}/progress`,
       );
       setProgress(res.data.result);
       setOpen(true);
