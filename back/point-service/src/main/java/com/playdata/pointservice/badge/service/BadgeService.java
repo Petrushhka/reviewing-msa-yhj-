@@ -169,7 +169,7 @@ public class BadgeService {
             // DTO로 포장해서 반환
             BadgeProgressResDto resDto = BadgeProgressResDto.builder()
                     .currentPoint(point)
-                    .currentLevel(current != null ? current.getLevel().name() : "BEGINNER")
+                    .currentLevel(current != null ? current.getLevel().getDisplayName() : BadgeLevel.BEGINNER.getDisplayName())
                     .nextLevel(next != null ? next.getLevel().name() : "MAX")
                     .pointsToNextLevel(next != null ? next.getThreshold() - point : 0)
                     .build();

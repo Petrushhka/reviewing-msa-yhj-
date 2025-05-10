@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useMemo } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -19,34 +19,42 @@ import AuthContext from '../context/UserContext';
 import BadgeProgressModal from './BadgeProgressModal';
 import { API_BASE_URL } from '../configs/host-config';
 
-// (자동완성 샘플, 실제로는 서버에서 fetch)
 const sampleOptions = ['리액트', '스프링 부트', 'JPA', 'MSA', 'JWT'];
 
 const Header = () => {
-  const { isLoggedIn, onLogout, userRole, userName, badge, userId } =
+  const { isLoggedIn, onLogout, userRole, userName, badge, userId, isInit } =
     useContext(AuthContext);
+  console.log('🧩 badge:', badge);
+  console.log('🧩 badge.level:', badge?.level);
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
-  const [options, setOptions] = useState(sampleOptions);
   const [progress, setProgress] = useState(null);
   const [open, setOpen] = useState(false);
 
   const handleBadgeClick = async () => {
+    console.log('🔥 배지 클릭됨');
     try {
       const res = await axios.get(
         `${API_BASE_URL}/badges/user/${userId}/progress`,
       );
+      console.log('✅ progress API 응답:', res.data);
       setProgress(res.data.result);
-      setOpen(true);
     } catch (err) {
-      console.error('배지 진행 상태 조회 실패:', err);
+      console.error('❌ 배지 진행 상태 조회 실패:', err);
+      setProgress({
+        currentPoint: 0,
+        currentLevel: '없음',
+        nextLevel: '입문자',
+        pointsToNextLevel: 0,
+      });
     }
+    setOpen(true);
   };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     console.log('검색어:', searchValue);
-    // 예: navigate(`/search?keyword=${encodeURIComponent(searchValue)}`);
+    // navigate(`/search?keyword=${encodeURIComponent(searchValue)}`);
   };
 
   const handleLogout = () => {
@@ -79,7 +87,7 @@ const Header = () => {
                 >
                   <Autocomplete
                     freeSolo
-                    options={options}
+                    options={sampleOptions}
                     inputValue={searchValue}
                     onInputChange={(e, v) => setSearchValue(v)}
                     filterOptions={(x) => x}
@@ -103,7 +111,7 @@ const Header = () => {
                 </Box>
               </Grid>
 
-              {/* 중앙(선택): ADMIN 메뉴 */}
+              {/* 중앙: 관리자 메뉴 */}
               {userRole === 'ADMIN' && (
                 <Grid item>
                   <Button color='inherit' component={Link} to='/member/list'>
@@ -118,16 +126,8 @@ const Header = () => {
                 </Grid>
               )}
 
-              {/* 오른쪽: 네비게이션 + 유저 정보 */}
-              <Grid
-                item
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                }}
-              >
-                {/* 네비게이션 메뉴 (로그인 버튼 왼쪽) */}
+              {/* 오른쪽: 유저 정보 */}
+              <Grid item sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Stack direction='row' spacing={1}>
                   <Button color='inherit' component={Link} to='/sass'>
                     체험단 등록
@@ -143,7 +143,6 @@ const Header = () => {
                   </Button>
                 </Stack>
 
-                {/* 로그인/회원가입 또는 유저 정보/배지/로그아웃 */}
                 {isLoggedIn ? (
                   <>
                     <Typography
@@ -158,12 +157,16 @@ const Header = () => {
                     >
                       {userName}님
                     </Typography>
-                    {badge?.level && (
+                    {isInit && badge?.level && (
                       <img
                         src={`/icons/${badge.level.toLowerCase()}.png`}
-                        alt={badge.badgeName}
+                        alt={badge.badgeName || '기본 뱃지'}
                         onClick={handleBadgeClick}
-                        style={{ width: 24, cursor: 'pointer' }}
+                        style={{
+                          width: 24,
+                          cursor: 'pointer',
+                          marginLeft: '-15px',
+                        }}
                       />
                     )}
                     <Button color='inherit' onClick={handleLogout}>

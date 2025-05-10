@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -52,8 +53,7 @@ public class UserService {
                 () -> new EntityNotFoundException("User not found!")
         );
 
-        log.info("🔍 로그인된 사용자: id={}, email={}, nickName={}",
-                user.getId(), user.getEmail(), user.getNickName());
+
 
         if (!encoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -68,9 +68,21 @@ public class UserService {
     }
 
 
-    // 임시 작성
+    // 유저 ID로 포인트 조회
+    @Transactional(readOnly = true)
     public int getUserPoint(Long userId) {
-        return 5;
+        log.info("[UserService] getUserPoint() 호출됨 - userId: {}", userId);
+
+        // 유저 ID로 DB에서 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("해당 ID의 유저 없음: {} ", userId);
+                    return new IllegalArgumentException("유저 없음");
+                });
+
+        log.info("찾은 유저 포인트: {}", user.getPoint());
+        // 유저 엔티티에서 포인트 리턴
+        return user.getPoint();
     }
 
 

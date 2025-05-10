@@ -38,6 +38,7 @@ public class SecurityConfig {
                             "/user-service/user/login",
                             "/user-service/user/profile",
                             "/user-service/user/refresh",
+                            "/user-service/user/{userId}/point",
                             "/user-service/users",
                             "/badges/user/{userId}/progress").permitAll()
                     .requestMatchers("/user-service/user/*/point").authenticated()
