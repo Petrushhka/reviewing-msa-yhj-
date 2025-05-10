@@ -50,5 +50,14 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    @DeleteMapping("/reviews/{id}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long id) throws Exception {
+        reviewService.deleteReview(id);
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK, "리뷰 삭제 완료!", null
+        );
+        return ResponseEntity.ok().body(resDto);
+    }
+
 
 }

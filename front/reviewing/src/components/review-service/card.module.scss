@@ -2,7 +2,32 @@
   display: flex;
   justify-content: space-between;
 
-  .moreBtn > svg {
-    cursor: pointer;
+  .moreBtn {
+    position: relative;
+    & > svg {
+      cursor: pointer;
+    }
+    .optionWrap {
+      position: absolute;
+      width: 40px;
+      text-align: center;
+      border: 1px solid #d2d2d2;
+      border-radius: 10px;
+      li {
+        // border: 1px solid #d2d2d2;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #d2d2d2;
+        }
+        &:first-child {
+          border-radius: 9px 9px 0 0;
+        }
+        &:last-child {
+          border: 0;
+          border-radius: 0 0 9px 9px;
+        }
+      }
+    }
   }
 }

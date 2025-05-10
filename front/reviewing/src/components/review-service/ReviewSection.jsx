@@ -7,7 +7,7 @@ import axios from 'axios';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 
 const ReviewSection = () => {
-  const [isShowModal, setIsShowModal] = useState(false);
+  const [isShownModal, setIsShownModal] = useState(false);
   const [reviews, setReviews] = useState([]);
   useEffect(async () => {
     const res = await axios.get(
@@ -18,15 +18,15 @@ const ReviewSection = () => {
   }, []);
 
   const handleReviewBtnClick = () => {
-    setIsShowModal(true);
+    setIsShownModal(true);
   };
   const handleCancelBtnClick = () => {
-    setIsShowModal(false);
+    setIsShownModal(false);
   };
 
   return (
     <>
-      {isShowModal && (
+      {isShownModal && (
         <ReviewModal handleCancelBtnClick={handleCancelBtnClick} />
       )}
       <div className={styles.entireWrap}>

@@ -47,6 +47,7 @@ public class Review {
     public ReviewResponseDto toResponseDto() {
         return ReviewResponseDto.builder()
                 .id(id)
+                .userId(userId)
                 .content(content)
                 .rating(rating)
                 .images(images.stream().map(ReviewImage::getUrl).toList())

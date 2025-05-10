@@ -7,7 +7,7 @@ import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 import { handleAxiosError } from '../../configs/HandleAxiosError';
 const ReviewModal = ({ handleCancelBtnClick }) => {
-  const [reviewImages, setReviewImages] = useState(null);
+  const [reviewImages, setReviewImages] = useState([]);
   const [thumbnailImages, setThumbnailImages] = useState([]);
   const [reviewContent, setReviewContent] = useState('');
   const [rating, setRating] = useState(0);
@@ -77,6 +77,9 @@ const ReviewModal = ({ handleCancelBtnClick }) => {
     });
   };
 
+  const handleStarClick = (value) => {
+    setRating(value);
+  };
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.entireWrap}>
@@ -90,11 +93,12 @@ const ReviewModal = ({ handleCancelBtnClick }) => {
           </div>
           <div className='ratingWrap'>
             <span>
-              <StarSvg isGold={true} />
-              <StarSvg isGold={true} />
-              <StarSvg isGold={true} />
-              <StarSvg isGold={true} />
-              <StarSvg isGold={true} />
+              {[1, 2, 3, 4, 5].map((value) => (
+                <StarSvg
+                  isGold={rating >= value ? true : false}
+                  handleClick={() => handleStarClick(value)}
+                />
+              ))}
             </span>
           </div>
           <div className='contentWrap'>
