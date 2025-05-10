@@ -79,10 +79,18 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteReview(Long id) throws Exception {
+    public void deleteReview(Long id, String email) throws Exception {
         Review review = reviewRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Review not found!")
         );
+
+        UserResDto userResDto = userServiceClient.getUserByEmail(email);
+        if(userResDto == null) {
+            throw new EntityNotFoundException("User not found for delete review!!");
+        } else if(!userResDto.getId().equals(review.getUserId())) {
+            throw new EntityNotFoundException("User id not matched for delete review!!");
+        }
+
         for (ReviewImage reviewImage : review.getImages()) {
             awsS3Config.deleteFromS3Bucket(reviewImage.getUrl());
         }

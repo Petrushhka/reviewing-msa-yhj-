@@ -91,6 +91,14 @@ public class UserService {
         user.setProfileImage(imageUrl);
         userRepository.save(user);
     }
+
+    public UserResDto findByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        return user.toDto();
+    }
 }
 
 

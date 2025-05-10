@@ -51,8 +51,9 @@ public class ReviewController {
     }
 
     @DeleteMapping("/reviews/{id}")
-    public ResponseEntity<?> deleteReview(@PathVariable Long id) throws Exception {
-        reviewService.deleteReview(id);
+    public ResponseEntity<?> deleteReview(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+                                          @PathVariable Long id) throws Exception {
+        reviewService.deleteReview(id, tokenUserInfo.getEmail());
         CommonResDto resDto = new CommonResDto(
                 HttpStatus.OK, "리뷰 삭제 완료!", null
         );

@@ -78,6 +78,7 @@ const ReviewModal = ({ handleCancelBtnClick }) => {
   };
 
   const handleStarClick = (value) => {
+    console.log('클릭됨', value);
     setRating(value);
   };
   return (
@@ -92,14 +93,13 @@ const ReviewModal = ({ handleCancelBtnClick }) => {
             <div className='profileNameWrap'></div>
           </div>
           <div className='ratingWrap'>
-            <span>
-              {[1, 2, 3, 4, 5].map((value) => (
-                <StarSvg
-                  isGold={rating >= value ? true : false}
-                  handleClick={() => handleStarClick(value)}
-                />
-              ))}
-            </span>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <StarSvg
+                key={value}
+                isGold={rating >= value ? true : false}
+                handleClick={() => handleStarClick(value)}
+              />
+            ))}
           </div>
           <div className='contentWrap'>
             <textarea
