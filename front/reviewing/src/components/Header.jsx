@@ -64,7 +64,15 @@ const Header = () => {
 
   return (
     <>
-      <AppBar position='static' color='default' elevation={1}>
+      <AppBar
+        position='fixed'
+        color='white'
+        elevation={1}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: '#ffffff',
+        }}
+      >
         <Toolbar>
           <Container maxWidth={false} disableGutters>
             <Grid
@@ -75,11 +83,31 @@ const Header = () => {
             >
               {/* 왼쪽: 로고 + 검색창 */}
               <Grid item sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Button color='inherit' component={Link} to='/'>
-                  <Typography variant='h6' sx={{ fontWeight: 'bold' }}>
-                    PlayData
+                <Button
+                  color='inherit'
+                  component={Link}
+                  to='/'
+                  disableRipple // 물결 효과 제거
+                  sx={{
+                    backgroundColor: 'transparent',
+                    '&:hover': {
+                      backgroundColor: 'transparent', // hover 배경 제거
+                    },
+                  }}
+                >
+                  <Typography
+                    variant='h6'
+                    sx={{
+                      fontWeight: 'bold',
+                      color: 'peru',
+                      fontFamily: 'Lobster, cursive',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    리뷰킹
                   </Typography>
                 </Button>
+
                 <Box
                   component='form'
                   onSubmit={handleSearchSubmit}
@@ -96,6 +124,7 @@ const Header = () => {
                         {...params}
                         placeholder='검색어를 입력하세요'
                         size='small'
+                        fullWidth
                         InputProps={{
                           ...params.InputProps,
                           endAdornment: (
@@ -103,8 +132,25 @@ const Header = () => {
                               <SearchIcon />
                             </IconButton>
                           ),
+                          sx: {
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: 'peru', // 기본 테두리 색
+                              borderWidth: '1px',
+                            },
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: 'peru', // 마우스 올렸을 때
+                              borderWidth: '1px',
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                              borderColor: 'peru', // 포커스 되었을 때
+                              borderWidth: '1px',
+                            },
+                            transition: 'box-shadow 0.2s ease-in-out',
+                            '&:hover': {
+                              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                            },
+                          },
                         }}
-                        fullWidth
                       />
                     )}
                   />
@@ -129,18 +175,32 @@ const Header = () => {
               {/* 오른쪽: 유저 정보 */}
               <Grid item sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Stack direction='row' spacing={1}>
-                  <Button color='inherit' component={Link} to='/sass'>
-                    체험단 등록
-                  </Button>
-                  <Button color='inherit' component={Link} to='/badges'>
-                    커뮤니티
-                  </Button>
-                  <Button color='inherit' component={Link} to='/collapsible'>
-                    공지/이벤트
-                  </Button>
-                  <Button color='inherit' component={Link} to='/collapsible'>
-                    이용가이드
-                  </Button>
+                  {[
+                    { label: '체험단 등록', to: '/sass' },
+                    { label: '커뮤니티', to: '/badges' },
+                    { label: '공지/이벤트', to: '/collapsible' },
+                    { label: '이용가이드', to: '/collapsible' },
+                  ].map(({ label, to }) => (
+                    <Button
+                      key={label}
+                      color='inherit'
+                      component={Link}
+                      to={to}
+                      disableRipple // 물결 효과 제거
+                      sx={{
+                        backgroundColor: 'transparent',
+                        fontFamily: 'inherit',
+                        fontWeight: 400,
+                        color: '#4B4B4B',
+                        '&:hover': {
+                          backgroundColor: 'transparent', // 배경 고정
+                          color: 'rgba(0, 0, 0, 0.6)', // 글씨만 살짝 연하게
+                        },
+                      }}
+                    >
+                      {label}
+                    </Button>
+                  ))}
                 </Stack>
 
                 {isLoggedIn ? (
@@ -150,9 +210,17 @@ const Header = () => {
                       to='/mypage'
                       sx={{
                         cursor: 'pointer',
-                        color: 'inherit',
                         textDecoration: 'none',
-                        '&:hover': { textDecoration: 'underline' },
+                        fontFamily: 'Lobster, cursive',
+                        fontWeight: 500,
+                        color: '#5A4FCF',
+                        letterSpacing: '0.5px',
+                        textShadow: '1px 1px 1px rgba(0,0,0,0.1)',
+                        transition: 'color 0.2s ease-in-out',
+                        '&:hover': {
+                          backgroundColor: 'transparent',
+                          color: '#7D6EFF',
+                        },
                       }}
                     >
                       {userName}님
@@ -169,20 +237,43 @@ const Header = () => {
                         }}
                       />
                     )}
-                    <Button color='inherit' onClick={handleLogout}>
+                    <Button
+                      color='inherit'
+                      onClick={handleLogout}
+                      sx={{
+                        backgroundColor: 'transparent',
+                        fontFamily: 'inherit',
+                        fontWeight: 400,
+                        color: '#4B4B4B',
+                        '&:hover': {
+                          backgroundColor: 'transparent', // 배경 고정
+                          color: 'rgba(0, 0, 0, 0.6)', // 글씨만 살짝 연하게
+                        },
+                      }}
+                    >
                       로그아웃
                     </Button>
                   </>
                 ) : (
                   <>
                     <Button
-                      color='inherit'
                       component={Link}
                       to='/member/create'
+                      sx={{
+                        color: '#blue',
+                        fontWeight: 500,
+                      }}
                     >
                       회원가입
                     </Button>
-                    <Button color='inherit' component={Link} to='/login'>
+                    <Button
+                      component={Link}
+                      to='/login'
+                      sx={{
+                        color: '#blue',
+                        fontWeight: 500,
+                      }}
+                    >
                       로그인
                     </Button>
                   </>
@@ -192,6 +283,7 @@ const Header = () => {
           </Container>
         </Toolbar>
       </AppBar>
+      <Box sx={{ height: '64px' }} />
 
       {/* 배지 진행률 모달 */}
       <BadgeProgressModal
