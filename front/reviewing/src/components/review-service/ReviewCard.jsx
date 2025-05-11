@@ -3,16 +3,25 @@ import StarSvg from './StarSvg';
 import styles from './card.module.scss';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
+import ReviewModal from './ReviewModal';
 
-const ReviewCard = ({ reviewInfo }) => {
+const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
   const userId = localStorage.getItem('USER_ID');
   const [isMore, setIsMore] = useState(false);
+  const [isShownModalForModify, setIsShownModalForModify] = useState(false);
+
+  const handleCancelBtnClick = () => {
+    setIsShownModalForModify(false);
+  };
+
+  const handleModifyClick = () => {
+    setIsShownModalForModify(true);
+  };
 
   const handleMoreClick = () => {
     setIsMore(!isMore);
   };
 
-  const handleUpdateClick = () => {};
   const handleDeleteClick = () => {
     if (confirm('정말 삭제하시겠습니까?')) {
       const res = axiosInstance.delete(
@@ -23,9 +32,24 @@ const ReviewCard = ({ reviewInfo }) => {
 
   return (
     <>
+      {isShownModalForModify && (
+        <ReviewModal
+          handleCancelBtnClick={handleCancelBtnClick}
+          onReviewSubmitted={onReviewSubmitted}
+          isModify={true}
+          modifyingInfo={reviewInfo}
+        />
+      )}
       <div className={styles.entireWrap}>
         <div className={styles.profileWrap}>
-          <div className={styles.profileImage}></div>
+          <div className={styles.profile}>
+            <div className={styles.profileImage}>
+              <img src={reviewInfo.profileImage} alt='' />
+            </div>
+            <div className={styles.profileBadge}>
+              <img src='../../icons/beginner.png' alt='' />
+            </div>
+          </div>
           <div className={styles.profileInfo}>
             <div className={styles.nickname}>{reviewInfo.nickname}</div>
             <div className={styles.detailedInfo}>
@@ -50,7 +74,7 @@ const ReviewCard = ({ reviewInfo }) => {
                 {isMore && (
                   <div className={styles.optionWrap}>
                     <ul>
-                      <li onClick={handleUpdateClick}>수정</li>
+                      <li onClick={handleModifyClick}>수정</li>
                       <li onClick={handleDeleteClick}>삭제</li>
                     </ul>
                   </div>

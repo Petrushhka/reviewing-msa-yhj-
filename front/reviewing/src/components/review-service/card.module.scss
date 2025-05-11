@@ -2,6 +2,21 @@
   display: flex;
   justify-content: space-between;
 
+  .profileImage {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #d2d2d2;
+    border-radius: 20px;
+  }
+  .profileBadge {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    img {
+      width: 100%;
+    }
+  }
   .moreBtn {
     position: relative;
     & > svg {

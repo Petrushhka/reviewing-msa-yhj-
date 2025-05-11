@@ -96,4 +96,20 @@ public class ReviewService {
         }
         reviewRepository.delete(review);
     }
+
+    public void updateReview(ReviewRequestDto reviewRequestDto, String email) {
+        Review review = reviewRepository.findById(reviewRequestDto.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Review not found!")
+        );
+        UserResDto userResDto = userServiceClient.getUserByEmail(email);
+        if(userResDto == null) {
+            throw new EntityNotFoundException("User not found for update review!!");
+        } else if(!userResDto.getId().equals(review.getUserId())) {
+            throw new EntityNotFoundException("User id not matched for update review!!");
+        }
+
+        review.setRating(reviewRequestDto.getRating());
+        review.setContent(reviewRequestDto.getContent());
+        reviewRepository.save(review);
+    }
 }

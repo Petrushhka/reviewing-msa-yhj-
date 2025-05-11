@@ -50,6 +50,16 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    @PatchMapping("/review")
+    public ResponseEntity<?> updateReview(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+                                          ReviewRequestDto reviewRequestDto) {
+        reviewService.updateReview(reviewRequestDto, tokenUserInfo.getEmail());
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK, "리뷰 수정 완료!", null
+        );
+        return ResponseEntity.ok().body(resDto);
+    }
+
     @DeleteMapping("/reviews/{id}")
     public ResponseEntity<?> deleteReview(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
                                           @PathVariable Long id) throws Exception {
