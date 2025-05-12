@@ -2,10 +2,7 @@ package com.playdata.reviewservice.review.entity;
 
 import com.playdata.reviewservice.review.dto.ReviewResponseDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -47,6 +45,7 @@ public class Review {
     public ReviewResponseDto toResponseDto() {
         return ReviewResponseDto.builder()
                 .id(id)
+                .userId(userId)
                 .content(content)
                 .rating(rating)
                 .images(images.stream().map(ReviewImage::getUrl).toList())

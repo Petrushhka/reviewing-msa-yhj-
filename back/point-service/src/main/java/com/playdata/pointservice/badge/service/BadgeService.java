@@ -136,17 +136,22 @@ public class BadgeService {
 
 
             // 유저 서비스에 요청하여 포인트를 받아옴
-//            int point = Optional.ofNullable(userPointClient.getUserPoint(userId)).orElse(0);
-            int point = 120;
+            int point = Optional.ofNullable(userPointClient.getUserPoint(userId)).orElse(0);
             log.info("사용자 포인트: {}", point);
 
             // 현재 서비스는 '리뷰' 작성에만 포인트 부여
             List<Badge> allBadges = badgeRepository.findAll();
             log.info("전체 배지 개수: {}", allBadges.size());
+            if (allBadges.isEmpty()) {
+                log.warn("등록된 배지가 하나도 없습니다.");
+                return new CommonResDto(HttpStatus.NOT_FOUND, "등록된 배지가 없습니다", null);
+            }
+
+
 
             // 포인트 기준으로 오름차순 정렬 (낮은 점수 배지부터)
             allBadges.sort(Comparator.comparing(Badge::getThreshold));
-            log.info("정렬 후 첫 배지: {}", allBadges.get(0));
+            log.info("정렬 후 첫 배지: {}", allBadges.get(0).getName());
 
             Badge current = null;
             Badge next = null;
@@ -164,7 +169,7 @@ public class BadgeService {
             // DTO로 포장해서 반환
             BadgeProgressResDto resDto = BadgeProgressResDto.builder()
                     .currentPoint(point)
-                    .currentLevel(current != null ? current.getLevel().name() : "BEGINNER")
+                    .currentLevel(current != null ? current.getLevel().getDisplayName() : BadgeLevel.BEGINNER.getDisplayName())
                     .nextLevel(next != null ? next.getLevel().name() : "MAX")
                     .pointsToNextLevel(next != null ? next.getThreshold() - point : 0)
                     .build();

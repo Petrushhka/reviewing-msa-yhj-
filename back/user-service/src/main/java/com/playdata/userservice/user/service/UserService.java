@@ -11,19 +11,21 @@ import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -51,6 +53,8 @@ public class UserService {
                 () -> new EntityNotFoundException("User not found!")
         );
 
+
+
         if (!encoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -64,9 +68,21 @@ public class UserService {
     }
 
 
-    // 임시 작성
+    // 유저 ID로 포인트 조회
+    @Transactional(readOnly = true)
     public int getUserPoint(Long userId) {
-        return 5;
+        log.info("[UserService] getUserPoint() 호출됨 - userId: {}", userId);
+
+        // 유저 ID로 DB에서 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("해당 ID의 유저 없음: {} ", userId);
+                    return new IllegalArgumentException("유저 없음");
+                });
+
+        log.info("찾은 유저 포인트: {}", user.getPoint());
+        // 유저 엔티티에서 포인트 리턴
+        return user.getPoint();
     }
 
 
@@ -74,6 +90,7 @@ public class UserService {
         User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
                 () -> new EntityNotFoundException("User not found!")
         );
+
 
         // 1) 이전 프로필이 기본 url이 아니고, null도 아니라면 삭제
         String oldUrl = user.getProfileImage();
@@ -90,6 +107,14 @@ public class UserService {
 
         user.setProfileImage(imageUrl);
         userRepository.save(user);
+    }
+
+    public UserResDto findByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        return user.toDto();
     }
 }
 
