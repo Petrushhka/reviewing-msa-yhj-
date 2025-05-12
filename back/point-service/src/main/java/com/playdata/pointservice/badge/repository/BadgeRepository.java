@@ -12,5 +12,5 @@ public interface BadgeRepository extends JpaRepository<Badge, Long> {
     // 레벨별 최신 배지 1개 조회
     Badge findTopByLevelOrderByIdDesc(BadgeLevel level);
 
-    Optional<Badge> findByLevel(BadgeLevel level);
+
 }
