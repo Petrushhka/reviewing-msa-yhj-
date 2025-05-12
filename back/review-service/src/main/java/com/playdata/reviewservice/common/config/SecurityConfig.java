@@ -30,7 +30,8 @@ public class SecurityConfig {
         // url 요청 권한 설정
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers("/review-service/reviews/restaurant/{restaurantId}",
-                                "/review-service/review/count/{userId}").permitAll()
+                                "/review-service/review/count/{userId}",
+                                "/review-service/reviews/stats/restaurant/{restaurantId}").permitAll()
                         .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

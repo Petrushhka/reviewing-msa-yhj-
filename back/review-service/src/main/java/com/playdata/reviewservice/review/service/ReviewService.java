@@ -121,14 +121,7 @@ public class ReviewService {
     }
 
     public ReviewStatsDto getRestaurantReviewStats(Long restaurantId) {
-        Object[] result = reviewRepository.getReviewCountAndAverageRating(restaurantId);
-        Long count = (Long) result[0];
-        Double averageRating = (Double) result[1];
-
-        return ReviewStatsDto.builder()
-                .count(count)
-                .averageRating(averageRating)
-                .build();
+        return reviewRepository.getReviewCountAndAverageRating(restaurantId);
 
     }
 }
