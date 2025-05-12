@@ -15,13 +15,13 @@ const MyPageUser = () => {
   const { userRole, userName, badge, userId, userImage } =
     useContext(AuthContext);
 
-  console.log('userimage' + userImage);
+  console.log('userimage:  ' + userImage);
 
   return (
     <>
       <div className={styles.myPageUser}>
         <div className={styles.profile}>
-          <img vsrc={userImage} alt='프로필사진' />
+          <img src={userImage} alt='프로필사진' />
           <ul>
             <li>
               닉네임:&nbsp;
@@ -42,7 +42,6 @@ const MyPageUser = () => {
                       ? '가게사장님'
                       : '관리자'
                 }
-                readOnly
               />
             </li>
           </ul>
