@@ -28,21 +28,23 @@ public class RestaurantService {
 
     // 상점 등록
     public void RestaurantCreate(RestaurantReqDto restaurantReqDto) throws IOException {
-        MultipartFile restaurantImage = restaurantReqDto.getImages().get(0);
-        String uniqueFileName = UUID.randomUUID() + "_" + restaurantImage.getOriginalFilename();
-        String imageUrl = awsS3Config.uploadToS3Bucket(restaurantImage.getBytes(), uniqueFileName);
-
         Restaurant restaurant = restaurantReqDto.toEntity();
-        RestaurantImage image = new RestaurantImage();
-        image.setUrl(imageUrl);
-        image.setSort_order(0);
-        restaurant.addImage(image);
+
+        List<MultipartFile> restaurantImages = restaurantReqDto.getImages();
+        for (MultipartFile restaurantImage : restaurantImages) {
+            String uniqueFileName = UUID.randomUUID() + "_" + restaurantImage.getOriginalFilename();
+            String imageUrl = awsS3Config.uploadToS3Bucket(restaurantImage.getBytes(), uniqueFileName);
+            RestaurantImage image = new RestaurantImage();
+            image.setUrl(imageUrl);
+            image.setSort_order(0);
+            restaurant.addImage(image);
+        }
 
         restaurantRepository.save(restaurant);
     }
 
     // 상점 수정
-    public void updateRestaurantInfo(Long restaurantId, RestaurantResDto dto) {
+    public void updateRestaurantInfo(Long restaurantId, RestaurantReqDto dto) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException("restaurant not found"));
         restaurant.setName(dto.getName());
