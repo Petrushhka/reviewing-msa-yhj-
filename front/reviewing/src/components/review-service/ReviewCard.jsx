@@ -66,7 +66,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
           <div className={styles.profileInfo}>
             <div className={styles.nickname}>{reviewInfo.nickname}</div>
             <div className={styles.detailedInfo}>
-              <span>지역 가이드 리뷰 {totalReviewCount}개 사진 44831장</span>
+              <span>지역 가이드 리뷰 {totalReviewCount}개</span>
             </div>
           </div>
           <div className={styles.moreBtn}>
