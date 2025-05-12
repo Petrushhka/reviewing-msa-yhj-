@@ -10,10 +10,9 @@ import java.util.Optional;
 
 
 public interface UserBadgeMapRepository extends JpaRepository<UserBadgeMap, Long> {
-    // 유저가 받은 배지 중 1개 조회 (가장 빠른 생성 순으로 1개)
-    UserBadgeMap findFirstByUserId(Long userId);
 
     UserBadgeMap findTopByUserIdOrderByBadgeLevelDesc(Long userId);
 
 
+    void deleteByUserId(Long userId);
 }

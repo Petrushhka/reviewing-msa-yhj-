@@ -2,12 +2,10 @@ package com.playdata.userservice.user.service;
 
 
 import com.playdata.userservice.common.auth.TokenUserInfo;
-import com.playdata.userservice.user.dto.UserLoginReqDto;
+import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.common.config.AwsS3Config;
-import com.playdata.userservice.user.dto.UserRequestDto;
-import com.playdata.userservice.user.dto.UserResDto;
-import com.playdata.userservice.user.dto.UserSaveReqDto;
 import com.playdata.userservice.user.entity.User;
+import com.playdata.userservice.user.external.client.BadgeClient;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final AwsS3Config awsS3Config;
+    private final BadgeClient badgeClient;
 
 
     public UserResDto createUser(UserSaveReqDto dto) {
@@ -45,6 +44,9 @@ public class UserService {
 
         User user = dto.toEntity(encoder);
         User saved = userRepository.save(user);
+
+        badgeClient.assignBeginnerBadge(new AssignBadgeReqDto(saved.getId()));
+
         return saved.toDto();
     }
 
