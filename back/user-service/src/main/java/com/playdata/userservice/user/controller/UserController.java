@@ -164,6 +164,13 @@ public class UserController {
 
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<UserResDto> getUserByEmail(@RequestParam String email) {
+        UserResDto userResDto = userService.findByEmail(email);
+
+        return ResponseEntity.ok().body(userResDto);
+    }
+
 
 
 }

@@ -10,4 +10,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<List<Review>> findAllByRestaurantId(Long restaurantId);
 
     Optional<List<Review>> findAllByUserId(Long userId);
+
+    long countByUserId(Long userId);
 }

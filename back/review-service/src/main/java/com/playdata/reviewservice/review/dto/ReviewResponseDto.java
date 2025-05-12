@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class ReviewResponseDto {
     private Long id;
+    private Long userId;
     private String nickname;
     private String content;
     private String rating;

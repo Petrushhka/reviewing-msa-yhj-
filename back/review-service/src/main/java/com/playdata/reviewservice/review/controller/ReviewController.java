@@ -50,5 +50,34 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    @PatchMapping("/review")
+    public ResponseEntity<?> updateReview(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+                                          ReviewRequestDto reviewRequestDto) {
+        reviewService.updateReview(reviewRequestDto, tokenUserInfo.getEmail());
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK, "리뷰 수정 완료!", null
+        );
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    @DeleteMapping("/reviews/{id}")
+    public ResponseEntity<?> deleteReview(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+                                          @PathVariable Long id) throws Exception {
+        reviewService.deleteReview(id, tokenUserInfo.getEmail());
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK, "리뷰 삭제 완료!", null
+        );
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    @GetMapping("/review/count/{userId}")
+    public ResponseEntity<?> getReviewCount(@PathVariable Long userId) {
+        long reviewCount = reviewService.getReviewCountByUserId(userId);
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK, "리뷰 개수 조회 성공!", reviewCount
+        );
+        return ResponseEntity.ok().body(resDto);
+    }
+
 
 }
