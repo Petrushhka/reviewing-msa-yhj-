@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import styles from './modal.module.scss';
 import StarSvg from './StarSvg';
 import AuthContext from '../../context/UserContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 import { handleAxiosError } from '../../configs/HandleAxiosError';
@@ -21,6 +21,7 @@ const ReviewModal = ({
   const location = useLocation();
   const { onLogout, userName } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   // 쿼리스트링 파싱
   const queryParams = new URLSearchParams(location.search);
@@ -44,7 +45,7 @@ const ReviewModal = ({
   const postReview = async (e) => {
     const reviewBody = new FormData();
     reviewBody.append('userId', localStorage.getItem('USER_ID'));
-    reviewBody.append('restaurantId', 1);
+    reviewBody.append('restaurantId', id);
     reviewBody.append('rating', rating);
     reviewBody.append('content', reviewContent);
     const files = reviewImages;

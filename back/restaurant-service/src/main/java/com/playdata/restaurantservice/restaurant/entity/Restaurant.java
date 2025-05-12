@@ -49,6 +49,7 @@ public class Restaurant {
                 .description(description)
                 .address(address)
                 .phone(phone)
+                .createdAt(createdAt)
                 .build();
         List<String> imageUrls = new ArrayList<>();
         for (RestaurantImage image : images) {
