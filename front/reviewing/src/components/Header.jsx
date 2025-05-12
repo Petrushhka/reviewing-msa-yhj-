@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -24,8 +24,7 @@ const sampleOptions = ['리액트', '스프링 부트', 'JPA', 'MSA', 'JWT'];
 const Header = () => {
   const { isLoggedIn, onLogout, userRole, userName, badge, userId, isInit } =
     useContext(AuthContext);
-  console.log('🧩 badge:', badge);
-  console.log('🧩 badge.level:', badge?.level);
+
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
   const [progress, setProgress] = useState(null);
@@ -37,7 +36,6 @@ const Header = () => {
       const res = await axios.get(
         `${API_BASE_URL}/badges/user/${userId}/progress`,
       );
-      console.log('✅ progress API 응답:', res.data);
       setProgress(res.data.result);
     } catch (err) {
       console.error('❌ 배지 진행 상태 조회 실패:', err);
@@ -53,8 +51,8 @@ const Header = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    console.log('검색어:', searchValue);
     // navigate(`/search?keyword=${encodeURIComponent(searchValue)}`);
+    console.log('검색어:', searchValue);
   };
 
   const handleLogout = () => {
@@ -88,12 +86,10 @@ const Header = () => {
                   color='inherit'
                   component={Link}
                   to='/'
-                  disableRipple // 물결 효과 제거
+                  disableRipple
                   sx={{
                     backgroundColor: 'transparent',
-                    '&:hover': {
-                      backgroundColor: 'transparent', // hover 배경 제거
-                    },
+                    '&:hover': { backgroundColor: 'transparent' },
                   }}
                 >
                   <Typography
@@ -135,16 +131,14 @@ const Header = () => {
                           ),
                           sx: {
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: 'peru', // 기본 테두리 색
+                              borderColor: 'peru',
                               borderWidth: '1px',
                             },
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                              borderColor: 'peru', // 마우스 올렸을 때
-                              borderWidth: '1px',
+                              borderColor: 'peru',
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                              borderColor: 'peru', // 포커스 되었을 때
-                              borderWidth: '1px',
+                              borderColor: 'peru',
                             },
                             transition: 'box-shadow 0.2s ease-in-out',
                             '&:hover': {
@@ -187,15 +181,15 @@ const Header = () => {
                       color='inherit'
                       component={Link}
                       to={to}
-                      disableRipple // 물결 효과 제거
+                      disableRipple
                       sx={{
                         backgroundColor: 'transparent',
                         fontFamily: 'inherit',
                         fontWeight: 400,
                         color: '#4B4B4B',
                         '&:hover': {
-                          backgroundColor: 'transparent', // 배경 고정
-                          color: 'rgba(0, 0, 0, 0.6)', // 글씨만 살짝 연하게
+                          backgroundColor: 'transparent',
+                          color: 'rgba(0, 0, 0, 0.6)',
                         },
                       }}
                     >
@@ -226,6 +220,7 @@ const Header = () => {
                     >
                       {userName}님
                     </Typography>
+
                     {isInit && badge?.level && (
                       <img
                         src={`/icons/${badge.level.toLowerCase()}.png`}
@@ -238,6 +233,7 @@ const Header = () => {
                         }}
                       />
                     )}
+
                     <Button
                       color='inherit'
                       onClick={handleLogout}
@@ -247,8 +243,8 @@ const Header = () => {
                         fontWeight: 400,
                         color: '#4B4B4B',
                         '&:hover': {
-                          backgroundColor: 'transparent', // 배경 고정
-                          color: 'rgba(0, 0, 0, 0.6)', // 글씨만 살짝 연하게
+                          backgroundColor: 'transparent',
+                          color: 'rgba(0, 0, 0, 0.6)',
                         },
                       }}
                     >
@@ -257,24 +253,10 @@ const Header = () => {
                   </>
                 ) : (
                   <>
-                    <Button
-                      component={Link}
-                      to='/member/create'
-                      sx={{
-                        color: '#blue',
-                        fontWeight: 500,
-                      }}
-                    >
+                    <Button component={Link} to='/member/create'>
                       회원가입
                     </Button>
-                    <Button
-                      component={Link}
-                      to='/login'
-                      sx={{
-                        color: '#blue',
-                        fontWeight: 500,
-                      }}
-                    >
+                    <Button component={Link} to='/login'>
                       로그인
                     </Button>
                   </>
@@ -284,6 +266,7 @@ const Header = () => {
           </Container>
         </Toolbar>
       </AppBar>
+
       <Box sx={{ height: '64px' }} />
 
       {/* 배지 진행률 모달 */}
