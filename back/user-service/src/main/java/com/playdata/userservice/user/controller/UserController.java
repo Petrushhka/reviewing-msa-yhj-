@@ -90,7 +90,7 @@ public class UserController {
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("token", token);
         loginInfo.put("id", user.getId());
-        loginInfo.put("name", user.getNickName());
+        loginInfo.put("nickName", user.getNickName());
         loginInfo.put("role", user.getRole().toString());
         loginInfo.put("badge", badge);
 
@@ -129,8 +129,18 @@ public class UserController {
 
     @GetMapping("/user/{userId}/point")
     public ResponseEntity<?> getUserPoint(@PathVariable Long userId) {
-        int point = userService.getUserPoint(userId);
-        return ResponseEntity.ok(point);
+        try {
+            int point = userService.getUserPoint(userId);
+            return ResponseEntity.ok(point);
+        } catch (Exception e) {
+            log.error("유저 포인트 조회 중 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "statusCode", 500,
+                            "statusMessage", "server error",
+                            "error", e.getMessage()
+                    ));
+        }
     }
 
 

@@ -1,5 +1,5 @@
 package com.playdata.userservice.common.auth;
 
 public enum Role {
-    USER, OWNER, ADMIN
+    USER, OWNER, ADMIN, REVIEWER
 }
