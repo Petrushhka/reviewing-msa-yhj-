@@ -73,9 +73,12 @@ export default function NaverMapComponent({
   useEffect(() => {
     if (!loaded) return;
     addressInputRef.current.value = address;
+    console.log('address in useEffect: ', address);
+    console.log(addressInputRef.current.value);
+
     submitButtonRef.current.click();
     // submitButtonRef.current.click();
-  }, [loaded]);
+  }, [loaded, address]);
   // —— 6) 헬퍼 함수들 ——
   function makeAddress(item) {
     if (!item) return '';
