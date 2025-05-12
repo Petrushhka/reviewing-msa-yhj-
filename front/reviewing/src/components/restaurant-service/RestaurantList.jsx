@@ -7,11 +7,16 @@ import {
   REVIEW_SERVICE,
 } from '../../configs/host-config';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [sortOption, setSortOption] = useState('latest');
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const searchName = queryParams.get('searchName');
 
   useEffect(() => {
     fetchData();
@@ -19,9 +24,16 @@ const RestaurantList = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurant/list`,
-      );
+      let res;
+      if (!searchName) {
+        res = await axios.get(
+          `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurant/list`,
+        );
+      } else {
+        res = await axios.get(
+          `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurant/list?searchName=${searchName}&address=${searchName}`,
+        );
+      }
       const restaurantData = res.data.result;
 
       // 리뷰, 평점 추가 정보 불러오기
@@ -75,7 +87,11 @@ const RestaurantList = () => {
       </div>
       <div className={styles.list}>
         {sortedRestaurants.map((item) => (
-          <Link key={item.id} to={`/restaurantDetail/${item.id}`}>
+          <Link
+            className={styles.link}
+            key={item.id}
+            to={`/restaurantDetail/${item.id}`}
+          >
             <RestaurantCard key={item.id} restaurant={item} />
           </Link>
         ))}

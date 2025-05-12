@@ -51,8 +51,9 @@ const Header = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // navigate(`/search?keyword=${encodeURIComponent(searchValue)}`);
+    navigate(`/restaurant/list?searchName=${encodeURIComponent(searchValue)}`);
     console.log('검색어:', searchValue);
+    window.location.reload();
   };
 
   const handleLogout = () => {
@@ -154,15 +155,12 @@ const Header = () => {
 
               {/* 중앙: 관리자 메뉴 */}
               {userRole === 'ADMIN' && (
-                <Grid item>
+                <Grid>
                   <Button color='inherit' component={Link} to='/member/list'>
                     회원관리
                   </Button>
                   <Button color='inherit' component={Link} to='/product/manage'>
                     가게등록
-                  </Button>
-                  <Button color='inherit' component={Link} to='/order/list'>
-                    실시간 주문
                   </Button>
                 </Grid>
               )}
@@ -196,6 +194,20 @@ const Header = () => {
                       {label}
                     </Button>
                   ))}
+                  {/* 오너일 때만 상품 등록 버튼 추가 */}
+                  {userRole === 'OWNER' && (
+                    <Grid item>
+                      <Button
+                        component={Link}
+                        to='/product/create'
+                        type='submit'
+                        variant='contained'
+                        sx={{ backgroundColor: 'peru' }}
+                      >
+                        상점 등록
+                      </Button>
+                    </Grid>
+                  )}
                 </Stack>
 
                 {isLoggedIn ? (

@@ -45,6 +45,7 @@ const BadgeProgressModal = ({ open, onClose, progress }) => {
         {progress.nextLevel !== 'MAX' && (
           <Typography>남은 포인트: {progress.pointsToNextLevel}점</Typography>
         )}
+
         <Box sx={{ mt: 2 }}>
           <LinearProgress variant='determinate' value={percent} />
           <Typography align='right' variant='caption' sx={{ mt: 1 }}>

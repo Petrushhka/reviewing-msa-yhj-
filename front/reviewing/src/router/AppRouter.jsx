@@ -9,6 +9,7 @@ import ReviewSection from '../components/review-service/ReviewSection';
 import RestaurantForm from '../components/restaurant-service/RestaurantForm';
 import RestaurantDetail from '../components/restaurant-service/RestaurantDetail';
 import RestaurantUpdate from '../components/restaurant-service/RestaurantUpdate';
+import RestaurantList from '../components/restaurant-service/RestaurantList';
 import MyPage from '../user-service/MyPage';
 import AuthContext from '../context/UserContext';
 
@@ -22,6 +23,7 @@ const AppRouter = () => {
       <Route path='/login' element={<LoginPage />} />
       <Route path='/review' element={<ReviewSection userId={7} />} />
       <Route path='/restaurantForm' element={<RestaurantForm />} />
+      <Route path='/restaurant/list' element={<RestaurantList />} />
       <Route path='/restaurantDetail' element={<RestaurantDetail />} />
       <Route path='/restaurantUpdate' element={<RestaurantUpdate />} />
       <Route
