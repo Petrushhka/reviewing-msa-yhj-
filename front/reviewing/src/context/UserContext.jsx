@@ -12,6 +12,7 @@ const AuthContext = React.createContext({
   setBadge: () => {},
   userId: null,
   userImage: '', // 유저 프로필사진
+  setUserImage: () => {},
   isInit: false,
 });
 

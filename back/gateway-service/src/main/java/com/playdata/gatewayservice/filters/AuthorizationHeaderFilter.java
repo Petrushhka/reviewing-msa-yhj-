@@ -30,7 +30,6 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
             "/user-service/users",
             "/user-service/user/login",
             "/user-service/users/signup",
-            "/user-service/user/profile",
             "/user-service/user/{userId}/point",
             "/badges/**",
             "/icons/**",
