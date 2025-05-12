@@ -11,6 +11,7 @@ const AuthContext = React.createContext({
   badge: null,
   setBadge: () => {},
   userId: null,
+  userImage: '', // 유저 프로필사진
   isInit: false,
 });
 
@@ -21,6 +22,7 @@ export const AuthContextProvider = (props) => {
   const [userName, setUserName] = useState('');
   const [badge, setBadge] = useState(null);
   const [isInit, setIsInit] = useState(false);
+  const [userImage, setUserImage] = useState('');
 
   // ✅ 서버에서 최신 배지 불러오기 (로그인 시 + 새로고침 시)
   const fetchLatestBadge = async (id) => {
@@ -52,11 +54,13 @@ export const AuthContextProvider = (props) => {
     localStorage.setItem('USER_ID', loginData.id);
     localStorage.setItem('USER_ROLE', loginData.role);
     localStorage.setItem('USER_NICKNAME', loginData.nickName);
+    localStorage.setItem('USER_IMAGE', loginData.profileImage);
 
     setIsLoggedIn(true);
     setUserId(loginData.id);
     setUserRole(loginData.role);
     setUserName(loginData.nickName);
+    setUserImage(loginData.profileImage);
 
     setBadge(null); // 초기화
     fetchLatestBadge(loginData.id); // 최신 배지 즉시 반영
@@ -69,6 +73,7 @@ export const AuthContextProvider = (props) => {
     setUserRole('');
     setUserName('');
     setBadge(null);
+    setUserImage('');
   };
 
   useEffect(() => {
@@ -80,12 +85,15 @@ export const AuthContextProvider = (props) => {
       const storedRole = localStorage.getItem('USER_ROLE');
       const storedName = localStorage.getItem('USER_NICKNAME');
       const storedBadge = localStorage.getItem('USER_ICON');
+      const storedImage = localStorage.getItem('USER_IMAGE');
 
       setIsLoggedIn(true);
       setUserId(storedId);
       setUserRole(storedRole);
       setUserName(storedName);
-
+      if (storedImage) {
+        setUserImage(storedImage);
+      }
       // 1차 로컬 복원
       if (storedBadge) {
         try {
@@ -119,6 +127,8 @@ export const AuthContextProvider = (props) => {
         userId,
         badge,
         setBadge,
+        userImage,
+        setUserImage,
         isInit,
       }}
     >

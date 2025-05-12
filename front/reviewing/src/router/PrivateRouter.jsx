@@ -15,10 +15,14 @@ const PrivateRouter = ({ element, requiredRole }) => {
     return <Navigate to='/login' replace />;
   }
 
-  if (requiredRole && userRole !== requiredRole) {
+  if (!requiredRole) {
     alert('권한 없음');
     return <Navigate to='/' replace />;
   }
+  console.log(
+    '사용자 로그인상태 private: ' + isLoggedIn,
+    '사용자 권한: ' + userRole,
+  );
 
   // 로그인도 했고, 권한에도 문제가 없다면 원래 렌더링 하고자 했던 컴포넌트를 렌더링
   return element;

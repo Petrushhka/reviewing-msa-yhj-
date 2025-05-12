@@ -1,0 +1,30 @@
+.myPageUser {
+  width: auto;
+  height: 900px;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  background-color: antiquewhite;
+
+  .profile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+    height: 700px;
+    background-color: azure;
+    position: relative;
+    top: 5em;
+  }
+
+  img {
+    width: 450px;
+    height: 450px;
+    border-radius: 100%;
+  }
+  img:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+}

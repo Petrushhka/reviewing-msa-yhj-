@@ -93,6 +93,7 @@ public class UserController {
         loginInfo.put("nickName", user.getNickName());
         loginInfo.put("role", user.getRole().toString());
         loginInfo.put("badge", badge);
+        loginInfo.put("profileImage", user.getProfileImage());
 
 
 
