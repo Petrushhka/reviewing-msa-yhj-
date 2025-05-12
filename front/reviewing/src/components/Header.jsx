@@ -71,6 +71,7 @@ const Header = () => {
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
           backgroundColor: '#ffffff',
+          padding: '8px 8px',
         }}
       >
         <Toolbar>
@@ -176,7 +177,7 @@ const Header = () => {
               <Grid item sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Stack direction='row' spacing={1}>
                   {[
-                    { label: '체험단 등록', to: '/sass' },
+                    { label: '체험단 검색', to: '/sass' },
                     { label: '커뮤니티', to: '/badges' },
                     { label: '공지/이벤트', to: '/collapsible' },
                     { label: '이용가이드', to: '/collapsible' },
