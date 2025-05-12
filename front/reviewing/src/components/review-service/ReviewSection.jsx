@@ -45,7 +45,7 @@ const ReviewSection = ({ restaurantId = null, userId = null }) => {
       {isShownModal && (
         <ReviewModal
           handleCancelBtnClick={handleCancelBtnClick}
-          onReviewSubmitted={fetchReviews}
+          onReviewSubmitted={fetchReviewsByRestaurant}
         />
       )}
 

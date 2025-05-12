@@ -46,6 +46,13 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
     console.log(res.data.result);
     setTotalReviewCount(res.data.result);
   };
+  const fetchReviewStats = async () => {
+    const res = await axios.get(
+      `${API_BASE_URL}${REVIEW_SERVICE}/review/count/${reviewInfo.userId}`,
+    );
+    console.log(res.data.result);
+    setTotalReviewCount(res.data.result);
+  };
   // console.log(reviewInfo);
   return (
     <>

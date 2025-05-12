@@ -4,6 +4,7 @@ import axios from 'axios';
 import { API_BASE_URL, RESTAURANT_SERVICE } from '../../configs/host-config';
 import { useNavigate, useParams } from 'react-router-dom';
 import NaverMapComponent from '../NaverMapComponent';
+import ReviewSection from '../review-service/ReviewSection';
 
 const RestaurantDetail = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -131,6 +132,7 @@ const RestaurantDetail = () => {
           <span>{restaurants.description}</span>
         </div>
       </div>
+      <ReviewSection restaurantId={id} />
     </div>
   );
 };
