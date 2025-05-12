@@ -49,6 +49,7 @@ public class Review {
                 .content(content)
                 .rating(rating)
                 .images(images.stream().map(ReviewImage::getUrl).toList())
+                .createdAt(createdAt)
                 .build();
     }
 

@@ -108,7 +108,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
               </div>
             </span>
           </div>
-          <div className='uploaded-date'>2018.05.05</div>
+          <div className='uploaded-date'>{reviewInfo.createdAt}</div>
         </div>
         <div className='content-wrap'>
           <p>{reviewInfo && reviewInfo.content}</p>
