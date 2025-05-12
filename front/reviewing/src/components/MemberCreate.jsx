@@ -107,7 +107,7 @@ const MemberCreate = () => {
                 required
               >
                 <MenuItem value=''>선택하세요</MenuItem>
-                <MenuItem value='REVIEWER'>리뷰 작성자</MenuItem>
+                <MenuItem value='USER'>리뷰 작성자</MenuItem>
                 <MenuItem value='OWNER'>사업자</MenuItem>
               </TextField>
               <CardActions>

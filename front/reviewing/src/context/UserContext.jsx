@@ -12,6 +12,7 @@ const AuthContext = React.createContext({
   setBadge: () => {},
   userId: null,
   isInit: false,
+  fetchLatestBadge: () => {}, // ✅ 초기값에도 추가 (오타 수정)
 });
 
 export const AuthContextProvider = (props) => {
@@ -36,30 +37,32 @@ export const AuthContextProvider = (props) => {
       });
 
       const newBadge = badgeRes.data.result;
-      console.log('서버에서 최신 배지 불러옴:', newBadge);
+      console.log('✅ 서버에서 최신 배지 불러옴:', newBadge);
       setBadge(newBadge);
       localStorage.setItem('USER_ICON', JSON.stringify(newBadge));
     } catch (e) {
-      console.error('최신 배지 동기화 실패:', e);
+      console.error('❌ 최신 배지 동기화 실패:', e);
     }
   };
 
-  // ✅ 로그인 처리
-  const loginHandler = (loginData) => {
+  // 로그인 함수: 상태 + 배지까지 한 번에처리리
+  const loginHandler = async (loginData) => {
     console.log('[loginHandler] 로그인 응답 데이터:', loginData);
 
+    // 로컬스토리지 저장
     localStorage.setItem('ACCESS_TOKEN', loginData.token);
     localStorage.setItem('USER_ID', loginData.id);
     localStorage.setItem('USER_ROLE', loginData.role);
     localStorage.setItem('USER_NICKNAME', loginData.nickName);
 
+    // 상태저장
     setIsLoggedIn(true);
     setUserId(loginData.id);
     setUserRole(loginData.role);
     setUserName(loginData.nickName);
 
-    setBadge(null); // 초기화
-    fetchLatestBadge(loginData.id); // 최신 배지 즉시 반영
+    // 배지 상태도 이 안에서 설정
+    await fetchLatestBadge(loginData.id);
   };
 
   const logoutHandler = () => {
@@ -91,9 +94,9 @@ export const AuthContextProvider = (props) => {
         try {
           const parsed = JSON.parse(storedBadge);
           setBadge(parsed);
-          console.log('로컬 배지 복원됨:', parsed);
+          console.log('📦 로컬 배지 복원됨:', parsed);
         } catch (e) {
-          console.error('로컬 배지 파싱 실패:', e);
+          console.error('⚠️ 로컬 배지 파싱 실패:', e);
         }
       }
 
@@ -120,6 +123,7 @@ export const AuthContextProvider = (props) => {
         badge,
         setBadge,
         isInit,
+        fetchLatestBadge, // ✅ 외부에서 사용 가능하게 export
       }}
     >
       {props.children}
