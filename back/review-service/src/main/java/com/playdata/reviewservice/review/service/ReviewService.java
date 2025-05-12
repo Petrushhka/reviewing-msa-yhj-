@@ -1,10 +1,9 @@
 package com.playdata.reviewservice.review.service;
 
+import com.playdata.reviewservice.client.PointServiceClient;
 import com.playdata.reviewservice.client.UserServiceClient;
 import com.playdata.reviewservice.common.config.AwsS3Config;
-import com.playdata.reviewservice.review.dto.ReviewRequestDto;
-import com.playdata.reviewservice.review.dto.ReviewResponseDto;
-import com.playdata.reviewservice.review.dto.UserResDto;
+import com.playdata.reviewservice.review.dto.*;
 import com.playdata.reviewservice.review.entity.Review;
 import com.playdata.reviewservice.review.entity.ReviewImage;
 import com.playdata.reviewservice.review.repository.ReviewRepository;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserServiceClient userServiceClient;
+    private final PointServiceClient pointServiceClient;
     private final AwsS3Config awsS3Config;
 
     public void createReview(ReviewRequestDto reviewRequestDto) throws IOException {
@@ -64,6 +64,9 @@ public class ReviewService {
                 (v1, v2) -> v1 // 중복 키 값 발생 시 기존 값을 유지
         ));
         for (ReviewResponseDto reviewDto : reviewDtos) {
+            reviewDto.setBadgeInfo(
+                    pointServiceClient.getUserBadgeByUserId(reviewDto.getUserId())
+            );
             reviewDto.setNickname(idToNickname.get(reviewDto.getUserId()));
         }
         log.info("User reviews found: " + userResDtos.size());
@@ -115,5 +118,17 @@ public class ReviewService {
 
     public long getReviewCountByUserId(Long userId) {
         return reviewRepository.countByUserId(userId);
+    }
+
+    public ReviewStatsDto getRestaurantReviewStats(Long restaurantId) {
+        Object[] result = reviewRepository.getReviewCountAndAverageRating(restaurantId);
+        Long count = (Long) result[0];
+        Double averageRating = (Double) result[1];
+
+        return ReviewStatsDto.builder()
+                .count(count)
+                .averageRating(averageRating)
+                .build();
+
     }
 }

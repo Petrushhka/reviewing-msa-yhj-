@@ -4,6 +4,7 @@ import com.playdata.reviewservice.common.auth.TokenUserInfo;
 import com.playdata.reviewservice.common.dto.CommonResDto;
 import com.playdata.reviewservice.review.dto.ReviewRequestDto;
 import com.playdata.reviewservice.review.dto.ReviewResponseDto;
+import com.playdata.reviewservice.review.dto.ReviewStatsDto;
 import com.playdata.reviewservice.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -79,5 +80,10 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    // 식당 리뷰 개수, 평균 별점 가져오기
+    @GetMapping("/reviews/stats/restaurant/{restaurantId}")
+    public ResponseEntity<?> getRestaurantReviewsStats(@PathVariable Long restaurantId) {
+        return ResponseEntity.ok().body(reviewService.getRestaurantReviewStats(restaurantId));
+    }
 
 }

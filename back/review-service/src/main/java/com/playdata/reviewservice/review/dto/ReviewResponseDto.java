@@ -18,6 +18,8 @@ public class ReviewResponseDto {
     private String nickname;
     private String content;
     private String rating;
+    private UserBadgeResDto badgeInfo;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 

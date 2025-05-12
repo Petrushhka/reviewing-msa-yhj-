@@ -5,12 +5,16 @@ import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 import ReviewModal from './ReviewModal';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
   const userId = localStorage.getItem('USER_ID');
   const [isMore, setIsMore] = useState(false);
   const [isShownModalForModify, setIsShownModalForModify] = useState(false);
   const [totalReviewCount, setTotalReviewCount] = useState(0);
+
+  const { id } = useParams();
+
   const handleCancelBtnClick = () => {
     setIsShownModalForModify(false);
   };
@@ -42,7 +46,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
     console.log(res.data.result);
     setTotalReviewCount(res.data.result);
   };
-
+  // console.log(reviewInfo);
   return (
     <>
       {isShownModalForModify && (
@@ -66,7 +70,9 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
           <div className={styles.profileInfo}>
             <div className={styles.nickname}>{reviewInfo.nickname}</div>
             <div className={styles.detailedInfo}>
-              <span>지역 가이드 리뷰 {totalReviewCount}개</span>
+              <span>
+                {reviewInfo.badgeInfo.badgeName} 리뷰 {totalReviewCount}개
+              </span>
             </div>
           </div>
           <div className={styles.moreBtn}>
