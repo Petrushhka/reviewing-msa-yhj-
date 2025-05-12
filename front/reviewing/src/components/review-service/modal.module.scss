@@ -23,4 +23,12 @@
   .reviewTextArea {
     resize: none;
   }
+
+  .reviewWrap {
+    text-align: center;
+
+    .profileNameWrap {
+      text-align: left;
+    }
+  }
 }

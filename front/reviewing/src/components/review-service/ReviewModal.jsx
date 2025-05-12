@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import styles from './modal.module.scss';
 import StarSvg from './StarSvg';
 import AuthContext from '../../context/UserContext';
@@ -6,21 +6,39 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 import { handleAxiosError } from '../../configs/HandleAxiosError';
-const ReviewModal = ({ handleCancelBtnClick }) => {
-  const [reviewImages, setReviewImages] = useState(null);
+const ReviewModal = ({
+  handleCancelBtnClick,
+  onReviewSubmitted,
+  isModify = false,
+  modifyingInfo = null,
+}) => {
+  const [reviewImages, setReviewImages] = useState([]);
   const [thumbnailImages, setThumbnailImages] = useState([]);
   const [reviewContent, setReviewContent] = useState('');
   const [rating, setRating] = useState(0);
+
   const $fileTag = useRef();
   const location = useLocation();
-  const { onLogout } = useContext(AuthContext);
+  const { onLogout, userName } = useContext(AuthContext);
   const navigate = useNavigate();
+
   // 쿼리스트링 파싱
   const queryParams = new URLSearchParams(location.search);
   const restaurantId = queryParams.get('restaurantId');
 
+  useEffect(() => {
+    if (isModify && modifyingInfo) {
+      setReviewContent(modifyingInfo.content);
+      setRating(modifyingInfo.rating);
+    }
+  }, []);
+
   const handlePostBtnClick = (e) => {
-    postReview(e);
+    if (!isModify) {
+      postReview(e);
+    } else {
+      modifyReview(e);
+    }
   };
 
   const postReview = async (e) => {
@@ -45,6 +63,36 @@ const ReviewModal = ({ handleCancelBtnClick }) => {
       );
       alert('리뷰 등록 완료!');
       handleCancelBtnClick();
+      onReviewSubmitted();
+    } catch (e) {
+      handleAxiosError(e, onLogout, navigate);
+    }
+  };
+
+  const modifyReview = async (e) => {
+    const reviewBody = new FormData();
+    reviewBody.append('id', modifyingInfo.id);
+    reviewBody.append('userId', localStorage.getItem('USER_ID'));
+    reviewBody.append('restaurantId', 1);
+    reviewBody.append('rating', rating);
+    reviewBody.append('content', reviewContent);
+    const files = reviewImages;
+    for (let i = 0; i < files.length; i++) {
+      reviewBody.append('images', files[i]);
+    }
+    try {
+      await axiosInstance.patch(
+        `${API_BASE_URL}${REVIEW_SERVICE}/review`,
+        reviewBody,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+      alert('리뷰 수정정 완료!');
+      handleCancelBtnClick();
+      onReviewSubmitted();
     } catch (e) {
       handleAxiosError(e, onLogout, navigate);
     }
@@ -77,31 +125,38 @@ const ReviewModal = ({ handleCancelBtnClick }) => {
     });
   };
 
+  const handleStarClick = (value) => {
+    console.log('클릭됨', value);
+    setRating(value);
+  };
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.entireWrap}>
-        <div className='restaurantNameWrap'>
+        <div className={styles.restaurantNameWrap}>
           <span>서울남부버스터미널</span>
         </div>
-        <div className='reviewWrap'>
-          <div className='profileWrap'>
-            <div className='profileImageWrap'></div>
-            <div className='profileNameWrap'></div>
+        <div className={styles.reviewWrap}>
+          <div className={styles.profileWrap}>
+            <div className={styles.profileImageWrap}></div>
+            <div className={styles.profileNameWrap}>
+              <span>{userName}</span>
+            </div>
           </div>
           <div className='ratingWrap'>
-            <span>
-              <StarSvg isGold={true} />
-              <StarSvg isGold={true} />
-              <StarSvg isGold={true} />
-              <StarSvg isGold={true} />
-              <StarSvg isGold={true} />
-            </span>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <StarSvg
+                key={value}
+                isGold={rating >= value ? true : false}
+                handleClick={() => handleStarClick(value)}
+              />
+            ))}
           </div>
           <div className='contentWrap'>
             <textarea
               className={styles.reviewTextArea}
               onChange={(e) => setReviewContent(e.target.value)}
               placeholder='이곳에 다녀온 경험을 자세히 공유해 주세요.'
+              value={reviewContent}
             ></textarea>
           </div>
           <div className='imageAddWrap'>

@@ -7,28 +7,36 @@ import axios from 'axios';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 
 const ReviewSection = () => {
-  const [isShowModal, setIsShowModal] = useState(false);
+  const [isShownModal, setIsShownModal] = useState(false);
   const [reviews, setReviews] = useState([]);
-  useEffect(async () => {
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async () => {
     const res = await axios.get(
       `${API_BASE_URL}${REVIEW_SERVICE}/reviews/restaurant/1`,
     );
     console.log(res.data.result);
     setReviews(res.data.result);
-  }, []);
+  };
 
   const handleReviewBtnClick = () => {
-    setIsShowModal(true);
+    setIsShownModal(true);
   };
   const handleCancelBtnClick = () => {
-    setIsShowModal(false);
+    setIsShownModal(false);
   };
 
   return (
     <>
-      {isShowModal && (
-        <ReviewModal handleCancelBtnClick={handleCancelBtnClick} />
+      {isShownModal && (
+        <ReviewModal
+          handleCancelBtnClick={handleCancelBtnClick}
+          onReviewSubmitted={fetchReviews}
+        />
       )}
+
       <div className={styles.entireWrap}>
         <div className={styles.reviewWriteBtnWrap}>
           <button type='button' onClick={handleReviewBtnClick}>
@@ -39,7 +47,11 @@ const ReviewSection = () => {
           <ul>
             {reviews.map((review) => (
               <li>
-                <ReviewCard key={review.id} reviewInfo={review} />
+                <ReviewCard
+                  key={review.id}
+                  reviewInfo={review}
+                  onReviewSubmitted={fetchReviews}
+                />
               </li>
             ))}
           </ul>

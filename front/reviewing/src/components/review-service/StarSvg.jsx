@@ -1,8 +1,9 @@
 import React from 'react';
 
-const StarSvg = ({ isGold }) => {
+const StarSvg = ({ handleClick, isGold }) => {
   return (
     <svg
+      onClick={handleClick}
       width='24'
       height='24'
       fill={isGold ? 'gold' : 'lightgray'}
