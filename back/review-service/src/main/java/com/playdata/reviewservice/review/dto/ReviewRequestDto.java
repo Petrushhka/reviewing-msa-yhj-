@@ -10,7 +10,7 @@ import java.util.List;
 public class ReviewRequestDto {
     private Long id;
     private String content;
-    private String rating;
+    private Long rating;
     private Long userId;
     private Long restaurantId;
 
