@@ -10,6 +10,7 @@ import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.external.client.BadgeClient;
 import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.user.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.HEAD;
 import lombok.RequiredArgsConstructor;
@@ -52,14 +53,42 @@ public class UserController {
     }
 
     @PostMapping("/user/profile")
-    public ResponseEntity<?> uploadProfile(
-            UserRequestDto dto) throws Exception {
-        userService.uploadProfile(dto);
+    public ResponseEntity<?> uploadProfile(@ModelAttribute UserRequestDto dto) throws Exception {
+        String newProfile = userService.uploadProfile(dto);
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.OK,
-                "upload success", null);
+                "upload success", Map.of("newProfileName", newProfile));
 
         return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/user/update-info")
+        public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDto dto){
+        try {
+            UserUpdateDto updated = userService.updateInfoUser(dto);
+            CommonResDto resDto = new CommonResDto(
+                    HttpStatus.OK,
+                    "회원정보 수정 성공",
+                    updated
+            );
+            return ResponseEntity.ok(resDto);
+
+        } catch (IllegalArgumentException e) {
+            // 닉네임 중복 또는 비밀번호 조건 위반
+            CommonResDto resDto = new CommonResDto(
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage(),
+                    null
+            );
+            return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
+            CommonResDto resDto = new CommonResDto(
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage(),
+                    null
+            );
+            return new ResponseEntity<>(resDto, HttpStatus.NOT_FOUND);
+        }
     }
 
 

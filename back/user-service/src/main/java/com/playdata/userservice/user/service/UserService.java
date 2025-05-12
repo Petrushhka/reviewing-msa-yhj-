@@ -1,18 +1,13 @@
 package com.playdata.userservice.user.service;
 
 
-import com.playdata.userservice.common.auth.TokenUserInfo;
-import com.playdata.userservice.user.dto.UserLoginReqDto;
+import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.common.config.AwsS3Config;
-import com.playdata.userservice.user.dto.UserRequestDto;
-import com.playdata.userservice.user.dto.UserResDto;
-import com.playdata.userservice.user.dto.UserSaveReqDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +16,6 @@ import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -86,7 +79,7 @@ public class UserService {
     }
 
 
-    public void uploadProfile(UserRequestDto userRequestDto) throws Exception {
+    public String uploadProfile(UserRequestDto userRequestDto) throws Exception {
         User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
                 () -> new EntityNotFoundException("User not found!")
         );
@@ -107,6 +100,7 @@ public class UserService {
 
         user.setProfileImage(imageUrl);
         userRepository.save(user);
+        return imageUrl;
     }
 
     public UserResDto findByEmail(String email) {
@@ -130,6 +124,30 @@ public class UserService {
         return user.toDto();
     }
 
+    public UserUpdateDto updateInfoUser(UserUpdateDto dto) {
+        User user = userRepository.findById(dto.getId()).orElseThrow(
+                () -> new EntityNotFoundException("User not found!")
+        );
+
+        String newNick = dto.getNickName();
+        if (dto.getNickName() != null && !dto.getNickName().isBlank()) {
+            if(!newNick.equals(user.getNickName())&& userRepository.existsByNickName(newNick)) {
+                throw new IllegalArgumentException("이미 사용중인 닉네임 입니다.");
+            }
+            user.setNickName(newNick);
+        }
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            String encodedPassword = encoder.encode(dto.getPassword());
+            user.setPassword(encodedPassword);
+        }
+        userRepository.save(user);
+
+        return UserUpdateDto.builder()
+                .id(user.getId())
+                .nickName(user.getNickName())
+                .build();
+    }
 }
 
 
