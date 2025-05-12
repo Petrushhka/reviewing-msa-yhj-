@@ -22,7 +22,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
-    private String rating;
+    private Long rating;
     private Long userId;
     private Long restaurantId;
     @CreationTimestamp
@@ -49,6 +49,7 @@ public class Review {
                 .content(content)
                 .rating(rating)
                 .images(images.stream().map(ReviewImage::getUrl).toList())
+                .createdAt(createdAt)
                 .build();
     }
 

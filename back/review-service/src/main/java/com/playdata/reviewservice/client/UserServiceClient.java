@@ -15,4 +15,7 @@ public interface UserServiceClient {
 
     @GetMapping("/user-service/users")
     public UserResDto getUserByEmail(@RequestParam String email);
+
+    @PatchMapping("/user-service/users/point")
+    public UserResDto updatePoint(@RequestParam Long userId, @RequestParam int point );
 }

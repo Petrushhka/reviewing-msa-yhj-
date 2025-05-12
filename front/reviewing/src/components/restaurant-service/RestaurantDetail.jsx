@@ -1,54 +1,138 @@
-// ✅ RestaurantDetail.jsx (세로 구분선 적용)
 import { useState, useEffect } from 'react';
 import styles from './RestaurantDetail.module.scss';
+import axios from 'axios';
+import { API_BASE_URL, RESTAURANT_SERVICE } from '../../configs/host-config';
+import { useNavigate, useParams } from 'react-router-dom';
+import NaverMapComponent from '../NaverMapComponent';
+import ReviewSection from '../review-service/ReviewSection';
 
-const RestaurantDetail = ({ restaurantId }) => {
-  const [data, setData] = useState(null);
+const RestaurantDetail = () => {
+  const [restaurants, setRestaurants] = useState([]);
+  const [currentImage, setCurrentImage] = useState(0);
+  const [address, setAddress] = useState('');
+  const [isOwner, setIsOwner] = useState(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const dummyData = {
-      id: restaurantId,
-      name: '스시 오마카세 히로',
-      description: '신선한 해산물과 정성 가득한 오마카세 전문점입니다.',
-      address: '서울 강남구 테헤란로 123',
-      phone: '010-0000-0000',
-      mainImageUrl: 'https://restaurantservice-image2400.s3.ap-northeast-2.amazonaws.com/d1521755-f638-4f90-ac52-fe48a71d6403_basic.jpg',
-    };
-    setData(dummyData);
-  }, [restaurantId]);
+    fetchData();
+  }, []);
 
-  if (!data) return <div>Loading...</div>;
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurants/${id}`,
+      );
+      console.log(res.data.result);
+      setRestaurants(res.data.result);
+      setAddress(res.data.result.address);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  if (!restaurants) return <div>Loading...</div>;
+
+  const images = restaurants.imageUrls || ['/default.jpg'];
+
+  const nextImage = () => {
+    setCurrentImage((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const token = localStorage.getItem('ACCESS_TOKEN');
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setIsOwner(
+          payload.id === restaurants.userId && payload.role === 'OWNER',
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, []);
+
+  const handleDelete = async () => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+
+    try {
+      await axios.delete(
+        `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurant/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      alert('상점이 삭제되었습니다.');
+      navigate('/restaurant');
+    } catch (e) {
+      console.log(e);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
+  const handleEdit = () => {
+    navigate(`/restaurantUpdate/${id}`); // 수정 페이지로 이동
+  };
 
   return (
     <div className={styles.detailWrapper}>
-      <div className={styles.actions}>
-        <button>수정</button>
-        <button>삭제</button>
-      </div>
+      {isOwner && (
+        <div className={styles.actions}>
+          <button onClick={handleEdit}>수정</button>
+          <button onClick={handleDelete}>삭제</button>
+        </div>
+      )}
 
       <div className={styles.imageSection}>
-        <img src={data.mainImageUrl || '/default.jpg'} alt='상점 이미지' />
+        <img src={images[currentImage]} alt='상점 이미지' />
+        {images.length > 1 && (
+          <div className={styles.slideControls}>
+            <button onClick={prevImage}>&lt;</button>
+            <button onClick={nextImage}>&gt;</button>
+          </div>
+        )}
       </div>
 
       <div className={styles.infoSection}>
         <div className={styles.row}>
           <strong>상점명</strong>
-          <div className={styles.separator} /> <span>{data.name}</span>
+          <div className={styles.separator} /> <span>{restaurants.name}</span>
         </div>
         <div className={styles.row}>
           <strong>연락처</strong>
-          <div className={styles.separator} /> <span>{data.phone}</span>
+          <div className={styles.separator} /> <span>{restaurants.phone}</span>
         </div>
         <div className={styles.row}>
           <strong>위치</strong>
-          <div className={styles.separator} /> <span>{data.address}</span>
+          <div className={styles.separator} />{' '}
+          <div>
+            <div>{restaurants.address}</div>
+            <div>
+              {address && (
+                <NaverMapComponent
+                  address={address}
+                  width='500px'
+                  height='300px'
+                />
+              )}
+            </div>
+          </div>
         </div>
         <div className={styles.row}>
           <strong>소개글</strong>
-          <div className={styles.separator} /> <span>{data.description}</span>
+          <div className={styles.separator} />{' '}
+          <span>{restaurants.description}</span>
         </div>
       </div>
-      
+      <ReviewSection restaurantId={id} />
     </div>
   );
 };

@@ -1,7 +1,12 @@
 package com.playdata.pointservice.badge.entity;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
+@Slf4j
 @Getter
 public enum BadgeLevel {
     BEGINNER(0, "입문자"),
@@ -19,13 +24,11 @@ public enum BadgeLevel {
     }
 
     public static BadgeLevel fromPoint(int point) {
-        BadgeLevel result = BEGINNER;
-
-        for (BadgeLevel level : values()) {
-            if (point >= level.getMinPoint()) {
-                result = level;
-            }
-        }
-        return result;
+        return Arrays.stream(values())
+                .sorted(Comparator.comparingInt(BadgeLevel::getMinPoint).reversed())
+                .filter(level -> point >= level.getMinPoint())
+                .findFirst()
+                .orElse(BEGINNER);
     }
+
 }

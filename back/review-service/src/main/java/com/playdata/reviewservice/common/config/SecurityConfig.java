@@ -3,7 +3,6 @@ package com.playdata.reviewservice.common.config;
 import com.playdata.reviewservice.common.auth.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,7 +29,9 @@ public class SecurityConfig {
         // url 요청 권한 설정
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers("/review-service/reviews/restaurant/{restaurantId}",
-                                "/review-service/review/count/{userId}").permitAll()
+                                "/review-service/review/count/{userId}",
+                                "/review-service/reviews/stats/restaurant/{restaurantId}",
+                                "/review-service/reviews/user/{id}").permitAll()
                         .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

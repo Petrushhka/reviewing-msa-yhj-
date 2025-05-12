@@ -1,6 +1,21 @@
 .list {
-  padding: 3rem;
+  padding: 2rem;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 40px;
+}
+
+.sortWrapper {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 3rem;
+
+  select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
 }

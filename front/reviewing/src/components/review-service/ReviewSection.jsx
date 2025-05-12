@@ -6,16 +6,28 @@ import axiosInstance from '../../configs/axios-config';
 import axios from 'axios';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 
-const ReviewSection = () => {
+const ReviewSection = ({ restaurantId = null, userId = null }) => {
   const [isShownModal, setIsShownModal] = useState(false);
   const [reviews, setReviews] = useState([]);
   useEffect(() => {
-    fetchReviews();
+    if (restaurantId) {
+      fetchReviewsByRestaurant();
+    } else if (userId) {
+      fetchReviewsByUserId();
+    }
   }, []);
 
-  const fetchReviews = async () => {
+  const fetchReviewsByRestaurant = async () => {
     const res = await axios.get(
-      `${API_BASE_URL}${REVIEW_SERVICE}/reviews/restaurant/1`,
+      `${API_BASE_URL}${REVIEW_SERVICE}/reviews/restaurant/${restaurantId}`,
+    );
+    console.log(res.data.result);
+    setReviews(res.data.result);
+  };
+
+  const fetchReviewsByUserId = async () => {
+    const res = await axios.get(
+      `${API_BASE_URL}${REVIEW_SERVICE}/reviews/user/${userId}`,
     );
     console.log(res.data.result);
     setReviews(res.data.result);
@@ -33,16 +45,18 @@ const ReviewSection = () => {
       {isShownModal && (
         <ReviewModal
           handleCancelBtnClick={handleCancelBtnClick}
-          onReviewSubmitted={fetchReviews}
+          onReviewSubmitted={fetchReviewsByRestaurant}
         />
       )}
 
       <div className={styles.entireWrap}>
-        <div className={styles.reviewWriteBtnWrap}>
-          <button type='button' onClick={handleReviewBtnClick}>
-            리뷰하기
-          </button>
-        </div>
+        {restaurantId && (
+          <div className={styles.reviewWriteBtnWrap}>
+            <button type='button' onClick={handleReviewBtnClick}>
+              리뷰하기
+            </button>
+          </div>
+        )}
         <div className={styles.reviewsWrap}>
           <ul>
             {reviews.map((review) => (
@@ -50,7 +64,7 @@ const ReviewSection = () => {
                 <ReviewCard
                   key={review.id}
                   reviewInfo={review}
-                  onReviewSubmitted={fetchReviews}
+                  onReviewSubmitted={fetchReviewsByRestaurant}
                 />
               </li>
             ))}
