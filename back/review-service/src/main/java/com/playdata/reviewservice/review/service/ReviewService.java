@@ -77,9 +77,25 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findAllByUserId(id).orElseThrow(
                 () -> new EntityNotFoundException("Review not found!")
         );
-        return reviews.stream()
+
+        List<ReviewResponseDto> reviewDtos = reviews.stream()
                 .map(Review::toResponseDto)
                 .collect(Collectors.toList());
+
+        List<Integer> userIds = reviewDtos.stream().map((review) -> review.getUserId().intValue()).collect(Collectors.toList());
+        List<UserResDto> userResDtos= userServiceClient.getUserForReivew(userIds);
+        Map<Long, String> idToNickname = userResDtos.stream().collect(Collectors.toMap(
+                UserResDto::getId,
+                UserResDto::getNickName,
+                (v1, v2) -> v1 // 중복 키 값 발생 시 기존 값을 유지
+        ));
+        for (ReviewResponseDto reviewDto : reviewDtos) {
+            reviewDto.setBadgeInfo(
+                    pointServiceClient.getUserBadgeByUserId(reviewDto.getUserId())
+            );
+            reviewDto.setNickname(idToNickname.get(reviewDto.getUserId()));
+        }
+        return reviewDtos;
     }
 
     public void deleteReview(Long id, String email) throws Exception {

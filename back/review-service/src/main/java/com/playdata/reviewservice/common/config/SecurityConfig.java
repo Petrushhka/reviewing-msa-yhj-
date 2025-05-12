@@ -31,7 +31,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers("/review-service/reviews/restaurant/{restaurantId}",
                                 "/review-service/review/count/{userId}",
-                                "/review-service/reviews/stats/restaurant/{restaurantId}").permitAll()
+                                "/review-service/reviews/stats/restaurant/{restaurantId}",
+                                "/review-service/reviews/user/{id}").permitAll()
                         .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
