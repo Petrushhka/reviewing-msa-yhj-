@@ -116,6 +116,20 @@ public class UserService {
         }
         return user.toDto();
     }
+
+    public UserResDto addPoint(Long userId, Integer point) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("User not found!")
+        );
+        if (user == null) {
+            return null;
+        }
+
+        user.setPoint(user.getPoint()+point);
+        userRepository.save(user);
+        return user.toDto();
+    }
+
 }
 
 

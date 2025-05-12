@@ -33,6 +33,7 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Builder.Default
+    @Setter
     private int point = 0;
 
     @Column(length = 255, nullable = true)
