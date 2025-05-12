@@ -10,6 +10,7 @@ import ReviewSection from '../components/review-service/ReviewSection';
 import RestaurantForm from '../components/restaurant-service/RestaurantForm';
 import RestaurantDetail from '../components/restaurant-service/RestaurantDetail';
 import RestaurantUpdate from '../components/restaurant-service/RestaurantUpdate';
+import RestaurantList from '../components/restaurant-service/RestaurantList';
 
 const AppRouter = () => {
   return (
@@ -19,6 +20,7 @@ const AppRouter = () => {
       <Route path='/login' element={<LoginPage />} />
       <Route path='/review' element={<ReviewSection userId={7} />} />
       <Route path='/restaurantForm' element={<RestaurantForm />} />
+      <Route path='/restaurant/list' element={<RestaurantList />} />
       <Route path='/restaurantDetail/:id' element={<RestaurantDetail />} />
       <Route path='/restaurantUpdate/:id' element={<RestaurantUpdate />} />
       {/* <Route path='/mypage' element={<PrivateRouter element={<MyPage />} />} /> */}

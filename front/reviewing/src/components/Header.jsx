@@ -51,8 +51,9 @@ const Header = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // navigate(`/search?keyword=${encodeURIComponent(searchValue)}`);
+    navigate(`/restaurant/list?searchName=${encodeURIComponent(searchValue)}`);
     console.log('검색어:', searchValue);
+    window.location.reload();
   };
 
   const handleLogout = () => {

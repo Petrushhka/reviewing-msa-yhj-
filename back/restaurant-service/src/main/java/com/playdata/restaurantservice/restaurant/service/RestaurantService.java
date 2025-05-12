@@ -78,6 +78,8 @@ public class RestaurantService {
         Page<Restaurant> restaurants;
         if (dto.getSearchName() == null) {
             restaurants = restaurantRepository.findAll(pageable);
+        } else if (!dto.getSearchName().isEmpty() && !dto.getAddress().isEmpty()){
+            restaurants = restaurantRepository.findByNameAndAddressValue(dto.getSearchName(), pageable);
         } else if (!dto.getSearchName().isEmpty()) {
             restaurants = restaurantRepository.findByNameValue(dto.getSearchName(), pageable);
         } else {
