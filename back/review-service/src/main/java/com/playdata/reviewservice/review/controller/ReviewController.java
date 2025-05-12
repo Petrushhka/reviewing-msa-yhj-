@@ -70,5 +70,14 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    @GetMapping("/review/count/{userId}")
+    public ResponseEntity<?> getReviewCount(@PathVariable Long userId) {
+        long reviewCount = reviewService.getReviewCountByUserId(userId);
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK, "리뷰 개수 조회 성공!", reviewCount
+        );
+        return ResponseEntity.ok().body(resDto);
+    }
+
 
 }

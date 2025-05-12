@@ -1,15 +1,16 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import StarSvg from './StarSvg';
 import styles from './card.module.scss';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 import ReviewModal from './ReviewModal';
+import axios from 'axios';
 
 const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
   const userId = localStorage.getItem('USER_ID');
   const [isMore, setIsMore] = useState(false);
   const [isShownModalForModify, setIsShownModalForModify] = useState(false);
-
+  const [totalReviewCount, setTotalReviewCount] = useState(0);
   const handleCancelBtnClick = () => {
     setIsShownModalForModify(false);
   };
@@ -28,6 +29,18 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
         `${API_BASE_URL}${REVIEW_SERVICE}/reviews/${reviewInfo.id}`,
       );
     }
+  };
+
+  useEffect(() => {
+    fetchTotalReviewCount();
+  }, []);
+
+  const fetchTotalReviewCount = async () => {
+    const res = await axios.get(
+      `${API_BASE_URL}${REVIEW_SERVICE}/review/count/${reviewInfo.userId}`,
+    );
+    console.log(res.data.result);
+    setTotalReviewCount(res.data.result);
   };
 
   return (
@@ -53,7 +66,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
           <div className={styles.profileInfo}>
             <div className={styles.nickname}>{reviewInfo.nickname}</div>
             <div className={styles.detailedInfo}>
-              <span>지역 가이드 리뷰 3,172개 사진 44831장</span>
+              <span>지역 가이드 리뷰 {totalReviewCount}개 사진 44831장</span>
             </div>
           </div>
           <div className={styles.moreBtn}>

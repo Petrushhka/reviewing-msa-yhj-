@@ -112,4 +112,8 @@ public class ReviewService {
         review.setContent(reviewRequestDto.getContent());
         reviewRepository.save(review);
     }
+
+    public long getReviewCountByUserId(Long userId) {
+        return reviewRepository.countByUserId(userId);
+    }
 }
