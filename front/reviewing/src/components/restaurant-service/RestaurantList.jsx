@@ -87,7 +87,11 @@ const RestaurantList = () => {
       </div>
       <div className={styles.list}>
         {sortedRestaurants.map((item) => (
-          <Link key={item.id} to={`/restaurantDetail/${item.id}`}>
+          <Link
+            className={styles.link}
+            key={item.id}
+            to={`/restaurantDetail/${item.id}`}
+          >
             <RestaurantCard key={item.id} restaurant={item} />
           </Link>
         ))}
