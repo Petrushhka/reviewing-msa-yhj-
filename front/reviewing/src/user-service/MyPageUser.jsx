@@ -3,6 +3,7 @@ import { useContext, useRef, useState } from 'react';
 import AuthContext from '../context/UserContext';
 import axios from 'axios';
 import { API_BASE_URL } from '../configs/host-config';
+import ReviewSection from '../components/review-service/ReviewSection';
 
 const MyPageUser = () => {
   const { userRole, userName, badge, userId, userImage, setUserImage } =
@@ -121,7 +122,9 @@ const MyPageUser = () => {
           </li>
         </ul>
       </div>
-
+      <div className={styles.reviewList}>
+        <ReviewSection userId={userId} />
+      </div>
       <div className={styles.updateSection}>
         <h3>회원정보 수정</h3>
         <div className={styles.inputGroup}>
