@@ -10,6 +10,7 @@ import {
 import axios from 'axios';
 import { useState } from 'react';
 import { API_BASE_URL, RESTAURANT_SERVICE } from '../../configs/host-config';
+import { useNavigate } from 'react-router-dom';
 
 const RestaurantForm = () => {
   const [images, setImages] = useState([]);
@@ -17,6 +18,7 @@ const RestaurantForm = () => {
   const [phone, setPhone] = useState('');
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setImages(e.target.files);
@@ -55,7 +57,7 @@ const RestaurantForm = () => {
 
       if (res.status === 201) {
         alert('상점 등록이 완료되었습니다.');
-        navigate('/restaurant');
+        navigate('/');
       } else {
         alert('상점 등록에 실패했습니다.');
       }
