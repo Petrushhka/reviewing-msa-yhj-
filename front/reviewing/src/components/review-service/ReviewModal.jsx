@@ -6,6 +6,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 import { handleAxiosError } from '../../configs/HandleAxiosError';
+
 const ReviewModal = ({
   handleCancelBtnClick,
   onReviewSubmitted,
@@ -17,12 +18,16 @@ const ReviewModal = ({
   const [thumbnailImages, setThumbnailImages] = useState([]);
   const [reviewContent, setReviewContent] = useState('');
   const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+
+  const effectiveRating = hoverRating > rating ? hoverRating : rating;
 
   const $fileTag = useRef();
   const location = useLocation();
   const { onLogout, userName } = useContext(AuthContext);
   const navigate = useNavigate();
   const { id } = useParams();
+  const { userImage } = useContext(AuthContext);
 
   // 쿼리스트링 파싱
   const queryParams = new URLSearchParams(location.search);
@@ -139,45 +144,49 @@ const ReviewModal = ({
         </div>
         <div className={styles.reviewWrap}>
           <div className={styles.profileWrap}>
-            <div className={styles.profileImageWrap}></div>
+            <div className={styles.profileImageWrap}>
+              <img src={userImage} />
+            </div>
             <div className={styles.profileNameWrap}>
               <span>{userName}</span>
             </div>
           </div>
-          <div className='ratingWrap'>
+          <div className={styles.ratingWrap}>
             {[1, 2, 3, 4, 5].map((value) => (
               <StarSvg
                 key={value}
-                isGold={rating >= value ? true : false}
+                isGold={value <= effectiveRating}
+                onMouseEnter={() => setHoverRating(value)}
+                onMouseLeave={() => setHoverRating(0)}
                 handleClick={() => handleStarClick(value)}
               />
             ))}
           </div>
-          <div className='contentWrap'>
+          <div className={styles.contentWrap}>
             <textarea
-              className={styles.reviewTextArea}
               onChange={(e) => setReviewContent(e.target.value)}
               placeholder='이곳에 다녀온 경험을 자세히 공유해 주세요.'
               value={reviewContent}
             ></textarea>
           </div>
-          <div className='imageAddWrap'>
+          <div className={styles.imageAddWrap}>
             <input
               type='file'
               onChange={updateFiles}
               ref={$fileTag}
               accept='image/*'
               multiple
+              className={styles.fileInput}
             />
           </div>
-          <div className='imagesWrap'>
+          <div className={styles.imagesWrap}>
             {thumbnailImages &&
               thumbnailImages.map((value, index) => {
                 return <img src={value} style={{ width: '70px' }} />;
               })}
           </div>
         </div>
-        <div className='buttonsWrap'>
+        <div className={styles.buttonsWrap}>
           <button type='button' onClick={handleCancelBtnClick}>
             취소
           </button>
