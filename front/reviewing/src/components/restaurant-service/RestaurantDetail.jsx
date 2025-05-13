@@ -132,7 +132,7 @@ const RestaurantDetail = () => {
           <span>{restaurants.description}</span>
         </div>
       </div>
-      <ReviewSection restaurantId={id} />
+      <ReviewSection restaurantId={id} restaurantName={restaurants.name} />
     </div>
   );
 };

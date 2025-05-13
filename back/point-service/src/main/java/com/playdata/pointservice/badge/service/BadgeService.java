@@ -99,6 +99,7 @@ public class BadgeService {
         return UserBadgeResDto.builder()
                 .badgeName(badge.getName())
                 .level(badge.getLevel().name())
+                .iconUrl(badge.getIcon_url())
                 .build();
     }
 

@@ -170,8 +170,8 @@ const Header = () => {
                 <Stack direction='row' spacing={1}>
                   {[
                     { label: '체험단 검색', to: '/sass' },
-                    { label: '커뮤니티', to: '/badges' },
-                    { label: '공지/이벤트', to: '/collapsible' },
+                    { label: '커뮤니티', to: '/coummunity' },
+                    { label: '공지/이벤트', to: '/noticeEvent' },
                     { label: '이용가이드', to: '/collapsible' },
                   ].map(({ label, to }) => (
                     <Button
@@ -199,7 +199,7 @@ const Header = () => {
                     <Grid item>
                       <Button
                         component={Link}
-                        to='/product/create'
+                        to='/restaurantForm'
                         type='submit'
                         variant='contained'
                         sx={{ backgroundColor: 'peru' }}
@@ -233,9 +233,9 @@ const Header = () => {
                       {userName}님
                     </Typography>
 
-                    {isInit && badge?.level && (
+                    {isInit && badge && badge.iconUrl && (
                       <img
-                        src={`/icons/${badge.level.toLowerCase()}.png`}
+                        src={badge.iconUrl}
                         alt={badge.badgeName || '기본 뱃지'}
                         onClick={handleBadgeClick}
                         style={{

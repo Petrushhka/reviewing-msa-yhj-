@@ -11,6 +11,7 @@ const ReviewModal = ({
   onReviewSubmitted,
   isModify = false,
   modifyingInfo = null,
+  restaurantName,
 }) => {
   const [reviewImages, setReviewImages] = useState([]);
   const [thumbnailImages, setThumbnailImages] = useState([]);
@@ -134,7 +135,7 @@ const ReviewModal = ({
     <div className={styles.modalOverlay}>
       <div className={styles.entireWrap}>
         <div className={styles.restaurantNameWrap}>
-          <span>서울남부버스터미널</span>
+          <span>{restaurantName}</span>
         </div>
         <div className={styles.reviewWrap}>
           <div className={styles.profileWrap}>

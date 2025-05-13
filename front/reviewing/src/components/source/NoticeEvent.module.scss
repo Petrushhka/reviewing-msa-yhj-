@@ -1,0 +1,56 @@
+.noticeWrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+}
+
+.noticeCard {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 1.5rem;
+}
+
+.notice {
+  background-color: #f39c12;
+}
+
+.event {
+  background-color: #3498db;
+}
+
+.content {
+  flex: 1;
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+  }
+  p {
+    margin: 0 0 0.5rem 0;
+    color: #555;
+  }
+}
+
+.date {
+  font-size: 0.85rem;
+  color: #888;
+}
