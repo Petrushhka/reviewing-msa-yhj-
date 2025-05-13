@@ -37,11 +37,35 @@ public class BadgeService {
     public CommonResDto assignBadge(AssignBadgeReqDto request) {
         int point = request.getPoint();
         Long userId = request.getUserId();
+        String role = request.getRole();
 
 
         try {
             log.info("assignBadge 요청: userId={}, point={}", userId, point);
+            
+            // 운영자일 경우 운영자 배지를 부여
+            if ("ADMIN".equalsIgnoreCase(role)) {
+                Badge adminBadge = badgeRepository.findByName("운영자")
+                        .orElseThrow(() -> new NoSuchElementException("운영자 배지를 찾을 수 없습니다"));
 
+                mapRepository.deleteByUserId(userId);
+
+                UserBadgeMap map = new UserBadgeMap(userId, adminBadge);
+                mapRepository.save(map);
+                log.info("운영자 배지 부여 완료");
+
+                UserBadgeResDto resDto = UserBadgeResDto.builder()
+                        .badgeName(adminBadge.getName())
+                        .description(adminBadge.getDescription())
+                        .iconUrl(adminBadge.getIcon_url())
+                        .level("ADMIN")
+                        .build();
+
+                return new CommonResDto(HttpStatus.OK, "운영자 배지 부여 성공", resDto);
+            }
+            
+            
+            // 일반 유저는 기존 포인트 기준 부여 로직 수행
             BadgeLevel level = BadgeLevel.fromPoint(point);
             log.info("계산된 level: {}", level);
 
@@ -65,6 +89,8 @@ public class BadgeService {
                     .iconUrl(badge.getIcon_url())
                     .level(badge.getLevel().name())
                     .build();
+            log.info(">>> [assignBadge] role = {}", role);
+            log.info(">>> 전달된 role = '{}'", request.getRole());
 
             return new CommonResDto(HttpStatus.OK, "배지 부여 성공", resDto);
 
@@ -73,6 +99,7 @@ public class BadgeService {
             return new CommonResDto(HttpStatus.INTERNAL_SERVER_ERROR, "배지 부여 실패", null);
         }
     }
+
 
     public CommonResDto getUserBadge(Long userId) {
         UserBadgeMap map = mapRepository.findTopByUserIdOrderByBadgeLevelDesc(userId);

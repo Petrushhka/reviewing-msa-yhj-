@@ -13,4 +13,6 @@ public class AssignBadgeReqDto {
 
     // 유저의 현재 포인트
     private int point;
+
+    private String role;
 }

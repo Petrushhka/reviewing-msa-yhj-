@@ -13,4 +13,5 @@ public interface BadgeRepository extends JpaRepository<Badge, Long> {
     Badge findTopByLevelOrderByIdDesc(BadgeLevel level);
 
 
+    Optional<Badge> findByName(String name);
 }

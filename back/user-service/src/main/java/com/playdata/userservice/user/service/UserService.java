@@ -96,7 +96,7 @@ public class UserService {
         String oldUrl = user.getProfileImage();
         if (oldUrl != null && !oldUrl.isBlank()) {
             awsS3Config.deleteFromS3Bucket(oldUrl);
-            ;
+
         }
 
         //2) 새 파일 업로드

@@ -23,8 +23,9 @@ public class BadgeDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        // 전체 배지가 하나도 없는 경우에만 기본 배지 초기화 (입문자 ~ 마스터)
         if (badgeRepository.count() == 0) {
-            log.info("[BadgeDataInitializer] 배지 데이터가 없으므로 초기화합니다.");
+            log.info("[BadgeDataInitializer] 배지 데이터가 없으므로 기본 배지를 초기화합니다.");
 
             List<Badge> badges = List.of(
                     Badge.builder()
@@ -61,9 +62,26 @@ public class BadgeDataInitializer implements CommandLineRunner {
             );
 
             badgeRepository.saveAll(badges);
-            log.info("[BadgeDataInitializer] 배지 초기화 완료 (총 {}개)", badges.size());
+            log.info("[BadgeDataInitializer] 기본 배지 초기화 완료 (총 {}개)", badges.size());
         } else {
-            log.info("[BadgeDataInitializer] 배지 데이터가 이미 존재합니다. 초기화 생략");
+            log.info("[BadgeDataInitializer] 배지 데이터가 이미 존재하여 기본 배지 초기화를 생략합니다.");
         }
+
+        // 운영자 배지는 별도로 존재 여부를 확인 후 삽입
+        badgeRepository.findByName("운영자").ifPresentOrElse(
+                badge -> log.info("운영자 배지가 이미 존재합니다. ID: {}", badge.getId()),
+                () -> {
+                    Badge adminBadge = Badge.builder()
+                            .name("운영자")
+                            .description("운영자입니다!")
+                            .icon_url("/icons/admin.png")
+                            .level(BadgeLevel.ADMIN)
+                            .threshold(9999)
+                            .build();
+
+                    badgeRepository.save(adminBadge);
+                    log.info("운영자 배지를 새로 추가했습니다.");
+                }
+        );
     }
 }
