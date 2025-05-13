@@ -23,6 +23,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    // 리뷰 등록하기
     @PostMapping("/review")
     public ResponseEntity<?> createReview(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
                                           ReviewRequestDto reviewRequestDto) throws IOException {
@@ -32,6 +33,7 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    // 식당 별 리뷰 가져오기
     @GetMapping("/reviews/restaurant/{restaurantId}")
     public ResponseEntity<?> getRestaurantReviews(@PathVariable Long restaurantId) {
         List<ReviewResponseDto> reviews = reviewService.getRestaurantReviews(restaurantId);
@@ -42,6 +44,7 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    // 유저 별 리뷰 가져오기
     @GetMapping("/reviews/user/{id}")
     public ResponseEntity<?> getUserReviews(@PathVariable Long id) {
         List<ReviewResponseDto> userReviews = reviewService.getUserReviews(id);
@@ -51,6 +54,7 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    // 리뷰 수정
     @PatchMapping("/review")
     public ResponseEntity<?> updateReview(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
                                           ReviewRequestDto reviewRequestDto) {
@@ -61,6 +65,7 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    // 리뷰 삭제
     @DeleteMapping("/reviews/{id}")
     public ResponseEntity<?> deleteReview(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
                                           @PathVariable Long id) throws Exception {
@@ -71,6 +76,7 @@ public class ReviewController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    // 유저 리뷰 개수 가져오기
     @GetMapping("/review/count/{userId}")
     public ResponseEntity<?> getReviewCount(@PathVariable Long userId) {
         long reviewCount = reviewService.getReviewCountByUserId(userId);
