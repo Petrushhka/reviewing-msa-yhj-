@@ -6,7 +6,7 @@ import RestaurantList from './restaurant-service/RestaurantList';
 const Home = () => {
   return (
     // <Container>
-      <RestaurantList />
+    <RestaurantList />
     // </Container>
   );
 };

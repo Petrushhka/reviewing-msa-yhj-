@@ -1,4 +1,6 @@
+import { useContext } from 'react';
 import { Modal, Box, Typography, LinearProgress } from '@mui/material';
+import AuthContext from '../context/UserContext'; // 경로는 실제 프로젝트 구조에 맞게 수정
 
 /**
  * 뱃지 진행 상황을 보여주는 모달 컴포넌트
@@ -6,26 +8,49 @@ import { Modal, Box, Typography, LinearProgress } from '@mui/material';
  * @param onClose - 모달 닫기 함수
  * @param progress - 서버에서 받은 진행 상황 정보
  */
-
 const BadgeProgressModal = ({ open, onClose, progress }) => {
-  console.log('모달 렌더링 상태:', open, progress);
-  if (!progress) return null; // 데이터 없으면 렌더링 안함
+  const { badge } = useContext(AuthContext); // ✅ Context에서 badge 사용
 
-  // 진행률 계산 (현재 포인트 / 다음 티어까지 필요한 총 포인트)
-  const percent =
-    progress.nextLevel !== 'MAX'
-      ? Math.floor(
-          (progress.currentPoint /
-            (progress.currentPoint + progress.pointsToNextLevel)) *
-            100,
-        )
-      : 100;
+  // 진행률 계산 함수
+  const calculatePercent = (progress) => {
+    if (!progress || progress.nextLevel === 'MAX') return 100;
+    return Math.floor(
+      (progress.currentPoint /
+        (progress.currentPoint + progress.pointsToNextLevel)) *
+        100,
+    );
+  };
+
+  // 조건: 아직 progress가 없을 경우
+  if (!progress) {
+    return (
+      <Modal open={open} onClose={onClose} sx={{ zIndex: 1300 }}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'white',
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            width: 300,
+          }}
+        >
+          <Typography>로딩 중...</Typography>
+        </Box>
+      </Modal>
+    );
+  }
+
+  const percent = calculatePercent(progress);
 
   return (
     <Modal open={open} onClose={onClose} sx={{ zIndex: 1300 }}>
       <Box
         sx={{
-          position: 'absolute', // 🔥 모달을 화면 중앙에 띄우기 위해 꼭 필요
+          position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
@@ -36,11 +61,8 @@ const BadgeProgressModal = ({ open, onClose, progress }) => {
           width: 300,
         }}
       >
-        <Typography variant='h6' gutterBottom>
-          나의 티어 진행 상황
-        </Typography>
-        {!progress ? (
-          <Typography>로딩 중...</Typography>
+        {badge?.level === 'ADMIN' ? (
+          <Typography align='center'>내가 운영자요</Typography>
         ) : (
           <>
             <Typography>현재 포인트: {progress.currentPoint}점</Typography>

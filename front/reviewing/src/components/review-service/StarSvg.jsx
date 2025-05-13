@@ -1,9 +1,11 @@
 import React from 'react';
 
-const StarSvg = ({ handleClick, isGold }) => {
+const StarSvg = ({ handleClick, isGold, onMouseEnter, onMouseLeave }) => {
   return (
     <svg
       onClick={handleClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       width='24'
       height='24'
       fill={isGold ? 'gold' : 'lightgray'}

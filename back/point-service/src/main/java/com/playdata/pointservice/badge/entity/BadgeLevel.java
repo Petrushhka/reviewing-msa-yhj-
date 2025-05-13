@@ -12,7 +12,9 @@ public enum BadgeLevel {
     BEGINNER(0, "입문자"),
     INTERMEDIATE(100, "리뷰 중수"),
     ADVANCED(200, "리뷰 고수"),
-    MASTER(300, "맛집 마스터");
+    MASTER(300, "맛집 마스터"),
+    ADMIN(9999, "운영자");
+
 
     private final int minPoint;
     private final String displayName;

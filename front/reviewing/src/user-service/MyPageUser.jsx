@@ -17,6 +17,13 @@ const MyPageUser = () => {
   const [newNickName, setNewNickName] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
+  // 내 리뷰 보기
+  const [myReview, setMyReview] = useState(false);
+
+  const handleMyReview = () => {
+    setMyReview((prev) => !prev);
+  };
+
   const handleImageClick = () => {
     inputRef.current.click();
   };
@@ -123,7 +130,10 @@ const MyPageUser = () => {
         </ul>
       </div>
       <div className={styles.reviewList}>
-        <ReviewSection userId={userId} />
+        <div className={styles.myReview} onClick={handleMyReview}>
+          {myReview ? '리뷰 숨기기' : '내 리뷰 보기'}
+        </div>
+        {myReview && <ReviewSection userId={userId} />}
       </div>
       <div className={styles.updateSection}>
         <h3>회원정보 수정</h3>

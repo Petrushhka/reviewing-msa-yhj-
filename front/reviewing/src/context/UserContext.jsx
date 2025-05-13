@@ -27,7 +27,7 @@ export const AuthContextProvider = (props) => {
   const [userImage, setUserImage] = useState('');
 
   // ✅ 서버에서 최신 배지 불러오기 (로그인 시 + 새로고침 시)
-  const fetchLatestBadge = async (id) => {
+  const fetchLatestBadge = async (id, userRole) => {
     try {
       const pointRes = await axios.get(
         `${API_BASE_URL}/user-service/user/${id}/point`,
@@ -37,6 +37,7 @@ export const AuthContextProvider = (props) => {
       const badgeRes = await axios.post(`${API_BASE_URL}/badges/assign`, {
         userId: id,
         point,
+        role: userRole,
       });
 
       const newBadge = badgeRes.data.result;
@@ -67,7 +68,7 @@ export const AuthContextProvider = (props) => {
     setUserImage(loginData.profileImage);
 
     // 배지 상태도 이 안에서 설정
-    await fetchLatestBadge(loginData.id);
+    await fetchLatestBadge(loginData.id, loginData.role);
   };
 
   const logoutHandler = () => {
@@ -108,13 +109,18 @@ export const AuthContextProvider = (props) => {
           console.error('⚠️ 로컬 배지 파싱 실패:', e);
         }
       }
-
-      // 2차 서버에서 최신 배지 다시 갱신
-      fetchLatestBadge(storedId);
     }
 
     setIsInit(true);
   }, []);
+
+  // 모든 상태가 준비되면 서버에서 배지 최신화 (로그인 or 새로고침 모두 포함)
+  useEffect(() => {
+    if (userId && userRole && isLoggedIn) {
+      console.log('상태 준비 완료 -> 최신 배지 요청');
+      fetchLatestBadge(userId, userRole);
+    }
+  }, [userId, userRole, isLoggedIn]);
 
   useEffect(() => {
     console.log('[badge state] 현재 badge 상태:', badge);
