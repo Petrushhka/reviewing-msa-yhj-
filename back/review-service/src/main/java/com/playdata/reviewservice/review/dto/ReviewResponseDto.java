@@ -15,6 +15,7 @@ import java.util.List;
 public class ReviewResponseDto {
     private Long id;
     private Long userId;
+    private String profileImage;
     private String nickname;
     private String content;
     private Long rating;

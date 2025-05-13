@@ -63,11 +63,19 @@ public class ReviewService {
                 UserResDto::getNickName,
                 (v1, v2) -> v1 // 중복 키 값 발생 시 기존 값을 유지
         ));
+        Map<Long, String> idToProfileImage = userResDtos.stream().collect(Collectors.toMap(
+                UserResDto::getId,
+                (userDto) -> {
+                    return userDto.getProfileImage() != null ? userDto.getProfileImage() : "";
+                },
+                (v1, v2) -> v1 // 중복 키 값 발생 시 기존 값을 유지
+        ));
         for (ReviewResponseDto reviewDto : reviewDtos) {
             reviewDto.setBadgeInfo(
                     pointServiceClient.getUserBadgeByUserId(reviewDto.getUserId())
             );
             reviewDto.setNickname(idToNickname.get(reviewDto.getUserId()));
+            reviewDto.setProfileImage(idToProfileImage.get(reviewDto.getUserId()));
         }
         log.info("User reviews found: " + userResDtos.size());
         return reviewDtos;
