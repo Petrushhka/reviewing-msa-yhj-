@@ -199,7 +199,7 @@ const Header = () => {
                     <Grid item>
                       <Button
                         component={Link}
-                        to='/product/create'
+                        to='/restaurantForm'
                         type='submit'
                         variant='contained'
                         sx={{ backgroundColor: 'peru' }}
@@ -233,9 +233,9 @@ const Header = () => {
                       {userName}님
                     </Typography>
 
-                    {isInit && badge?.level && (
+                    {isInit && badge && badge.iconUrl && (
                       <img
-                        src={`/icons/${badge.level.toLowerCase()}.png`}
+                        src={badge.iconUrl}
                         alt={badge.badgeName || '기본 뱃지'}
                         onClick={handleBadgeClick}
                         style={{

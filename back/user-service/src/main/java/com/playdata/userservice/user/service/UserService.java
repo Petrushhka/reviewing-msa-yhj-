@@ -43,7 +43,7 @@ public class UserService {
         User user = dto.toEntity(encoder);
         User saved = userRepository.save(user);
 
-        badgeClient.assignBeginnerBadge(new AssignBadgeReqDto(saved.getId()));
+
 
         return saved.toDto();
     }

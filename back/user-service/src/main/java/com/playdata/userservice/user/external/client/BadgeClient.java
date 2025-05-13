@@ -14,6 +14,6 @@ public interface BadgeClient {
     @GetMapping("/badges/user/{userId}")
     UserBadgeResDto getUserBadge(@PathVariable("userId") Long userId);
 
-    @PostMapping("/badges/assign")
-    void assignBeginnerBadge(@RequestBody AssignBadgeReqDto request);
+
+
 }
