@@ -116,6 +116,7 @@ const MemberCreate = () => {
                   color='primary'
                   variant='contained'
                   fullWidth
+                  sx={{ background: 'peru' }}
                 >
                   등록
                 </Button>

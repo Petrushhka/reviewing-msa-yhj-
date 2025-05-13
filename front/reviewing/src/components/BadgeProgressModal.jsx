@@ -39,19 +39,32 @@ const BadgeProgressModal = ({ open, onClose, progress }) => {
         <Typography variant='h6' gutterBottom>
           나의 티어 진행 상황
         </Typography>
-        <Typography>현재 포인트: {progress.currentPoint}점</Typography>
-        <Typography>현재 티어: {progress.currentLevel}</Typography>
-        <Typography>다음 티어: {progress.nextLevel}</Typography>
-        {progress.nextLevel !== 'MAX' && (
-          <Typography>남은 포인트: {progress.pointsToNextLevel}점</Typography>
-        )}
+        {!progress ? (
+          <Typography>로딩 중...</Typography>
+        ) : (
+          <>
+            <Typography>현재 포인트: {progress.currentPoint}점</Typography>
+            <Typography>현재 티어: {progress.currentLevel}</Typography>
 
-        <Box sx={{ mt: 2 }}>
-          <LinearProgress variant='determinate' value={percent} />
-          <Typography align='right' variant='caption' sx={{ mt: 1 }}>
-            {percent}%
-          </Typography>
-        </Box>
+            {progress.nextLevel === 'MAX' ? (
+              <Typography>최고 레벨입니다</Typography>
+            ) : (
+              <>
+                <Typography>다음 티어: {progress.nextLevel}</Typography>
+                <Typography>
+                  남은 포인트: {progress.pointsToNextLevel}점
+                </Typography>
+              </>
+            )}
+
+            <Box sx={{ mt: 2 }}>
+              <LinearProgress variant='determinate' value={percent} />
+              <Typography align='right' variant='caption' sx={{ mt: 1 }}>
+                {percent}%
+              </Typography>
+            </Box>
+          </>
+        )}
       </Box>
     </Modal>
   );

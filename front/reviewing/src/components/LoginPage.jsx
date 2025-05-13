@@ -93,6 +93,7 @@ const LoginPage = () => {
                     type='submit'
                     color='primary'
                     variant='contained'
+                    sx={{ background: 'peru' }}
                     fullWidth
                   >
                     로그인

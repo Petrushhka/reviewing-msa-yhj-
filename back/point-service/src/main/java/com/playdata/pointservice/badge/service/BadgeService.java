@@ -127,13 +127,17 @@ public class BadgeService {
             }
 
             BadgeLevel currentLevel = current != null ? current.getLevel() : BadgeLevel.BEGINNER;
-            String nextLevelName = "";
-            int pointsToNextLevel = 0;
+            String nextLevelName;
+            int pointsToNextLevel;
 
-            // 마스터가 아닐 때만 다음 레벨 정보 설정
+            // 마스터가 아니고 다음 티어가 존재하면 → 남은 포인트 계산
             if (currentLevel != BadgeLevel.MASTER && next != null) {
                 nextLevelName = next.getLevel().getDisplayName();
                 pointsToNextLevel = next.getThreshold() - point;
+            } else {
+                // 마스터거나 next가 없는 경우 → 최고레벨 처리
+                nextLevelName = "MAX";
+                pointsToNextLevel = 0;
             }
 
             BadgeProgressResDto resDto = BadgeProgressResDto.builder()
