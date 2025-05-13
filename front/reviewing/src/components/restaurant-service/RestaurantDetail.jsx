@@ -50,7 +50,8 @@ const RestaurantDetail = () => {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         setIsOwner(
-          payload.id === restaurants.userId && payload.role === 'OWNER',
+          localStorage.getItem('USER_ID') === restaurants.userId &&
+            payload.role === 'OWNER',
         );
       } catch (e) {
         console.log(e);
