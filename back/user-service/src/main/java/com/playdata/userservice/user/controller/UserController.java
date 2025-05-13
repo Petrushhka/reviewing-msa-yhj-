@@ -201,7 +201,7 @@ public class UserController {
         return ResponseEntity.ok().body(userResDto);
     }
 
-    @PatchMapping("/users/point")
+    @PutMapping("/users/point")
     public ResponseEntity<UserResDto> updatePoint(@RequestParam Long userId, @RequestParam int point ){
         UserResDto userResDto = userService.addPoint(userId, point);
         return ResponseEntity.ok().body(userResDto);

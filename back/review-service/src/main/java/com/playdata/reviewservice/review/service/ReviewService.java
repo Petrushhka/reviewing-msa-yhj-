@@ -29,7 +29,8 @@ public class ReviewService {
     private final AwsS3Config awsS3Config;
 
     public void createReview(ReviewRequestDto reviewRequestDto) throws IOException {
-
+        int NO_IMAGE_POINT = 5;
+        int IMAGE_POINT = 10;
         Review review = reviewRequestDto.toEntity();
 
         if (reviewRequestDto.getImages() != null) {
@@ -42,6 +43,9 @@ public class ReviewService {
                 image.setSort_order(0);
                 review.addImage(image);
             }
+            userServiceClient.updatePoint(review.getUserId(), IMAGE_POINT);
+        } else {
+            userServiceClient.updatePoint(review.getUserId(), NO_IMAGE_POINT);
         }
 
         reviewRepository.save(review);
