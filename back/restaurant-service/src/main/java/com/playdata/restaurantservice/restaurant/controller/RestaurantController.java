@@ -1,6 +1,7 @@
 package com.playdata.restaurantservice.restaurant.controller;
 
 import com.playdata.restaurantservice.common.dto.CommonResDto;
+import com.playdata.restaurantservice.restaurant.dto.RestaurantIdDto;
 import com.playdata.restaurantservice.restaurant.dto.RestaurantReqDto;
 import com.playdata.restaurantservice.restaurant.dto.RestaurantResDto;
 import com.playdata.restaurantservice.restaurant.dto.RestaurantSearchDto;
@@ -69,5 +70,13 @@ public class RestaurantController {
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "상점이 조회 되었습니다.", dtoList);
         return ResponseEntity.ok().body(resDto);
     }
+
+    @GetMapping("/restaurant/{userId}")
+    public ResponseEntity<?> getRestaurantIdByUserId(@PathVariable Long userId) {
+        RestaurantIdDto restaurantIdByUserId = restaurantService.getRestaurantIdByUserId(userId);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "restaurantId 조회 성공!", restaurantIdByUserId);
+        return ResponseEntity.ok().body(resDto);
+    }
+
 
 }

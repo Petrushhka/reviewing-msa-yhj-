@@ -1,6 +1,7 @@
 package com.playdata.restaurantservice.restaurant.service;
 
 import com.playdata.restaurantservice.common.config.AwsS3Config;
+import com.playdata.restaurantservice.restaurant.dto.RestaurantIdDto;
 import com.playdata.restaurantservice.restaurant.dto.RestaurantReqDto;
 import com.playdata.restaurantservice.restaurant.dto.RestaurantResDto;
 import com.playdata.restaurantservice.restaurant.dto.RestaurantSearchDto;
@@ -93,4 +94,9 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
+    public RestaurantIdDto getRestaurantIdByUserId(Long userId) {
+        Restaurant restaurant = restaurantRepository.findByUserId(userId);
+        RestaurantIdDto restaurantIdDto = new RestaurantIdDto(restaurant.getId());
+        return restaurantIdDto;
+    }
 }
