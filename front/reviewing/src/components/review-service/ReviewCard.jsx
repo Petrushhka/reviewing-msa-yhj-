@@ -6,6 +6,7 @@ import { API_BASE_URL, REVIEW_SERVICE } from '../../configs/host-config';
 import ReviewModal from './ReviewModal';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import AuthContext from '../../context/UserContext';
 
 const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
   const userId = localStorage.getItem('USER_ID');
@@ -13,6 +14,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
   const [isShownModalForModify, setIsShownModalForModify] = useState(false);
   const [totalReviewCount, setTotalReviewCount] = useState(0);
 
+  const { userRole } = useContext(AuthContext);
   const { id } = useParams();
 
   const handleCancelBtnClick = () => {
@@ -32,6 +34,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
       const res = axiosInstance.delete(
         `${API_BASE_URL}${REVIEW_SERVICE}/reviews/${reviewInfo.id}`,
       );
+      window.location.reload();
     }
   };
 
@@ -84,7 +87,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
             </div>
           </div>
           <div className={styles.moreBtn}>
-            {userId == reviewInfo.userId ? (
+            {userId == reviewInfo.userId || userRole === 'ADMIN' ? (
               <>
                 <svg
                   onClick={handleMoreClick}

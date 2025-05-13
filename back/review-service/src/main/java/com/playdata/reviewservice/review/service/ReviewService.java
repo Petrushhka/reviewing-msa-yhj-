@@ -2,6 +2,7 @@ package com.playdata.reviewservice.review.service;
 
 import com.playdata.reviewservice.client.PointServiceClient;
 import com.playdata.reviewservice.client.UserServiceClient;
+import com.playdata.reviewservice.common.auth.Role;
 import com.playdata.reviewservice.common.config.AwsS3Config;
 import com.playdata.reviewservice.review.dto.*;
 import com.playdata.reviewservice.review.entity.Review;
@@ -118,7 +119,7 @@ public class ReviewService {
         UserResDto userResDto = userServiceClient.getUserByEmail(email);
         if(userResDto == null) {
             throw new EntityNotFoundException("User not found for delete review!!");
-        } else if(!userResDto.getId().equals(review.getUserId())) {
+        } else if(userResDto.getRole() != Role.ADMIN && !userResDto.getId().equals(review.getUserId())) {
             throw new EntityNotFoundException("User id not matched for delete review!!");
         }
 
