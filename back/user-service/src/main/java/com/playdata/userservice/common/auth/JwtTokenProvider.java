@@ -34,7 +34,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 // 현재 시간 밀리초에 30분을 더한 시간만큼을 만료시간으로 세팅
-                .setExpiration(new Date(now.getTime() + expiration * 60 * 1000))
+                .setExpiration(new Date(now.getTime() + expiration * 60000 * 1000))
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 서명을 어떤 알고리즘으로 암호화 할 지
                 .compact();
     }
@@ -49,7 +49,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 // 토큰 생성 로직은 비슷하지만 수명과 서명이 다릅니다. (Refresh가 좀 더 길어요)
-                .setExpiration(new Date(now.getTime() + expirationRt * 60 * 1000))
+                .setExpiration(new Date(now.getTime() + expirationRt * 60000 * 1000))
                 .signWith(SignatureAlgorithm.HS256, secretKeyRt) // 서명을 어떤 알고리즘으로 암호화 할 지
                 .compact();
     }

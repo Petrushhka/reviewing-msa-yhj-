@@ -2,7 +2,7 @@ import styles from './MyPageOwner.module.scss';
 import { useContext, useRef, useState } from 'react';
 import AuthContext from '../context/UserContext';
 import axios from 'axios';
-import { API_BASE_URL } from '../configs/host-config';
+import { API_BASE_URL, RESTAURANT_SERVICE } from '../configs/host-config';
 import ReviewSection from '../components/review-service/ReviewSection';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +21,7 @@ const MyPageOwner = () => {
   //내 가게 가기
   const goStore = useNavigate('');
 
-  const handleMyStore = async (userId) => {
+  const handleMyStore = async () => {
     try {
       const token = localStorage.getItem('ACCESS_TOKEN');
 
@@ -31,7 +31,7 @@ const MyPageOwner = () => {
       );
 
       const storeId = res.data.storeId || res.data.result.storeId;
-      goStore(`/restaurants/${storeId}`);
+      goStore(`/restaurantDetail/${storeId}`);
     } catch (e) {
       console.error('가게 아이디 조회 실패:', e);
       alert('내 가게 정보를 불러올 수 없습니다.');
