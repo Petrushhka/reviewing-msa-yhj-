@@ -72,7 +72,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
               <img src={reviewInfo.profileImage} alt='' />
             </div>
             <div className={styles.profileBadge}>
-              <img src='/icons/beginner.png' alt='' />
+              <img src={reviewInfo.badgeInfo.iconUrl} alt='' />
             </div>
           </div>
           <div className={styles.profileInfo}>
