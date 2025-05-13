@@ -7,7 +7,7 @@ import ReviewModal from './ReviewModal';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
+const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
   const userId = localStorage.getItem('USER_ID');
   const [isMore, setIsMore] = useState(false);
   const [isShownModalForModify, setIsShownModalForModify] = useState(false);
@@ -53,7 +53,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
     console.log(res.data.result);
     setTotalReviewCount(res.data.result);
   };
-  // console.log(reviewInfo);
+  console.log(reviewInfo);
   return (
     <>
       {isShownModalForModify && (
@@ -62,6 +62,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
           onReviewSubmitted={onReviewSubmitted}
           isModify={true}
           modifyingInfo={reviewInfo}
+          restaurantName={restaurantName}
         />
       )}
       <div className={styles.entireWrap}>
@@ -71,7 +72,7 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted }) => {
               <img src={reviewInfo.profileImage} alt='' />
             </div>
             <div className={styles.profileBadge}>
-              <img src='../../icons/beginner.png' alt='' />
+              <img src='/icons/beginner.png' alt='' />
             </div>
           </div>
           <div className={styles.profileInfo}>
