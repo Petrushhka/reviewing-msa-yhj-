@@ -13,6 +13,9 @@ const ReviewSection = ({
 }) => {
   const [isShownModal, setIsShownModal] = useState(false);
   const [reviews, setReviews] = useState([]);
+
+  const USER_ID = localStorage.getItem('USER_ID');
+
   useEffect(() => {
     if (restaurantId) {
       fetchReviewsByRestaurant();
@@ -55,7 +58,7 @@ const ReviewSection = ({
       )}
 
       <div className={styles.entireWrap}>
-        {restaurantId && (
+        {restaurantId && USER_ID && (
           <div className={styles.reviewWriteBtnWrap}>
             <button type='button' onClick={handleReviewBtnClick}>
               리뷰하기
