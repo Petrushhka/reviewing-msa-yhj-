@@ -17,4 +17,6 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     @Query("SELECT r FROM Restaurant r WHERE r.name LIKE %?1% or r.address LIKE %?1%")
     Page<Restaurant> findByNameAndAddressValue(String keyword, Pageable pageable);
 
+    Restaurant findByUserId(Long userId);
+
 }
