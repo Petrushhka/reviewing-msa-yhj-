@@ -6,37 +6,36 @@ import {
   RESTAURANT_SERVICE,
   REVIEW_SERVICE,
 } from '../../configs/host-config';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [sortOption, setSortOption] = useState('latest');
 
+  const observer = useRef();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-
   const searchName = queryParams.get('searchName');
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = async (currentPage) => {
     try {
       let res;
       if (!searchName) {
         res = await axios.get(
-          `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurant/list`,
+          `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurant/list?page=${currentPage}&size=10`,
         );
       } else {
         res = await axios.get(
-          `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurant/list?searchName=${searchName}&address=${searchName}`,
+          `${API_BASE_URL}${RESTAURANT_SERVICE}/restaurant/list?searchName=${searchName}&address=${searchName}&page=${currentPage}&size=10`,
         );
       }
-      const restaurantData = res.data.result;
 
-      // 리뷰, 평점 추가 정보 불러오기
+      const restaurantData = res.data.result;
+      if (restaurantData.length === 0) setHasMore(false);
+
       const updatedRestaurants = await Promise.all(
         restaurantData.map(async (restaurant) => {
           try {
@@ -55,11 +54,28 @@ const RestaurantList = () => {
         }),
       );
 
-      setRestaurants(updatedRestaurants);
+      setRestaurants((prev) => [...prev, ...updatedRestaurants]);
     } catch (e) {
       console.log(e);
     }
   };
+
+  useEffect(() => {
+    fetchData(page);
+  }, [page, searchName]);
+
+  const lastRestaurantRef = useCallback(
+    (node) => {
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prev) => prev + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [hasMore],
+  );
 
   const handleSortChange = (e) => {
     setSortOption(e.target.value);
@@ -86,13 +102,16 @@ const RestaurantList = () => {
         </select>
       </div>
       <div className={styles.list}>
-        {sortedRestaurants.map((item) => (
+        {sortedRestaurants.map((item, idx) => (
           <Link
             className={styles.link}
             key={item.id}
             to={`/restaurantDetail/${item.id}`}
+            ref={
+              idx === sortedRestaurants.length - 1 ? lastRestaurantRef : null
+            }
           >
-            <RestaurantCard key={item.id} restaurant={item} />
+            <RestaurantCard restaurant={item} />
           </Link>
         ))}
       </div>
