@@ -170,8 +170,8 @@ const Header = () => {
                 <Stack direction='row' spacing={1}>
                   {[
                     { label: '체험단 검색', to: '/sass' },
-                    { label: '커뮤니티', to: '/badges' },
-                    { label: '공지/이벤트', to: '/collapsible' },
+                    { label: '커뮤니티', to: '/coummunity' },
+                    { label: '공지/이벤트', to: '/noticeEvent' },
                     { label: '이용가이드', to: '/collapsible' },
                   ].map(({ label, to }) => (
                     <Button
