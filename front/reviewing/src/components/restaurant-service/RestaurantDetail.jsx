@@ -7,7 +7,7 @@ import NaverMapComponent from '../NaverMapComponent';
 import ReviewSection from '../review-service/ReviewSection';
 
 const RestaurantDetail = () => {
-  const [restaurants, setRestaurants] = useState([]);
+  const [restaurants, setRestaurants] = useState({});
   const [currentImage, setCurrentImage] = useState(0);
   const [address, setAddress] = useState('');
   const [isOwner, setIsOwner] = useState(false);
@@ -46,18 +46,20 @@ const RestaurantDetail = () => {
   const token = localStorage.getItem('ACCESS_TOKEN');
 
   useEffect(() => {
-    if (token) {
+    if (token && restaurants.userId) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         setIsOwner(
-          localStorage.getItem('USER_ID') === restaurants.userId &&
-            payload.role === 'OWNER',
+          (String(localStorage.getItem('USER_ID')) ===
+            String(restaurants.userId) &&
+            payload.role === 'OWNER') ||
+            payload.role === 'ADMIN',
         );
       } catch (e) {
         console.log(e);
       }
     }
-  }, []);
+  }, [restaurants]);
 
   const handleDelete = async () => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
