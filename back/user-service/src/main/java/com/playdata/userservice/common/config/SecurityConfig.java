@@ -39,9 +39,8 @@ public class SecurityConfig {
                             "/user-service/user/refresh",
                             "/user-service/user/{userId}/point",
                             "/user-service/users",
-                            "/badges/user/{userId}/progress").permitAll()
-                    .requestMatchers("/user-service/user/*/point").authenticated()
-
+                            "/badges/user/{userId}/progress",
+                            "/user-service/users/point").permitAll()
                     .anyRequest().authenticated();
         });
 
