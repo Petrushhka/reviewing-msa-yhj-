@@ -109,6 +109,12 @@ const RestaurantDetail = () => {
           <strong>상점명</strong>
           <div className={styles.separator} /> <span>{restaurants.name}</span>
         </div>
+
+        <div className={styles.row}>
+          <strong>소개글</strong>
+          <div className={styles.separator} />{' '}
+          <span>{restaurants.description}</span>
+        </div>
         <div className={styles.row}>
           <strong>연락처</strong>
           <div className={styles.separator} /> <span>{restaurants.phone}</span>
@@ -128,11 +134,6 @@ const RestaurantDetail = () => {
               )}
             </div>
           </div>
-        </div>
-        <div className={styles.row}>
-          <strong>소개글</strong>
-          <div className={styles.separator} />{' '}
-          <span>{restaurants.description}</span>
         </div>
       </div>
       <ReviewSection restaurantId={id} restaurantName={restaurants.name} />
