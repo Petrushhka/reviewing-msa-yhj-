@@ -45,13 +45,49 @@ public class RestaurantService {
     }
 
     // 상점 수정
-    public void updateRestaurantInfo(Long restaurantId, RestaurantReqDto dto) {
+    public void updateRestaurantInfo(Long restaurantId, RestaurantReqDto dto) throws Exception {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException("restaurant not found"));
+
+        // 기본 정보 수정
         restaurant.setName(dto.getName());
         restaurant.setDescription(dto.getDescription());
         restaurant.setAddress(dto.getAddress());
         restaurant.setPhone(dto.getPhone());
+
+        // 1. 삭제할 이미지 처리
+        List<String> deletedImageUrls = dto.getDeletedImageUrls();
+        if (deletedImageUrls != null) {
+            restaurant.getImages().removeIf(image -> {
+                if (deletedImageUrls.contains(image.getUrl())) {
+                    try {
+                        awsS3Config.deleteFromS3Bucket(image.getUrl());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    return true; // 리스트에서도 제거
+                }
+                return false;
+            });
+        }
+
+        // 2. 새 이미지 추가 처리
+        List<MultipartFile> restaurantImages = dto.getImages();
+        if (restaurantImages != null) {
+            for (MultipartFile restaurantImage : restaurantImages) {
+                String uniqueFileName = UUID.randomUUID() + "_" + restaurantImage.getOriginalFilename();
+                String imageUrl = awsS3Config.uploadToS3Bucket(restaurantImage.getBytes(), uniqueFileName);
+
+                RestaurantImage image = new RestaurantImage();
+                image.setUrl(imageUrl);
+                image.setSort_order(0);
+                image.setRestaurant(restaurant); // 연관관계 바인딩 필수!
+
+                restaurant.getImages().add(image);
+            }
+        }
+
+        // 3. 저장 (CascadeType.ALL 덕분에 자식도 자동 저장)
         restaurantRepository.save(restaurant);
     }
 

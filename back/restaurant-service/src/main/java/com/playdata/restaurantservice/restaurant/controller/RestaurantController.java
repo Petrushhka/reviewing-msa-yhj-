@@ -37,7 +37,7 @@ public class RestaurantController {
 
     // 상점 수정
     @PutMapping("/restaurant/{id}")
-    public ResponseEntity<?> updateRestaurant(RestaurantReqDto dto, @PathVariable Long id) {
+    public ResponseEntity<?> updateRestaurant(RestaurantReqDto dto, @PathVariable Long id) throws Exception {
         restaurantService.updateRestaurantInfo(id, dto);
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "수정 완료되었습니다.", null);
         return ResponseEntity.ok().body(resDto);
