@@ -132,6 +132,27 @@ public class UserController {
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
+
+    @GetMapping("user/profileImage/{userId}")
+    public ResponseEntity<?> getUserProfileImage(@PathVariable("userId") String userId) {
+        try {
+            UserResDto user = userService.getUserProfile(userId);
+            CommonResDto resDto = new CommonResDto(
+                    HttpStatus.OK,
+                    "프로필 전달 완료 ",
+                    user);
+            return new ResponseEntity<>(resDto, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("유저 못찾음", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of(
+                            "statusCode", 500,
+                            "statusMessage", "server error",
+                            "error", e.getMessage()
+                    ));
+        }
+    }
+
     @PostMapping("user/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> map) {
         String id = map.get("id");

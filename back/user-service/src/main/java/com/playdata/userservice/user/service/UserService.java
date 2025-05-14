@@ -155,6 +155,17 @@ public class UserService {
                 .nickName(user.getNickName())
                 .build();
     }
+
+    public UserResDto getUserProfile(String userId) {
+
+        User user = userRepository.findById(Long.parseLong(userId)).orElseThrow(
+                () -> new EntityNotFoundException("User not found!")
+        );
+
+        return UserResDto.builder()
+                .profileImage(user.getProfileImage())
+                .build();
+    }
 }
 
 

@@ -27,13 +27,15 @@ const ReviewModal = ({
   const { onLogout, userName } = useContext(AuthContext);
   const navigate = useNavigate();
   const { id } = useParams();
-  const { userImage } = useContext(AuthContext);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const { userId } = useContext(AuthContext);
 
   // 쿼리스트링 파싱
   const queryParams = new URLSearchParams(location.search);
   const restaurantId = queryParams.get('restaurantId');
 
   useEffect(() => {
+    comeProfile();
     if (isModify && modifyingInfo) {
       setReviewContent(modifyingInfo.content);
       setRating(modifyingInfo.rating);
@@ -48,6 +50,13 @@ const ReviewModal = ({
     }
   };
 
+  const comeProfile = async () => {
+    const res = await axiosInstance.get(
+      `${API_BASE_URL}/user-service/user/profileImage/${userId}`,
+    );
+    setPreviewUrl(res.data.result.profileImage);
+  };
+
   const postReview = async (e) => {
     const reviewBody = new FormData();
     reviewBody.append('userId', localStorage.getItem('USER_ID'));
@@ -58,6 +67,7 @@ const ReviewModal = ({
     for (let i = 0; i < files.length; i++) {
       reviewBody.append('images', files[i]);
     }
+
     try {
       await axiosInstance.post(
         `${API_BASE_URL}${REVIEW_SERVICE}/review`,
@@ -145,7 +155,7 @@ const ReviewModal = ({
         <div className={styles.reviewWrap}>
           <div className={styles.profileWrap}>
             <div className={styles.profileImageWrap}>
-              <img src={userImage} />
+              <img src={previewUrl} />
             </div>
             <div className={styles.profileNameWrap}>
               <span>{userName}</span>
