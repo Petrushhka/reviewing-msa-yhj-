@@ -7,7 +7,8 @@ import ReviewSection from '../components/review-service/ReviewSection';
 import axiosInstance from '../configs/axios-config';
 
 const MyPageUser = () => {
-  const { userRole, userName, badge, userId } = useContext(AuthContext);
+  const { userRole, userName, badge, userId, onLogout } =
+    useContext(AuthContext);
 
   // 프로필 이미지 변경
   const inputRef = useRef();
@@ -89,6 +90,7 @@ const MyPageUser = () => {
         },
       );
       alert('회원정보 수정완료!');
+      onLogout();
     } catch (e) {
       console.error('회원정보수정실패!', e);
       alert('닉네임 또는 비밀번호 변경 실패');

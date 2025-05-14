@@ -1,18 +1,19 @@
 import styles from './MyPageOwner.module.scss';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import AuthContext from '../context/UserContext';
 import axios from 'axios';
 import { API_BASE_URL, RESTAURANT_SERVICE } from '../configs/host-config';
 import ReviewSection from '../components/review-service/ReviewSection';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../configs/axios-config';
 
 const MyPageOwner = () => {
-  const { userRole, userName, badge, userId, userImage, setUserImage } =
+  const { userRole, userName, badge, userId, onLogout } =
     useContext(AuthContext);
 
   // 프로필 이미지 변경
   const inputRef = useRef();
-  const [previewUrl, setPreviewUrl] = useState(userImage);
+  const [previewUrl, setPreviewUrl] = useState('');
 
   // 닉네임, 비밀번호 바꾸기
   const [newNickName, setNewNickName] = useState('');
@@ -38,11 +39,20 @@ const MyPageOwner = () => {
     }
   };
 
+  useEffect(() => {
+    handleFileChange();
+  }, []);
+
   const handleImageClick = () => {
     inputRef.current.click();
   };
 
   const handleFileChange = async (e) => {
+    const res = await axiosInstance.get(
+      `${API_BASE_URL}/user-service/user/profileImage/${userId}`,
+    );
+    setPreviewUrl(res.data.result.profileImage);
+
     const file = e.target.files[0];
     if (!file) return;
 
@@ -65,10 +75,6 @@ const MyPageOwner = () => {
         },
       );
 
-      const newImageUrl = res.data.result.newProfileName;
-      const finalUrl = `${newImageUrl}?=${Date.now()}`;
-      setUserImage(finalUrl);
-      setPreviewUrl(finalUrl);
       alert('프로필 이미지 업로드 완료!');
     } catch (e) {
       console.error('이미지 업로드 실패: ', e);
@@ -95,6 +101,7 @@ const MyPageOwner = () => {
         },
       );
       alert('회원정보 수정완료!');
+      onLogout();
     } catch (e) {
       console.error('회원정보수정실패!', e);
       alert('닉네임 또는 비밀번호 변경 실패');
