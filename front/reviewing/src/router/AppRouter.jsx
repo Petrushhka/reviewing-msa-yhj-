@@ -14,6 +14,8 @@ import MyPage from '../user-service/MyPage';
 import AuthContext from '../context/UserContext';
 import Community from '../components/source/Community';
 import NoticeEvent from '../components/source/NoticeEvent';
+import UsageGuide from '../components/source/UsageGuide';
+import ExperienceSearch from '../components/source/ExperienceSearch';
 
 const AppRouter = () => {
   const { userRole } = useContext(AuthContext); // private 라우터를 이용하기 위해 추가(하준)
@@ -36,6 +38,8 @@ const AppRouter = () => {
       <Route path='/restaurantUpdate/:id' element={<RestaurantUpdate />} />
       <Route path='/coummunity' element={<Community />} />
       <Route path='/noticeEvent' element={<NoticeEvent />} />
+      <Route path='/usageGuide' element={<UsageGuide />} />
+      <Route path='/experienceSearch' element={<ExperienceSearch />} />
       {/* <Route path='/mypage' element={<PrivateRouter element={<MyPage />} />} /> */}
     </Routes>
   );
