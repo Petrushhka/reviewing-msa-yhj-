@@ -7,12 +7,15 @@ import ReviewModal from './ReviewModal';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/UserContext';
+import ReviewImageModal from './ReviewImageModal';
 
 const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
   const userId = localStorage.getItem('USER_ID');
   const [isMore, setIsMore] = useState(false);
   const [isShownModalForModify, setIsShownModalForModify] = useState(false);
   const [totalReviewCount, setTotalReviewCount] = useState(0);
+  const [isShowImageModal, setIsShowImageModal] = useState(false);
+  const [modalImageUrl, setModalImageUrl] = useState('');
 
   const { userRole } = useContext(AuthContext);
   const { id } = useParams();
@@ -56,9 +59,25 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
     console.log(res.data.result);
     setTotalReviewCount(res.data.result);
   };
+
+  const handleImageClick = (url) => {
+    setIsShowImageModal(true);
+    setModalImageUrl(url);
+  };
+
+  const handleClickBg = () => {
+    setIsShowImageModal(false);
+  };
+
   console.log(reviewInfo);
   return (
     <>
+      {isShowImageModal && (
+        <ReviewImageModal
+          handleClickBg={handleClickBg}
+          imageUrl={modalImageUrl}
+        />
+      )}
       {isShownModalForModify && (
         <ReviewModal
           handleCancelBtnClick={handleCancelBtnClick}
@@ -132,7 +151,14 @@ const ReviewCard = ({ reviewInfo, onReviewSubmitted, restaurantName }) => {
         </div>
         <div className='image-wrap'>
           {reviewInfo.images.map((imageUrl) => (
-            <img src={imageUrl} alt='' width='60px' />
+            <>
+              <img
+                src={imageUrl}
+                alt=''
+                width='60px'
+                onClick={() => handleImageClick(imageUrl)}
+              />
+            </>
           ))}
         </div>
         <div className='sup-bottom-wrap'></div>

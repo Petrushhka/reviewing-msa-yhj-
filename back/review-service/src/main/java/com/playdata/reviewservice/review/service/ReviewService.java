@@ -53,7 +53,7 @@ public class ReviewService {
     }
 
     public List<ReviewResponseDto> getRestaurantReviews(Long restaurantId) {
-        List<Review> reviews = reviewRepository.findAllByRestaurantId(restaurantId).orElseThrow(
+        List<Review> reviews = reviewRepository.findAllByRestaurantIdOrderByCreatedAtDesc(restaurantId).orElseThrow(
                 () -> new EntityNotFoundException("Review not found!")
         );
 
