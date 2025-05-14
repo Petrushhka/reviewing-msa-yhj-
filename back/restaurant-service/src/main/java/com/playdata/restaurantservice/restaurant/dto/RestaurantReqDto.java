@@ -19,6 +19,7 @@ public class RestaurantReqDto {
     private Long userId; // 사장님 ID
 
     private List<MultipartFile> images;
+    private List<String> deletedImageUrls;
 
     public Restaurant toEntity() {
         return Restaurant.builder()

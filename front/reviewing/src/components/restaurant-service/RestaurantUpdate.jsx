@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { API_BASE_URL, RESTAURANT_SERVICE } from '../../configs/host-config';
+import styles from './RestaurantUpdate.module.scss';
 
 const RestaurantUpdate = () => {
   const { id } = useParams();
@@ -18,6 +19,9 @@ const RestaurantUpdate = () => {
   const [phone, setPhone] = useState('');
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
+  const [images, setImages] = useState([]);
+  const [imageUrls, setImageUrls] = useState([]);
+  const [deletedImage, setDeletedImage] = useState([]);
   const navigate = useNavigate();
 
   const token = localStorage.getItem('ACCESS_TOKEN');
@@ -41,6 +45,7 @@ const RestaurantUpdate = () => {
       setPhone(data.phone || '');
       setDescription(data.description || '');
       setAddress(data.address || '');
+      setImageUrls(data.imageUrls || []);
     } catch (e) {
       console.log(e);
       alert('상점 정보를 불러오는데 실패했습니다.');
@@ -60,6 +65,13 @@ const RestaurantUpdate = () => {
     data.append('phone', phone);
     data.append('description', description);
     data.append('address', address);
+
+    for (let img of images) {
+      data.append('images', img);
+    }
+    for (let img of deletedImage) {
+      data.append('deletedImageUrls', img);
+    }
 
     try {
       const res = await axios.put(
@@ -82,6 +94,16 @@ const RestaurantUpdate = () => {
       console.log(e);
       alert('에러가 발생했습니다.');
     }
+  };
+
+  const handleDeleteImage = (url) => {
+    setDeletedImage((prev) => [...prev, url]);
+    const idx = imageUrls.indexOf(url); // 첫 번째로 일치하는 위치(없으면 -1)
+    if (idx !== -1) imageUrls.splice(idx, 1); // 해당 인덱스부터 1개 삭제
+  };
+
+  const handleFileChange = (e) => {
+    setImages(e.target.files);
   };
 
   return (
@@ -147,6 +169,32 @@ const RestaurantUpdate = () => {
                 margin='normal'
                 required
                 style={{
+                  marginBottom: '30px',
+                }}
+              />
+              <div className={styles.images}>
+                {imageUrls.map((url) => (
+                  <div className={styles.image}>
+                    <button
+                      type='button'
+                      onClick={() => handleDeleteImage(url)}
+                      className={styles.deleteBtn}
+                    >
+                      <span>X</span>
+                    </button>
+                    <img src={url} />
+                  </div>
+                ))}
+              </div>
+              <input
+                type='file'
+                name='images'
+                multiple
+                accept='image/*'
+                onChange={handleFileChange}
+                required
+                style={{
+                  marginTop: '10px',
                   marginBottom: '30px',
                 }}
               />
