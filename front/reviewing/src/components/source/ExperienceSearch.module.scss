@@ -1,0 +1,105 @@
+/* 브라운 팔레트 */
+$bg-light: #f5efe6;
+$bg-dark: #e8dfd0;
+$primary: #8b5e34;
+$primary-d: #5d3b1e;
+$text: #3c2a1a;
+
+.wrapper {
+  padding-block: 2rem; /* 위·아래 32px */
+  padding-inline: 1.5rem; /* ←→ 24px  */
+  @media (min-width: 768px) {
+    /* 태블릿 ↑ */
+    padding-inline: 2rem; /* ←→ 32px  */
+  }
+
+  background: $bg-light;
+  min-height: 100vh;
+  box-sizing: border-box; /* padding→width 계산에 포함 */
+}
+
+.searchBar {
+  width: 100%;
+  margin-bottom: 1rem;
+
+  input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid $primary;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: lighten($primary, 20%);
+    }
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  select {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid $primary;
+    border-radius: 6px;
+    background: #fff;
+    color: $text;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: $bg-dark;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba($primary-d, 0.15);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba($primary-d, 0.25);
+  }
+
+  img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+
+  .info {
+    padding: 1rem;
+    color: $text;
+
+    h4 {
+      margin: 0 0 0.5rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: $primary-d;
+    }
+
+    .meta {
+      font-size: 0.85rem;
+      color: darken($text, 10%);
+    }
+  }
+}
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: $primary-d;
+  padding: 2rem 0;
+  font-weight: 600;
+}

@@ -1,0 +1,105 @@
+/* root: UsageGuide.module.scss */
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #212529;
+  position: relative;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: #CD853F;
+    margin: 0.75rem auto 0;
+    border-radius: 2px;
+  }
+}
+
+.stepList {
+  counter-reset: step-counter;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    transform: translateY(-4px);
+    transition: transform 0.2s ease;
+  }
+
+  /* 숫자 대신 커스텀 아이콘 / 번호를 넣고 싶다면 여기 수정 */
+  .iconBox {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #CD853F; /* 원 안 배경색 */
+    color: #fff; /* 숫자 색상 */
+    font-weight: 700;
+    font-size: 1.1rem;
+
+    border-radius: 50%; /* 동그라미 */
+  }
+}
+
+.textBox {
+  flex: 1;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #343a40;
+}
+
+.desc {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #495057;
+}
+
+.tipBox {
+  background: #f1f3f5;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid #CD853F;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #343a40;
+
+  strong {
+    color: #CD853F;
+    margin-right: 0.35rem;
+  }
+}
+
+/* 🔹 반응형 */
+@media (max-width: 600px) {
+  .step {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
