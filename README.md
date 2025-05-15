@@ -1,3 +1,11 @@
+## 👥 Team Members
+
+| [<img src="https://avatars.githubusercontent.com/yeeun-yenny" width="70" style="border-radius:50%;">](https://github.com/yeeun-yenny) | [<img src="https://avatars.githubusercontent.com/SHINHYEONGUK" width="70" style="border-radius:50%;">](https://github.com/SHINHYEONGUK) | [<img src="https://avatars.githubusercontent.com/ehgus8" width="70" style="border-radius:50%;">](https://github.com/ehgus8) | [<img src="https://avatars.githubusercontent.com/Petrushhka" width="70" style="border-radius:50%;">](https://github.com/Petrushhka) |
+| :---------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: |
+|                                               [김예은](https://github.com/yeeun-yenny)                                               |                                              [신현국](https://github.com/SHINHYEONGUK)                                              |                                             [이도현](https://github.com/ehgus8)                                             |                                              [윤하준](https://github.com/Petrushhka)                                               |
+
+---
+
 ## ✅ 1. 기획서
 
 ### 1.1 프로젝트 개요
