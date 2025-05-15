@@ -74,7 +74,7 @@ const RestaurantDetail = () => {
         },
       );
       alert('상점이 삭제되었습니다.');
-      navigate('/restaurant');
+      navigate('/');
     } catch (e) {
       console.log(e);
       alert('삭제에 실패했습니다.');
