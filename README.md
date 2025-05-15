@@ -67,3 +67,6 @@
 - API 게이트웨이
 
 - Eureka 서버
+
+## 2. 산출물
+https://first-viburnum-d12.notion.site/MSA-3-1e58b55c686780978227faec24417dd6
