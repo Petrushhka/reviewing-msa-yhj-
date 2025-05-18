@@ -40,7 +40,9 @@ public class SecurityConfig {
                             "/user-service/user/{userId}/point",
                             "/user-service/users",
                             "/badges/user/{userId}/progress",
-                            "/user-service/users/point").permitAll()
+                            "/user-service/users/point",
+                            "/user-service/health-check",
+                            "/actuator/**").permitAll()
                     .anyRequest().authenticated();
         });
 

@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.HEAD;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,7 @@ public class UserController {
     private final RedisTemplate<String, Object> redisTemplate;
     private final BadgeClient badgeClient;
 
+    private final Environment env;
 
     @PostMapping("/users/signup")
     public ResponseEntity<?> createUser(
@@ -228,6 +230,12 @@ public class UserController {
         return ResponseEntity.ok().body(userResDto);
     };
 
+    @GetMapping("/health-check")
+    public String healthCheck() {
+        String msg = "";
+        msg += "token.exp_time:" + env.getProperty("token.expiration_time") +"\n";
+        return msg;
+    }
 
 
 }

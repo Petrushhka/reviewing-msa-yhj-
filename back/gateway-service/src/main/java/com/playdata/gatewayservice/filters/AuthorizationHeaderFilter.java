@@ -38,7 +38,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
             "/review-service/reviews/stats/restaurant/*",
             "/review-service/reviews/user/*",
             "/restaurant-service/restaurant/list",
-            "/restaurant-service/restaurants/*"
+            "/restaurant-service/restaurants/*",
+            "/actuator/**"
     );
 
     @Override
