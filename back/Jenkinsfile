@@ -5,7 +5,7 @@ def ecrLoginHelper = "docker-credential-ecr-login"
 pipeline {
     agent any // 어느 젠킨스 서버에서나 실행이 가능
     environment {
-        SERVICE_DIRS = "./back/config-service,./back/discovery-service,./back/gateway-service,./back/user-service,./back/review-service,./back/point-service,./back/restaurant-service"
+        SERVICE_DIRS = "back/config-service,back/discovery-service,back/gateway-service,back/user-service,back/review-service,back/point-service,back/restaurant-service"
         ECR_URL = "908027399356.dkr.ecr.ap-northeast-2.amazonaws.com"
         REGION = "ap-northeast-2"
     }
