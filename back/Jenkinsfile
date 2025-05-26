@@ -89,6 +89,7 @@ pipeline {
                     withAWS(region: "${REGION}", credentials: "aws-key") {
                         def changedServices = env.CHANGED_SERVICES.split(",")
                         changedServices.each { service ->
+                            def serviceName = service.replaceFirst(/^back\//, "")
                             sh """
                             curl -O https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com/0.4.0/linux-amd64/${ecrLoginHelper}
                             chmod +x ${ecrLoginHelper}
@@ -98,8 +99,8 @@ pipeline {
                             echo '{"credHelpers": {"${ECR_URL}": "ecr-login"}}' > ~/.docker/config.json
 
                             docker build -t ${service}:latest ${service}
-                            docker tag ${service}:latest ${ECR_URL}/${service}:latest
-                            docker push ${ECR_URL}/${service}:latest
+                            docker tag ${service}:latest ${ECR_URL}/${serviceName}:latest
+                            docker push ${ECR_URL}/${serviceName}:latest
                             """
                         }
                     }
