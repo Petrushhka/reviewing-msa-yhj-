@@ -94,6 +94,7 @@ pipeline {
                             chmod +x ${ecrLoginHelper}
                             mv ${ecrLoginHelper} /usr/local/bin/
 
+                            mkdir -p ~/.docker
                             echo '{"credHelpers": {"${ECR_URL}": "ecr-login"}}' > ~/.docker/config.json
 
                             docker build -t ${service}:latest ${service}
@@ -106,10 +107,13 @@ pipeline {
                 }
             }
         }
-//         stage('Deploy Changeed Services to AWS EC2') {
-//             when {
-//                 expression { env.CHANGED_SERVICES != "" }
-//             }
-//         }
+        stage('Deploy Changeed Services to AWS EC2') {
+            when {
+                expression { env.CHANGED_SERVICES != "" }
+            }
+            steps {
+
+            }
+        }
     }
 }
