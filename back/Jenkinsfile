@@ -107,13 +107,13 @@ pipeline {
                 }
             }
         }
-        stage('Deploy Changeed Services to AWS EC2') {
-            when {
-                expression { env.CHANGED_SERVICES != "" }
-            }
-            steps {
-
-            }
-        }
+//         stage('Deploy Changeed Services to AWS EC2') {
+//             when {
+//                 expression { env.CHANGED_SERVICES != "" }
+//             }
+//             steps {
+//
+//             }
+//         }
     }
 }
