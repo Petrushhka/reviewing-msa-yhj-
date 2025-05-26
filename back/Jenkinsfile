@@ -38,8 +38,8 @@ pipeline {
 
                         echo "Changed files: ${changedFiles}"
 
-                        def changedServices = []
-                        def serviceDirs = env.SERVICE_DIRS.split(",")
+                        changedServices = []
+                        serviceDirs = env.SERVICE_DIRS.split(",")
 
                         serviceDirs.each { service ->
                             if (changedFiles.any { it.startsWith(service + "/") }) {
