@@ -134,6 +134,16 @@ public class UserController {
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
+    // 유효한 이메일인지 검증 요청
+    @PostMapping("/email-valid")
+    public ResponseEntity<?> emailValid(@RequestBody Map<String, String> map) {
+        String email = map.get("email");
+        log.info("이메일 인증 요청! email: {}", email);
+
+        return null;
+    }
+
+
 
     @GetMapping("user/profileImage/{userId}")
     public ResponseEntity<?> getUserProfileImage(@PathVariable("userId") String userId) {
