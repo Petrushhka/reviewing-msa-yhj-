@@ -50,6 +50,7 @@ const MemberCreate = () => {
       alert(`${data.result}님 환영합니다!`);
       navigate('/');
     } else {
+      console.log(data);
       alert(data.statusMessage || '회원가입에 실패했습니다.');
     }
   };

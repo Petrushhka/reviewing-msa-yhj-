@@ -40,6 +40,11 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 이메일 입니다!");
         }
 
+        Optional<User> foundNickname
+                = userRepository.findByNickName(dto.getNickName());
+        if (foundNickname.isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임 입니다!");
+        }
         User user = dto.toEntity(encoder);
         User saved = userRepository.save(user);
 
