@@ -42,6 +42,7 @@ public class SecurityConfig {
                             "/badges/user/{userId}/progress",
                             "/user-service/users/point",
                             "/user-service/health-check",
+                            "/user-service/email-valid",
                             "/actuator/**").permitAll()
                     .anyRequest().authenticated();
         });

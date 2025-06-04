@@ -13,6 +13,7 @@ import React, { useContext, useState } from 'react';
 import { replace, useNavigate } from 'react-router-dom';
 import { API_BASE_URL, USER_SERVICE } from '../configs/host-config';
 import AuthContext from '../context/UserContext';
+import axios from 'axios';
 
 const MemberCreate = () => {
   const [nickName, setNickName] = useState('');
@@ -28,7 +29,7 @@ const MemberCreate = () => {
     navigate('/', replace);
   }
 
-  const sendVerificationEmail = () => {
+  const sendVerificationEmail = async () => {
     console.log('이메일 인증 버튼이 클릭됨!');
     if (!email) {
       alert('이메일을 먼저 입력해 주세요!');
@@ -43,6 +44,18 @@ const MemberCreate = () => {
     if (!regEmail.test(email)) {
       alert('올바른 이메일 형식이 아닙니다.');
       return;
+    }
+    try {
+      const res = await axios.post(
+        `${API_BASE_URL}${USER_SERVICE}/email-valid`,
+        {
+          email,
+        },
+      );
+      console.log('응답된 결과: ', res.data);
+    } catch (err) {
+      console.error('이메일 인증 요청 실패:', err);
+      alert('메일 전송 중 오류가 발생했습니다.');
     }
   };
 
@@ -121,11 +134,11 @@ const MemberCreate = () => {
                   sx={{ mb: 1, minWidth: '60px' }}
                 >
                   인증
-                  {/* {emailSendLoading
+                  {/*{emailSendLoading
                     ? '발송중...'
                     : isEmailVerified
                       ? '인증완료'
-                      : '인증'} */}
+                      : '인증'}*/}
                 </Button>
               </Box>
               <TextField

@@ -26,13 +26,18 @@ spring:
       routes:
         - id: user-service
           uri: lb://USER-SERVICE
+          # k8s 클러스터 내에서 다른 서비스를 지목하기위한 DNS 명명 규칙.
+          # <service-name>.<namespace>.svc.cluster.local:port
+#          uri: http://user-service.default.svc.cluster.local:8081
           predicates:
             - Path=/user-service/**
           filters:
             - AuthorizationHeaderFilter
 
+
         - id: restaurant-service
           uri: lb://RESTAURANT-SERVICE
+#          uri: http://restaurant-service.default.svc.cluster.local:8083
           predicates:
             - Path=/restaurant-service/**
           filters:
@@ -40,6 +45,7 @@ spring:
 
         - id: review-service
           uri: lb://REVIEW-SERVICE
+#          uri: http://review-service.default.svc.cluster.local:8082
           predicates:
             - Path=/review-service/**
           filters:
@@ -48,6 +54,7 @@ spring:
 
         - id: point-service-api
           uri: lb://POINT-SERVICE
+#          uri: http://point-service.default.svc.cluster.local:8084
           predicates:
             - Path=/point-service/**
           filters:
@@ -56,6 +63,7 @@ spring:
 
         - id: badge-api
           uri: lb://POINT-SERVICE
+#          uri: http://point-service.default.svc.cluster.local:8084
           predicates:
             - Path=/badges/**
           filters:

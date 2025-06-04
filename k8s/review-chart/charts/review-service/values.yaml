@@ -1,0 +1,11 @@
+# Helm Chart의 기본 설정값을 정의합니다.
+# templates 폴더 안에 있는 yml들이 이 파일에 작성된 값을 참조하여
+# k8s 리소스들을 동적으로 생성할 수 있습니다.
+
+# values.yaml (로컬 테스트 전용 예시)
+
+# 1. Pod 복제 개수
+replicaCount: 2
+image: 221082190600.dkr.ecr.ap-northeast-2.amazonaws.com/review-service:latest
+# 3. 컨테이너가 내부에서 열 포트(예: 애플리케이션 서버 포트)
+port: 8082

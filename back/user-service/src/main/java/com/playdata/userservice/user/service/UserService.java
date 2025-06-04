@@ -8,6 +8,7 @@ import com.playdata.userservice.common.config.AwsS3Config;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.external.client.BadgeClient;
 import com.playdata.userservice.user.repository.UserRepository;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class UserService {
     private final PasswordEncoder encoder;
     private final AwsS3Config awsS3Config;
     private final BadgeClient badgeClient;
+    private final MailSenderService mailSenderService;
 
 
     public UserResDto createUser(UserSaveReqDto dto) {
@@ -165,6 +167,25 @@ public class UserService {
         return UserResDto.builder()
                 .profileImage(user.getProfileImage())
                 .build();
+    }
+
+    public String mailCheck(String email) {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if (byEmail.isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 이메일 입니다.");
+        }
+
+        String authNum;
+
+        try {
+            // 이메일 전송만을 담당하는 객체를 이용해서 이메일 로직 작성.
+            authNum = mailSenderService.joinMail(email);
+        } catch (MessagingException e) {
+            throw new RuntimeException("이메일 전송 과정 중 문제 발생!");
+        }
+
+        return authNum;
+
     }
 }
 
