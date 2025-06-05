@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "point-service", url = "http://point-service.default.svc.cluster.local:8084")
+
+@FeignClient(name = "point-service" )
 public interface BadgeClient {
     @GetMapping("/badges/user/{userId}")
     UserBadgeResDto getUserBadge(@PathVariable("userId") Long userId);

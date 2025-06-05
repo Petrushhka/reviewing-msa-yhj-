@@ -112,7 +112,10 @@ const MyPageOwner = () => {
     <div className={styles.myPageUser}>
       <div className={styles.profile}>
         <img
-          src={previewUrl}
+          src={
+            previewUrl ||
+            'https://playdata-team3.s3.ap-northeast-2.amazonaws.com/nullprofile.png'
+          }
           alt='프로필사진'
           onClick={handleImageClick}
           style={{ cursor: 'pointer' }}
