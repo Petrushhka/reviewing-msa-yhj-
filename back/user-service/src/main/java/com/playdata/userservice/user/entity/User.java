@@ -60,6 +60,7 @@ public class User extends BaseTimeEntity {
                 .point(point)
                 .profileImage(profileImage)
                 .role(role)
+                .isBlack(isBlack)
                 .build();
     }
 }

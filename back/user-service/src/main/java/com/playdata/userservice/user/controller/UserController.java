@@ -254,4 +254,11 @@ public class UserController {
         return ResponseEntity.ok().body(userNickName);
     }
 
+    @GetMapping("/user-list")
+    public ResponseEntity<List<UserResDto>> getUserList() {
+        List<UserResDto> allUsers = userService.findAll();
+
+        return ResponseEntity.ok().body(allUsers);
+    }
+
 }
