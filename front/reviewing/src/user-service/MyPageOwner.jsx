@@ -133,10 +133,13 @@ const MyPageOwner = () => {
             현재 닉네임:&nbsp;
             <input type='text' value={userName} readOnly />
           </li>
-          <li>
-            현재 등급:&nbsp;
-            <input type='text' value={badge?.name || ''} readOnly />
-          </li>
+          <div className={styles.level}>
+            <li>
+              현재 등급:&nbsp;
+              <input type='text' value={badge.badgeName || '없음'} readOnly />
+              <img src={badge.iconUrl} />
+            </li>
+          </div>
           <li>
             사용자 상태:&nbsp;
             <input

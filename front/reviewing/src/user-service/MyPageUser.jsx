@@ -21,21 +21,6 @@ const MyPageUser = () => {
   // 내 리뷰 보기
   const [myReview, setMyReview] = useState(false);
 
-  // //Badge 등급명 가져오기(요청)
-  // const [progress, setProgress] = useState('');
-
-  // useEffect(async () => {
-  //   try {
-  //     const res = await axios.get(
-  //       `${API_BASE_URL}/badges/user/${userId}/progress`,
-  //     );
-
-  //     setProgress(res.data.result);
-  //   } catch {
-  //     console.log('안됨');
-  //   }
-  // }, []);
-
   const handleMyReview = () => {
     setMyReview((prev) => !prev);
   };
