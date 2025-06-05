@@ -40,6 +40,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
             "/review-service/reviews/user/*",
             "/restaurant-service/restaurant/list",
             "/restaurant-service/restaurants/*",
+            "user-service/add-black",
             "/actuator/**"
     );
 

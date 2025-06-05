@@ -187,6 +187,25 @@ public class UserService {
         return authNum;
 
     }
+
+    public String addBlackUser(String email, Boolean black) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if(userOptional.isEmpty()) {
+            throw new EntityNotFoundException("해당 회원이 없습니다.");
+        }
+
+        User user = userOptional.get();
+
+        if (user.getIsBlack()) {
+            user.setIsBlack(false);
+        }
+        else{
+            user.setIsBlack(true);
+        }
+        userRepository.save(user);
+        return user.getNickName();
+    }
+
 }
 
 

@@ -34,6 +34,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth
 //                    .requestMatchers("/user/list").hasRole("ROLE_ADMIN")
+                    .requestMatchers("/user-service/add-black").hasRole("ADMIN")
                     .requestMatchers("/user-service/users/signup",
                             "/user-service/user/login",
                             "/user-service/user/refresh",

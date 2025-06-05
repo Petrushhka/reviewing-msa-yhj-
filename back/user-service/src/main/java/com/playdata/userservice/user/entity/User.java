@@ -46,6 +46,9 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    @Setter
+    private Boolean isBlack = false; // True이면 활동 불가임.
 
     // DTO에 Entity 변환 메서드가 있는 거처럼
     // Entity에도 응답용 DTO 변환 메서드를 세팅해서 언제든 변환이 자유롭도록 작성.
