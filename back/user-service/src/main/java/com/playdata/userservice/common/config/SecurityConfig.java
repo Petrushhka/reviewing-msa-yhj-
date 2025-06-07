@@ -43,6 +43,7 @@ public class SecurityConfig {
                             "/user-service/users/point",
                             "/user-service/health-check",
                             "/user-service/email-valid",
+                            "/user-service/verify",
                             "/actuator/**").permitAll()
                     .anyRequest().authenticated();
         });

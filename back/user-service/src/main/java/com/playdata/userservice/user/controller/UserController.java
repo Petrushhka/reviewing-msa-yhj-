@@ -144,6 +144,15 @@ public class UserController {
         return ResponseEntity.ok().body(authNum);
     }
 
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> map) {
+        log.info("인증 코드 검증! map: {}", map);
+        Map<String, String> result
+                = userService.verifyEmail(map);
+
+        return ResponseEntity.ok().body("Success");
+    }
+
 
 
     @GetMapping("user/profileImage/{userId}")
