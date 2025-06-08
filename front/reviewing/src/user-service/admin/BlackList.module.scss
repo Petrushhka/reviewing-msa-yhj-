@@ -55,5 +55,13 @@
     tr:hover {
       background-color: #f9fafb;
     }
+    .status {
+      color: black;
+      cursor: pointer;
+    }
+    .status_blocked {
+      color: red;
+      font-weight: bold;
+    }
   }
 }
