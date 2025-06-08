@@ -1,7 +1,6 @@
 package com.playdata.userservice.common.config;
 
 import com.playdata.userservice.common.auth.JwtAuthFilter;
-import com.playdata.userservice.common.auth.UserStatusFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

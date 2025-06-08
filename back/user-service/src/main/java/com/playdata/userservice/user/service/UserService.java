@@ -9,22 +9,17 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-<<<<<<< HEAD
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.util.Map;
-=======
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
->>>>>>> user-service2
 import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -217,7 +212,6 @@ public class UserService {
 
     }
 
-<<<<<<< HEAD
     // 인증 코드 검증 로직
     public Map<String, String> verifyEmail(Map<String, String> map) {
         // 차단 상태 확인
@@ -273,7 +267,6 @@ public class UserService {
     }
 
 
-=======
     public String addBlackUser(String email, Boolean black) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if(userOptional.isEmpty()) {
@@ -314,7 +307,6 @@ public class UserService {
         return user.getIsBlack();
 
     }
->>>>>>> user-service2
 }
 
 
