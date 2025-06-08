@@ -1,17 +1,22 @@
 package com.playdata.userservice.user.service;
 
 
-import com.playdata.userservice.common.auth.TokenUserInfo;
-import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.common.config.AwsS3Config;
 import com.playdata.userservice.user.entity.User;
-import com.playdata.userservice.user.external.client.BadgeClient;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+<<<<<<< HEAD
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.util.Map;
+=======
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.LockedException;
@@ -19,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+>>>>>>> user-service2
 import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -36,8 +42,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final AwsS3Config awsS3Config;
-    private final BadgeClient badgeClient;
     private final MailSenderService mailSenderService;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    // Redis key 상수
+    private static final String VERIFICATION_CODE_KEY = "email_verify:code:";
+    private static final String VERIFICATION_ATTEMPT_KEY = "email_verify:attempt:";
+    private static final String VERIFICATION_BLOCK_KEY = "email_verify:block:";
+
 
 
     public UserResDto createUser(UserSaveReqDto dto) {
@@ -178,6 +190,11 @@ public class UserService {
     }
 
     public String mailCheck(String email) {
+        // 차단 상태 확인
+        if (isBlocked("email")) {
+            throw new IllegalArgumentException("Blocking");
+        }
+
         Optional<User> byEmail = userRepository.findByEmail(email);
         if (byEmail.isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 이메일 입니다.");
@@ -192,10 +209,71 @@ public class UserService {
             throw new RuntimeException("이메일 전송 과정 중 문제 발생!");
         }
 
+        // 인증 코드를 Redis 저장
+        String key = VERIFICATION_CODE_KEY + email;
+        redisTemplate.opsForValue().set(key, authNum, Duration.ofMinutes(1));
+
         return authNum;
 
     }
 
+<<<<<<< HEAD
+    // 인증 코드 검증 로직
+    public Map<String, String> verifyEmail(Map<String, String> map) {
+        // 차단 상태 확인
+        if (isBlocked(map.get("email"))) {
+            throw new IllegalArgumentException("blocking");
+        }
+
+        // 레디스에 저장된 인증 코드 조회
+        String key = VERIFICATION_CODE_KEY + map.get("email");
+        Object foundCode = redisTemplate.opsForValue().get(key);
+        if (foundCode == null) { // 조회결과가 null? -> 만료됨!
+            throw new IllegalArgumentException("authCode expired!");
+        }
+
+        // 인증 시도 횟수 증가
+        int attemptCount = incrementAttemptCount(map.get("email"));
+
+        // 조회한 코드와 사용자가 입력한 인증번호 검증
+        if (!foundCode.toString().equals(map.get("code"))) {
+            // 최대 시도 횟수 초과시 차단
+            if (attemptCount >= 3) {
+                blockUser(map.get("email"));
+                throw new IllegalArgumentException("email blocked!");
+            }
+            int remainingAttempts = 3 - attemptCount;
+            throw new IllegalArgumentException(String.format("authCode wrong!, %d", remainingAttempts));
+        }
+
+        log.info("이메일 인증 성공!, email: {}", map.get("email"));
+        redisTemplate.delete(key); // 레디스에서 인증번호 삭제
+        return map;
+    }
+
+    private boolean isBlocked(String email) {
+        String key = VERIFICATION_BLOCK_KEY + email;
+        return redisTemplate.hasKey(key);
+    }
+
+    private void blockUser(String email) {
+
+        String key = VERIFICATION_BLOCK_KEY + email;
+        redisTemplate.opsForValue().set(key, "blocked", Duration.ofMinutes(30));
+    }
+
+    private int incrementAttemptCount(String email) {
+        String key = VERIFICATION_ATTEMPT_KEY + email;
+        Object obj = redisTemplate.opsForValue().get(key);
+
+        int count = (obj != null) ? Integer.parseInt(obj.toString()) + 1 : 1;
+        redisTemplate.opsForValue().set(key, count, Duration.ofMinutes(1));
+
+        return count;
+    }
+
+
+=======
     public String addBlackUser(String email, Boolean black) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if(userOptional.isEmpty()) {
@@ -236,6 +314,7 @@ public class UserService {
         return user.getIsBlack();
 
     }
+>>>>>>> user-service2
 }
 
 
