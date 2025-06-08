@@ -1,10 +1,10 @@
 package com.playdata.userservice.common.config;
 
 import com.playdata.userservice.common.auth.JwtAuthFilter;
+import com.playdata.userservice.common.auth.UserStatusFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,6 +34,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth
 //                    .requestMatchers("/user/list").hasRole("ROLE_ADMIN")
+                    .requestMatchers("/user-service/add-black", "user-service/user-list", "user-service/change-status").hasRole("ADMIN")
                     .requestMatchers("/user-service/users/signup",
                             "/user-service/user/login",
                             "/user-service/user/refresh",

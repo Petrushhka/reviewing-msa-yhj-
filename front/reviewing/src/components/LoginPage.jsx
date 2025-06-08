@@ -37,8 +37,12 @@ const LoginPage = () => {
       onLogin(res.data.result);
       navigate('/');
     } catch (e) {
-      console.log(e); // 백엔드 데이터: e.response.data
-      alert('로그인 실패입니다. 아이디 또는 비밀번호를 확인하세요!');
+      if (e.response?.status === 403) {
+        alert('정지된 계정입니다. 관리자에게 문의하세요.');
+      } else {
+        console.log(e); // 백엔드 데이터: e.response.data
+        alert('로그인 실패입니다. 아이디 또는 비밀번호를 확인하세요!');
+      }
     }
   };
 

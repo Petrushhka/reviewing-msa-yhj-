@@ -9,18 +9,30 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+<<<<<<< HEAD
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Map;
+=======
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+>>>>>>> user-service2
 import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -61,7 +73,9 @@ public class UserService {
                 () -> new EntityNotFoundException("User not found!")
         );
 
-
+        if(Boolean.TRUE.equals(user.getIsBlack())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"정지된 계정입니다.");
+        }
 
         if (!encoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -203,6 +217,7 @@ public class UserService {
 
     }
 
+<<<<<<< HEAD
     // 인증 코드 검증 로직
     public Map<String, String> verifyEmail(Map<String, String> map) {
         // 차단 상태 확인
@@ -258,6 +273,48 @@ public class UserService {
     }
 
 
+=======
+    public String addBlackUser(String email, Boolean black) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if(userOptional.isEmpty()) {
+            throw new EntityNotFoundException("해당 회원이 없습니다.");
+        }
+
+        User user = userOptional.get();
+
+        if (user.getIsBlack()) {
+            user.setIsBlack(false);
+        }
+        else{
+            user.setIsBlack(true);
+        }
+        userRepository.save(user);
+        return user.getNickName();
+    }
+
+    public List<UserResDto> findAll() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(user->user.toDto())
+                .collect(Collectors.toList());
+
+    }
+    public Boolean changeStatus(String userEmail) {
+        Optional<User> byEmail = Optional.ofNullable(userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없음")));
+        User user = byEmail.get();
+        if(user.getIsBlack()) {
+            user.setIsBlack(false);
+        }else{
+            user.setIsBlack(true);
+        }
+        userRepository.save(user);
+
+        return user.getIsBlack();
+
+    }
+>>>>>>> user-service2
 }
 
 

@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 // user-service 이름은 Eureka 등록된 서비스명 또는 직접 URL
-//url = "http://point-service.default.svc.cluster.local:8081"
 @FeignClient(name = "user-service")
 public interface UserPointClient {
     @GetMapping("/user-service/user/{userId}/point")

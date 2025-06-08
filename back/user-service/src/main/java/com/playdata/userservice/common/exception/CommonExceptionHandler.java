@@ -1,12 +1,15 @@
 package com.playdata.userservice.common.exception;
 
 import com.playdata.userservice.common.dto.CommonErrorDto;
+import com.playdata.userservice.common.dto.CommonResDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class CommonExceptionHandler {
@@ -48,5 +51,20 @@ public class CommonExceptionHandler {
         CommonErrorDto errorDto
                 = new CommonErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, "server error");
         return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR); // 500 에러
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<CommonResDto> handleResponseStatus(ResponseStatusException e) {
+        // 1) 예외에 담긴 상태 코드를 꺼냄
+        HttpStatusCode statusCode = e.getStatusCode();
+
+        // 2) 예외 메세지를 꺼냄
+        String message = e.getMessage();
+
+        // 3) CommonResDto 생성
+        CommonResDto errorDto = new CommonResDto((HttpStatus) statusCode, message, null);
+
+        return ResponseEntity.status(statusCode).body(errorDto);
+
     }
 }

@@ -27,6 +27,22 @@
     align-items: center;
     margin-bottom: 2rem;
 
+    .level {
+      display: flex;
+      flex-direction: row;
+      box-sizing: border-box;
+
+      li {
+        gap: 0.3em;
+      }
+
+      img {
+        width: 1.3em;
+        height: 1.3em;
+        margin-right: -0.5em;
+      }
+    }
+
     img {
       width: 120px;
       height: 120px;

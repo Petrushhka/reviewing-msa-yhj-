@@ -12,7 +12,6 @@ import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.HEAD;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -24,10 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.awt.Color.black;
 
 
 @RestController
@@ -257,5 +257,22 @@ public class UserController {
         return msg;
     }
 
+    @PostMapping("/add-black")
+    public ResponseEntity<String> addBlack(@RequestBody UserBlackReqDto blackReqDto) {
+        String userNickName = userService.addBlackUser(blackReqDto.getUserEmail(), blackReqDto.getIsBlack());
+        return ResponseEntity.ok().body(userNickName);
+    }
 
+    @GetMapping("/user-list")
+    public ResponseEntity<List<UserResDto>> getUserList() {
+        List<UserResDto> allUsers = userService.findAll();
+
+        return ResponseEntity.ok().body(allUsers);
+    }
+
+    @PatchMapping("/change-status")
+    public ResponseEntity<Boolean> changeStatus(@RequestBody UserBlackReqDto statusReqDto) {
+        Boolean currentStatus = userService.changeStatus(statusReqDto.getUserEmail());
+        return ResponseEntity.ok().body(currentStatus);
+    }
 }
