@@ -261,4 +261,9 @@ public class UserController {
         return ResponseEntity.ok().body(allUsers);
     }
 
+    @PatchMapping("/change-status")
+    public ResponseEntity<Boolean> changeStatus(@RequestBody UserBlackReqDto statusReqDto) {
+        Boolean currentStatus = userService.changeStatus(statusReqDto.getUserEmail());
+        return ResponseEntity.ok().body(currentStatus);
+    }
 }

@@ -12,6 +12,9 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,7 +61,9 @@ public class UserService {
                 () -> new EntityNotFoundException("User not found!")
         );
 
-
+        if(Boolean.TRUE.equals(user.getIsBlack())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"정지된 계정입니다.");
+        }
 
         if (!encoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -214,6 +220,20 @@ public class UserService {
         return users.stream()
                 .map(user->user.toDto())
                 .collect(Collectors.toList());
+
+    }
+    public Boolean changeStatus(String userEmail) {
+        Optional<User> byEmail = Optional.ofNullable(userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없음")));
+        User user = byEmail.get();
+        if(user.getIsBlack()) {
+            user.setIsBlack(false);
+        }else{
+            user.setIsBlack(true);
+        }
+        userRepository.save(user);
+
+        return user.getIsBlack();
 
     }
 }
