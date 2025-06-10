@@ -18,7 +18,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -151,6 +153,24 @@ public class UserController {
                 = userService.verifyEmail(map);
 
         return ResponseEntity.ok().body("Success");
+    }
+
+    @PostMapping("/find-password")
+    public ResponseEntity<Void> sendVerificationCode(@Valid @RequestBody FindPwDto dto) {
+        userService.sendPasswordResetCode(dto.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<Void> verifyCode(@Valid @RequestBody VerifyCodeDto dto) {
+        userService.verifyResetCode( dto.getEmail(), dto.getCode());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordDto dto) {
+        userService.resetPassword( dto.getEmail(), dto.getCode(), dto.getNewPassword());
+        return ResponseEntity.ok().build();
     }
 
 

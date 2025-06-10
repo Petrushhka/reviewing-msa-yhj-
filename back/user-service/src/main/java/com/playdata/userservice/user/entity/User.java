@@ -48,6 +48,7 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Setter
+    @Builder.Default
     private Boolean isBlack = false; // True이면 활동 불가임.
 
     // DTO에 Entity 변환 메서드가 있는 거처럼

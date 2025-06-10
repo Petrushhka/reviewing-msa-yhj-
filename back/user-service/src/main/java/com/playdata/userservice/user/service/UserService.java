@@ -7,11 +7,15 @@ import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -40,10 +44,17 @@ public class UserService {
     private final MailSenderService mailSenderService;
     private final RedisTemplate<String, Object> redisTemplate;
 
+    private static final String CODE_CHARS =
+            "0123456789" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz";
+    private static final SecureRandom random = new SecureRandom();
+
     // Redis key 상수
     private static final String VERIFICATION_CODE_KEY = "email_verify:code:";
     private static final String VERIFICATION_ATTEMPT_KEY = "email_verify:attempt:";
     private static final String VERIFICATION_BLOCK_KEY = "email_verify:block:";
+    private static final String RESET_KEY_PREFIX = "pw-reset:";
+    private static final Duration RESET_CODE_TTL = Duration.ofMinutes(5);
+
 
 
 
@@ -306,6 +317,84 @@ public class UserService {
 
         return user.getIsBlack();
 
+    }
+
+    public void sendPasswordResetCode(@NotBlank(message = "이메일을 입력해 주세요.") String email) {
+        // 1) 회원 존재 확인
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다"));
+
+        // 2) 인증 코드 생성
+        String code = makeAlphanumericCode(9);
+
+        // 3) Rediss에 저장 (키: pw-reset:{email})
+        String redisKey = RESET_KEY_PREFIX + email;
+        redisTemplate.opsForValue()
+                .set(redisKey, code, RESET_CODE_TTL);
+
+        // 4) 비밀번호 재설정 메일 발송
+        // MailSenderService에 별도 메서드를 만들어 두는 걸 추천합니다.
+        try {
+            mailSenderService.sendPasswordResetMail(email, user.getNickName(), code);
+        } catch (MessagingException ex) {
+            log.error("비밀번호 재설정 메일 전송 실패", ex);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "인증 메일 전송에 실패했습니다. 잠시 후 다시 시도해 주세요."
+            );
+        }
+
+
+    }
+
+
+    private String makeAlphanumericCode(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int idx = random.nextInt(CODE_CHARS.length());
+            sb.append(CODE_CHARS.charAt(idx));
+        }
+        String code = sb.toString();
+        log.info("생성된 비밀번호 재설정 코드:{}", code);
+        return code;
+    }
+
+    public void verifyResetCode( @NotBlank String email, @NotBlank String code) {
+
+        // 1) 사용자 재확인 (옵션)
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾을 수 없습니다."));
+
+
+        // 2) Redis에서 코드 조회
+        String key = RESET_KEY_PREFIX + email;
+        Object savedCode = redisTemplate.opsForValue().get(key);
+        if (savedCode == null) {
+            throw new IllegalArgumentException("인증 코드가 만료되었습니다. 다시 요청해 주세요.");
+        }
+
+        if (!savedCode.equals(code)) {
+            throw new IllegalArgumentException("인증 코드가 일치하지 않습니다.");
+        }
+        // 3) 검증 성공 시에는 코드 삭제하거나 TTL을 짧게 조정해도 좋습니다.
+        // redisTemplate.delete(key);
+    }
+
+
+    public void resetPassword( @NotBlank String email, @NotBlank String code, @NotBlank String newPassword) {
+        verifyResetCode(email, code);
+
+        // 2) 사용자 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾을 수 없습니다."));
+
+        // 3) 비밀번호 해시 후 저장
+        String encoded = encoder.encode(newPassword);
+        user.setPassword(encoded);
+        userRepository.save(user);
+
+        // 4) 사용한 코드 삭제
+        redisTemplate.delete(RESET_KEY_PREFIX + email);
     }
 }
 
