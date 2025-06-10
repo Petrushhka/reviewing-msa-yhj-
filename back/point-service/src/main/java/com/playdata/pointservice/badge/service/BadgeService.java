@@ -13,6 +13,7 @@ import com.playdata.pointservice.common.dto.CommonResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ public class BadgeService {
 
         try {
             log.info("assignBadge 요청: userId={}, point={}", userId, point);
-            
+
             // 운영자일 경우 운영자 배지를 부여
             if ("ADMIN".equalsIgnoreCase(role)) {
                 Badge adminBadge = badgeRepository.findByName("운영자")
@@ -63,8 +64,16 @@ public class BadgeService {
 
                 return new CommonResDto(HttpStatus.OK, "운영자 배지 부여 성공", resDto);
             }
-            
-            
+
+            // 기존 배지 삭제 시도
+            try {
+                mapRepository.deleteByUserId(userId);
+            } catch (ObjectOptimisticLockingFailureException ex) {
+                // 이미 삭제되었거나 다른 트랜잭션과 충돌났다 -> 무시하고 넘어간다
+                log.warn("동시성으로 인해 deleteByUserId에서 락 실패 발생(무시): userId={}", userId, ex);
+            }
+
+
             // 일반 유저는 기존 포인트 기준 부여 로직 수행
             BadgeLevel level = BadgeLevel.fromPoint(point);
             log.info("계산된 level: {}", level);
@@ -74,8 +83,6 @@ public class BadgeService {
                 log.warn("해당 레벨의 배지를 찾을 수 없습니다: {}", level);
                 return new CommonResDto(HttpStatus.NOT_FOUND, "해당 레벨의 배지를 찾을 수 없습니다.", null);
             }
-            // 기존 배지 삭제
-            mapRepository.deleteByUserId(userId);
 
 
 

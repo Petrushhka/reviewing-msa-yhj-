@@ -12,22 +12,24 @@ import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.HEAD;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.awt.Color.black;
 
 
 @RestController
@@ -134,6 +136,44 @@ public class UserController {
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
+    // 유효한 이메일인지 검증 요청
+    @PostMapping("/email-valid")
+    public ResponseEntity<?> emailValid(@RequestBody Map<String, String> map) {
+        String email = map.get("email");
+        log.info("이메일 인증 요청! email: {}", email);
+        String authNum = userService.mailCheck(email);
+
+        return ResponseEntity.ok().body(authNum);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> map) {
+        log.info("인증 코드 검증! map: {}", map);
+        Map<String, String> result
+                = userService.verifyEmail(map);
+
+        return ResponseEntity.ok().body("Success");
+    }
+
+    @PostMapping("/find-password")
+    public ResponseEntity<Void> sendVerificationCode(@Valid @RequestBody FindPwDto dto) {
+        userService.sendPasswordResetCode(dto.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<Void> verifyCode(@Valid @RequestBody VerifyCodeDto dto) {
+        userService.verifyResetCode( dto.getEmail(), dto.getCode());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordDto dto) {
+        userService.resetPassword( dto.getEmail(), dto.getCode(), dto.getNewPassword());
+        return ResponseEntity.ok().build();
+    }
+
+
 
     @GetMapping("user/profileImage/{userId}")
     public ResponseEntity<?> getUserProfileImage(@PathVariable("userId") String userId) {
@@ -237,5 +277,22 @@ public class UserController {
         return msg;
     }
 
+    @PostMapping("/add-black")
+    public ResponseEntity<String> addBlack(@RequestBody UserBlackReqDto blackReqDto) {
+        String userNickName = userService.addBlackUser(blackReqDto.getUserEmail(), blackReqDto.getIsBlack());
+        return ResponseEntity.ok().body(userNickName);
+    }
 
+    @GetMapping("/user-list")
+    public ResponseEntity<List<UserResDto>> getUserList() {
+        List<UserResDto> allUsers = userService.findAll();
+
+        return ResponseEntity.ok().body(allUsers);
+    }
+
+    @PatchMapping("/change-status")
+    public ResponseEntity<Boolean> changeStatus(@RequestBody UserBlackReqDto statusReqDto) {
+        Boolean currentStatus = userService.changeStatus(statusReqDto.getUserEmail());
+        return ResponseEntity.ok().body(currentStatus);
+    }
 }

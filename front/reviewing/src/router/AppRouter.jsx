@@ -16,6 +16,10 @@ import Community from '../components/source/Community';
 import NoticeEvent from '../components/source/NoticeEvent';
 import UsageGuide from '../components/source/UsageGuide';
 import ExperienceSearch from '../components/source/ExperienceSearch';
+import BlackList from '../user-service/admin/BlackList';
+import FindPasswordForm from '../components/FindPasswordForm';
+import VerifyCodeForm from '../components/VerifyCodeForm';
+import ResetPasswordForm from '../components/ResetPasswordForm';
 
 const AppRouter = () => {
   const { userRole } = useContext(AuthContext); // private 라우터를 이용하기 위해 추가(하준)
@@ -25,6 +29,9 @@ const AppRouter = () => {
       <Route path='/' element={<Home />} />
       <Route path='/member/create' element={<MemberCreate />} />
       <Route path='/login' element={<LoginPage />} />
+      <Route path='/find-password' element={<FindPasswordForm />} />
+      <Route path='/verify-code' element={<VerifyCodeForm />} />
+      <Route path='/reset-password' element={<ResetPasswordForm />} />
       <Route path='/review' element={<ReviewSection userId={7} />} />
       <Route path='/restaurantForm' element={<RestaurantForm />} />
       <Route path='/restaurant/list' element={<RestaurantList />} />
@@ -34,6 +41,8 @@ const AppRouter = () => {
         path='/mypage'
         element={<PrivateRouter element={<MyPage />} requiredRole={userRole} />}
       />
+
+      <Route path='/member/list' element={<BlackList />} />
       <Route path='/restaurantDetail/:id' element={<RestaurantDetail />} />
       <Route path='/restaurantUpdate/:id' element={<RestaurantUpdate />} />
       <Route path='/coummunity' element={<Community />} />
