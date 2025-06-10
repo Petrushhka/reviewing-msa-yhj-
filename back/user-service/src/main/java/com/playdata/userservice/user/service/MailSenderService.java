@@ -60,8 +60,11 @@ public class MailSenderService {
     }
 
     private int makeRandomNumber() {
-        // 난수의 범위: 111111 ~ 999999
-        int checkNum = (int) (Math.random() * 999999) + 111111;
+        int min = 111_111;
+        int max = 999_999;
+        int range = max - min + 1;   // 999999 - 111111 + 1 = 888889
+
+        int checkNum = (int)(Math.random() * range) + min;
         log.info("인증번호: {}", checkNum);
         return checkNum;
     }
