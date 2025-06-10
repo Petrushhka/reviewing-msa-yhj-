@@ -6,6 +6,7 @@ import {
   Dialog,
   Grid,
   TextField,
+  Box,
 } from '@mui/material';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +14,7 @@ import AuthContext from '../context/UserContext';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { API_BASE_URL, USER_SERVICE } from '../configs/host-config';
+import kakaoImg from '../assets/kakao_login_medium_narrow.png';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -20,6 +22,12 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
   const { onLogin } = useContext(AuthContext);
+
+  const kakaoAuth = async () => {
+    const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=045dd91cb3fd95d1683a4f9e6623c7b3&redirect_uri=http://localhost:8080/oauth/kakao`;
+
+    window.location.href = kakaoUrl;
+  };
 
   const login = async () => {
     const loginData = {
@@ -87,21 +95,39 @@ const LoginPage = () => {
                 required
               />
               <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Button color='secondary' fullWidth>
-                    비밀번호 변경
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    type='submit'
-                    color='primary'
-                    variant='contained'
-                    sx={{ background: 'peru' }}
-                    fullWidth
-                  >
-                    로그인
-                  </Button>
+                <Grid item xs={6}></Grid>
+                <Grid
+                  container
+                  justifyContent='center'
+                  spacing={2}
+                  alignItems='center'
+                  marginTop={2}
+                >
+                  {/* 로그인 버튼 */}
+                  <Grid item>
+                    <Button
+                      type='submit'
+                      variant='contained'
+                      sx={{ background: 'peru', height: 40, width: 200 }}
+                    >
+                      로그인
+                    </Button>
+                  </Grid>
+
+                  {/* 카카오 로그인 이미지 */}
+                  <Grid item>
+                    <Box
+                      onClick={kakaoAuth}
+                      component='img'
+                      src={kakaoImg}
+                      alt='카카오 로그인'
+                      sx={{
+                        height: 40, // 버튼과 높이 맞춤
+                        objectFit: 'contain',
+                        cursor: 'pointer',
+                      }}
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
             </form>
