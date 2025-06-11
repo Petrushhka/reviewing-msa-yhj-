@@ -11,6 +11,13 @@ export default function VerifyCodeForm() {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleVerify();
+    }
+  };
+
   const handleVerify = async () => {
     try {
       await axios.post(`${API_BASE_URL}${USER_SERVICE}/verify-code`, {
@@ -40,6 +47,7 @@ export default function VerifyCodeForm() {
       </Typography>
       <Stack spacing={3}>
         <TextField
+          onKeyDown={handleKeyDown}
           label='인증 코드'
           value={code}
           onChange={(e) => {
@@ -51,6 +59,7 @@ export default function VerifyCodeForm() {
           fullWidth
         />
         <Button
+          type='submit'
           variant='contained'
           onClick={handleVerify}
           fullWidth
