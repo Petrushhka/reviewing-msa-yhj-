@@ -23,10 +23,17 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { onLogin } = useContext(AuthContext);
 
-  const kakaoAuth = async () => {
-    const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=045dd91cb3fd95d1683a4f9e6623c7b3&redirect_uri=http://localhost:8080/oauth/kakao`;
+  const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
+  const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
 
-    window.location.href = kakaoUrl;
+  const kakaoAuth = async () => {
+    const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}`;
+
+    window.open(
+      kakaoUrl,
+      'kakao-login',
+      'width=500, height=600, scrollbars=yes, resizable=yes',
+    );
   };
 
   const login = async () => {
