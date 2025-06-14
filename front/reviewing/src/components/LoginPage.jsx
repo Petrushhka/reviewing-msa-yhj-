@@ -8,8 +8,8 @@ import {
   TextField,
   Box,
 } from '@mui/material';
-import React, { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useState, useEffect } from 'react';
+import { replace, useNavigate, useSearchParams } from 'react-router-dom';
 import AuthContext from '../context/UserContext';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
@@ -29,11 +29,7 @@ const LoginPage = () => {
   const kakaoAuth = async () => {
     const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}`;
 
-    window.open(
-      kakaoUrl,
-      'kakao-login',
-      'width=500, height=600, scrollbars=yes, resizable=yes',
-    );
+    window.location.href = kakaoUrl;
   };
 
   const login = async () => {
