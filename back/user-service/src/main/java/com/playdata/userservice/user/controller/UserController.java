@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.awt.Color.black;
-
 
 @RestController
 @RequestMapping("/user-service")
@@ -139,9 +137,36 @@ public class UserController {
     public ResponseEntity<?> emailValid(@RequestBody Map<String, String> map) {
         String email = map.get("email");
         log.info("이메일 인증 요청! email: {}", email);
-        String authNum = userService.mailCheck(email);
+        try {
+            String authNum = userService.mailCheck(email);
+            // 성공: 200 + 인증번호
+            return ResponseEntity.ok(
+                    new CommonResDto(
+                        HttpStatus.OK,
+                        "인증 코드 발송 성공",
+                        authNum
+                    )
+            );
+        } catch (IllegalArgumentException ex) {
+            // 중복 이메일 또는 차단 상태
+            return ResponseEntity
+                    .badRequest()
+                    .body(new CommonResDto(
+                        HttpStatus.BAD_REQUEST,
+                        ex.getMessage(),
+                        null
+                    ));
+        } catch (RuntimeException ex) {
+            // 메일 전송 실패 등
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CommonResDto(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "이메일 전송 과정 중 문제 발생!",
+                        null
+                    ));
+        }
 
-        return ResponseEntity.ok().body(authNum);
     }
 
     @PostMapping("/verify")
@@ -151,6 +176,67 @@ public class UserController {
                 = userService.verifyEmail(map);
 
         return ResponseEntity.ok().body("Success");
+    }
+
+    @PostMapping("/find-password")
+    public ResponseEntity<Void> sendVerificationCode(@Valid @RequestBody FindPwDto dto) {
+        userService.sendPasswordResetCode(dto.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<CommonResDto> verifyCode(@Valid @RequestBody VerifyCodeDto dto) {
+
+        try {
+            userService.verifyResetCode( dto.getEmail(), dto.getCode());
+            return ResponseEntity.ok(
+                    new CommonResDto(
+                        HttpStatus.OK,
+                        "인증 코드가 일치합니다.",
+                        null
+                    )
+            );
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new CommonResDto(
+                            HttpStatus.BAD_REQUEST,
+                            ex.getMessage(),
+                            null
+                    ));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<CommonResDto> resetPassword(@Valid @RequestBody ResetPasswordDto dto) {
+        try {
+            userService.resetPassword(dto.getEmail(), dto.getCode(), dto.getNewPassword());
+            return ResponseEntity.ok(
+                    new CommonResDto(
+                            HttpStatus.OK,
+                            "비밀번호 재설정이 완료되었습니다.",
+                            null
+                    )
+            );
+        } catch (IllegalArgumentException ex) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(new CommonResDto(
+                            HttpStatus.BAD_REQUEST,
+                            ex.getMessage(),
+                            null
+                    ));
+        } catch (Exception ex) {
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CommonResDto(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "서버 에러가 발생했습니다. 다시 시도해주세요.",
+                            null
+                    ));
+        }
     }
 
 

@@ -18,6 +18,9 @@ import UsageGuide from '../components/source/UsageGuide';
 import ExperienceSearch from '../components/source/ExperienceSearch';
 import BlackList from '../user-service/admin/BlackList';
 import KakaoRedirectHandler from '../components/KakaoRedirectHandler';
+import FindPasswordForm from '../components/FindPasswordForm';
+import VerifyCodeForm from '../components/VerifyCodeForm';
+import ResetPasswordForm from '../components/ResetPasswordForm';
 
 const AppRouter = () => {
   const { userRole } = useContext(AuthContext); // private 라우터를 이용하기 위해 추가(하준)
@@ -34,6 +37,9 @@ const AppRouter = () => {
         path={KAKAO_REDIRECT_URI_PATH}
         element={<KakaoRedirectHandler />}
       />
+      <Route path='/find-password' element={<FindPasswordForm />} />
+      <Route path='/verify-code' element={<VerifyCodeForm />} />
+      <Route path='/reset-password' element={<ResetPasswordForm />} />
       <Route path='/review' element={<ReviewSection userId={7} />} />
       <Route path='/restaurantForm' element={<RestaurantForm />} />
       <Route path='/restaurant/list' element={<RestaurantList />} />

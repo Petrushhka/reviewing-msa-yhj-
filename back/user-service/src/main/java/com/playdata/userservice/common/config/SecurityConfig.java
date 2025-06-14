@@ -45,6 +45,9 @@ public class SecurityConfig {
                             "/user-service/email-valid",
                             "/user-service/verify",
                             "/user-service/oauth/kakao/**",
+                            "/user-service/find-password",
+                            "/user-service/verify-code",
+                            "/user-service/reset-password",
                             "/actuator/**").permitAll()
                     .anyRequest().authenticated();
         });

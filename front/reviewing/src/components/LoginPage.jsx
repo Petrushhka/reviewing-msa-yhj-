@@ -61,9 +61,9 @@ const LoginPage = () => {
     <Grid container justifyContent='center' marginTop={'100px'}>
       <Grid
         sx={{
-          border: '2px solid rgba(0, 0, 0, 0.3)', // 테두리: 두께 2px, 반투명 검정
-          borderRadius: 2, // 둥근 모서리
-          boxShadow: 1, // 약간의 그림자
+          border: '2px solid rgba(0, 0, 0, 0.3)',
+          borderRadius: 2,
+          boxShadow: 1,
         }}
         item
         xs={12}
@@ -97,51 +97,56 @@ const LoginPage = () => {
                 margin='normal'
                 required
               />
-              <Grid container spacing={2}>
-                <Grid item xs={6}></Grid>
-                <Grid
-                  container
-                  justifyContent='center'
-                  spacing={2}
-                  alignItems='center'
-                  marginTop={2}
-                >
-                  {/* 로그인 버튼 */}
-                  <Grid item>
-                    <Button
-                      type='submit'
-                      variant='contained'
-                      sx={{ background: 'peru', height: 40, width: 200 }}
-                    >
-                      로그인
-                    </Button>
-                  </Grid>
 
-                  {/* 카카오 로그인 이미지 */}
-                  <Grid item>
-                    <Box
-                      onClick={kakaoAuth}
-                      component='img'
-                      src={kakaoImg}
-                      alt='카카오 로그인'
-                      sx={{
-                        height: 40, // 버튼과 높이 맞춤
-                        objectFit: 'contain',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  </Grid>
+              {/* 로그인 및 비밀번호 찾기 버튼 (badge 브랜치에서 가져옴) */}
+              <Grid container spacing={2} sx={{ mt: 2 }}>
+                {' '}
+                {/* marginTop 조정 */}
+                <Grid item xs={6}>
+                  <Button
+                    color='secondary'
+                    fullWidth
+                    onClick={() => navigate('/find-password')}
+                  >
+                    비밀번호 찾기
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    type='submit'
+                    color='primary'
+                    variant='contained'
+                    sx={{ background: 'peru' }}
+                    fullWidth
+                  >
+                    로그인
+                  </Button>
+                </Grid>
+              </Grid>
+
+              {/* 카카오 로그인 이미지 (HEAD 브랜치에서 가져옴, 별도 Grid Item으로) */}
+              <Grid container justifyContent='center' sx={{ mt: 2 }}>
+                {' '}
+                {/* marginTop 조정 */}
+                <Grid item>
+                  <Box
+                    onClick={kakaoAuth}
+                    component='img'
+                    src={kakaoImg}
+                    alt='카카오 로그인'
+                    sx={{
+                      height: 40,
+                      objectFit: 'contain',
+                      cursor: 'pointer',
+                    }}
+                  />
                 </Grid>
               </Grid>
             </form>
           </CardContent>
         </Card>
       </Grid>
-
-      {/* 비밀번호 변경 모달 */}
-      {/* <Dialog open={resetPassword} onClose={() => setResetPassword(false)}>
-          <ResetPasswordModal handleClose={() => setResetPassword(false)} />
-        </Dialog> */}
+      {/* 비밀번호 변경 모달 부분은 주석 처리된 그대로 둠 */}
     </Grid>
   );
 };

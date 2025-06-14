@@ -3,6 +3,7 @@ package com.playdata.userservice.user.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -59,11 +60,32 @@ public class MailSenderService {
     }
 
     private int makeRandomNumber() {
-        // 난수의 범위: 111111 ~ 999999
-        int checkNum = (int) (Math.random() * 999999) + 111111;
+        int min = 111_111;
+        int max = 999_999;
+        int range = max - min + 1;   // 999999 - 111111 + 1 = 888889
+
+        int checkNum = (int)(Math.random() * range) + min;
         log.info("인증번호: {}", checkNum);
         return checkNum;
     }
 
 
+    public void sendPasswordResetMail(@NotBlank(message = "이메일을 입력해 주세요.") String email, String nickName, String code) throws MessagingException {
+        String subject = "[YourApp] 비밀번호 재설정 인증 코드 안내";
+        String content = new StringBuilder()
+                .append(nickName).append("님, 안녕하세요!<br><br>")
+                .append("아래 인증 코드를 입력하시면 비밀번호 재설정을 진행하실 수 있습니다.<br>")
+                .append("<strong>").append(code).append("</strong><br><br>")
+                .append("이 코드는 발송 시점부터 5분간 유효합니다.")
+                .toString();
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, false, "utf-8");
+        helper.setFrom("uiuo1266@gmail.com");
+        helper.setTo(email);
+        helper.setSubject(subject);
+        helper.setText(content, true);
+
+        mailSender.send(message);
+    }
 }

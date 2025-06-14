@@ -48,6 +48,7 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     @Column(nullable = false)
+    @Setter
     @Builder.Default
     private Boolean isBlack = false; // True이면 활동 불가임.
 
