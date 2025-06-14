@@ -44,6 +44,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
             "user-service/add-black",
             "user-service/user-list",
             "user-service/change-status",
+            "/user-service/oauth/kakao/**",
             "/actuator/**"
     );
 

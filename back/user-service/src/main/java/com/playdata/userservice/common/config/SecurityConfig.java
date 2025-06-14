@@ -44,6 +44,7 @@ public class SecurityConfig {
                             "/user-service/health-check",
                             "/user-service/email-valid",
                             "/user-service/verify",
+                            "/user-service/oauth/kakao/**",
                             "/actuator/**").permitAll()
                     .anyRequest().authenticated();
         });
