@@ -1,77 +1,140 @@
-import axios from 'axios';
-import React, { useEffect } from 'react';
+// src/components/KakaoRedirectHandler.js
+import React, { useEffect, useRef, useContext } from 'react'; // useRef 추가
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { API_BASE_URL, USER_SERVICE } from '../configs/host-config';
+import AuthContext from '../context/UserContext';
 
 const KakaoRedirectHandler = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // 'navigat' 오타 수정 -> 'navigate'
+  const navigate = useNavigate();
+  const { onLogin } = useContext(AuthContext);
+
+  // useRef를 사용하여 useEffect가 처음 한 번만 실행되도록 제어
+  // 이 플래그는 리렌더링 되어도 값을 유지합니다.
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    // 개발 모드에서 StrictMode 때문에 useEffect가 두 번 실행되는 것을 방지
+    // hasFetched.current가 true이면 이미 요청을 보냈다는 의미이므로 더 이상 실행하지 않음
+    if (hasFetched.current) {
+      return;
+    }
+
     const params = new URLSearchParams(location.search);
     const code = params.get('code');
 
     if (code) {
-      // axios를 사용하여 GET 요청 보내기
+      hasFetched.current = true; // 요청을 시작했음을 표시
+
+      console.log('카카오 인증 코드 발견:', code);
       axios
         .get(`${API_BASE_URL}${USER_SERVICE}/oauth/kakao`, {
-          // URL 수정 (API_BASE_URL과 USER_SERVICE 사용)
           params: {
-            code: code, // 'code' 파라미터를 params 객체로 전달
+            code: code,
           },
         })
         .then((response) => {
-          // axios는 기본적으로 2xx 응답에 대해 response.ok 체크가 필요 없음 (자동 에러 처리)
-          // 에러가 발생하면 catch 블록으로 바로 넘어갑니다.
-          const data = response.data; // axios는 응답 데이터를 response.data에 담아줍니다.
+          const data = response.data;
+          console.log('백엔드 카카오 로그인 처리 결과 (응답 데이터):', data);
 
-          console.log('백엔드에서 받은 UserInfoDto:', data); // + data 대신 , data 사용
+          const {
+            status,
+            message,
+            nickName,
+            email,
+            profileImageUrl,
+            kakaoId,
+            token,
+            userInfo,
+          } = data;
 
-          // 데이터 구조 다시 확인: `data.kakaoAccount.profile.nickname` -> `data.kakaoAccount?.profile?.nickname`
-          // 에러 가능성을 줄이기 위해 옵셔널 체이닝 `?.` 사용을 권장합니다.
-          const nickName = data.kakaoAccount?.profile?.nickname;
-          const email = data.kakaoAccount?.email;
-          const profileImageUrl = data.kakaoAccount?.profile?.profileImageUrl;
+          switch (status) {
+            case 'LOGIN_SUCCESS':
+              console.log('기존 카카오 계정 로그인 성공:', message);
+              if (onLogin && token && userInfo) {
+                onLogin(
+                  token,
+                  userInfo.id,
+                  userInfo.nickName,
+                  userInfo.role,
+                  userInfo.badge,
+                  userInfo.profileImage,
+                );
+              }
+              navigate('/', { replace: true }); // 로그인 성공 후 history에 남기지 않기 위해 replace: true 사용
+              break;
 
-          navigate('/member/create', {
-            // 오타 수정: '/member/creat' -> '/member/create'
-            state: {
-              nickName: nickName,
-              email: email,
-              profileImageUrl: profileImageUrl,
-              isKakaoLogin: true, // 카카오 로그인임을 나타내는 플래그
-            },
-          });
+            case 'EMAIL_EXISTS_SUGGEST_LINK':
+              console.log('이메일 존재, 연동 제안:', message);
+              navigate('/member/create', {
+                state: {
+                  nickName: nickName,
+                  email: email,
+                  profileImageUrl: profileImageUrl,
+                  kakaoId: kakaoId,
+                  isKakaoLogin: true,
+                  suggestLink: true,
+                },
+                replace: true, // 뒤로가기 시 이 페이지로 다시 오지 않도록
+              });
+              break;
+
+            case 'NEW_USER_SIGNUP':
+              console.log('신규 사용자: 회원가입 폼으로 이동');
+              navigate('/member/create', {
+                state: {
+                  nickName: nickName,
+                  email: email,
+                  profileImageUrl: profileImageUrl,
+                  kakaoId: kakaoId,
+                  isKakaoLogin: true,
+                },
+                replace: true, // 뒤로가기 시 이 페이지로 다시 오지 않도록
+              });
+              break;
+
+            default:
+              console.error('알 수 없는 카카오 로그인 상태:', status, message);
+              navigate('/login', {
+                state: { error: message || '알 수 없는 로그인 오류.' },
+                replace: true,
+              });
+              break;
+          }
         })
         .catch((error) => {
-          console.error('카카오 로그인 처리 중 오류 발생: ', error);
-          // axios 에러 객체에서 응답 정보를 얻는 방법
+          console.error(
+            '카카오 로그인 처리 중 오류 발생 (Axios Catch): ',
+            error,
+          );
           if (error.response) {
-            // 서버 응답이 있을 경우 (예: 4xx, 5xx 에러)
             console.error('응답 상태 코드:', error.response.status);
             console.error('응답 데이터:', error.response.data);
-            console.error('응답 헤더:', error.response.headers);
           } else if (error.request) {
-            // 요청이 만들어졌으나 응답을 받지 못한 경우 (네트워크 에러 등)
             console.error('요청:', error.request);
           } else {
-            // 요청 설정 중 오류 발생
             console.error('Error:', error.message);
           }
 
           navigate('/login', {
-            state: { error: '카카오 로그인에 실패했습니다.' },
+            state: { error: '카카오 로그인 처리 중 서버 오류가 발생했습니다.' },
+            replace: true,
           });
         });
     } else {
       console.error('카카오 인증 코드가 없습니다.');
-      navigate('/login');
+      navigate('/login', {
+        state: { error: '카카오 인증 코드가 유효하지 않습니다.' },
+        replace: true,
+      });
     }
-  }, [location, navigate]); // 의존성 배열에 location, navigate 포함 (useEffect 사용 시 필수)
+  }, [location, navigate, onLogin]); // 의존성 배열 유지
 
   return (
     <div>
       <p>카카오 로그인 처리 중입니다. 잠시만 기다려 주세요...</p>
+      {/* 로딩 스피너 등을 여기에 추가할 수 있습니다 */}
     </div>
   );
 };

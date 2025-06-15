@@ -9,7 +9,7 @@ import {
   Box,
 } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react'; // CardActions는 사용되지 않아 제거
-import { replace, useNavigate } from 'react-router-dom';
+import { replace, useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL, USER_SERVICE } from '../configs/host-config';
 import AuthContext from '../context/UserContext';
 import axios from 'axios';
@@ -20,6 +20,9 @@ const MemberCreate = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [kakaoId, setKakaoId] = useState('');
+  const [suggestLink, setSuggestLink] = useState('');
+
   const [errors, setErrors] = useState({}); // 모든 에러 메시지를 위한 객체
 
   // 이메일 인증 관련 상태
@@ -31,6 +34,44 @@ const MemberCreate = () => {
 
   const navigate = useNavigate();
   const { isLoggedIn } = useContext(AuthContext);
+
+  // kakao 사용자 정보 가져오기
+  const location = useLocation();
+
+  // 카카오 로그인 관련 상태
+  const [profileImageUrl, setProfileImageUrl] = useState('');
+  const [isKakaoLogin, setIsKakaoLogin] = useState(false); // 카카오 로그인 여부 플래그
+
+  useEffect(() => {
+    if (location.state && location.state.isKakaoLogin) {
+      console.log('카카오 로그인 정보 수신: ', location.state);
+      setNickName(location.state.nickName || '');
+      setEmail(location.state.email || '');
+      setIsKakaoLogin(true);
+      setKakaoId(location.state.kakaoId || null);
+      setSuggestLink(location.state.suggestLink || false); // 연동 제안 플래그
+
+      setIsEmailSent(true);
+      setIsEmailVerified(true);
+
+      if (location.state.suggestLink) {
+        alert(
+          '이메일이 이미 존재합니다. 회원가입을 완료하시면 기존 계정에 카카오 계정이 연동됩니다.',
+        );
+        // TODO: 여기서 연동 여부를 사용자에게 명확히 묻는 모달을 띄우는 것이 더 좋음
+      } else {
+        setIsKakaoLogin(false);
+        setKakaoId(null);
+        setSuggestLink(false);
+      }
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (location.state && location.state.is) {
+      alert('이미 로그인되어 있습니다.');
+    }
+  });
 
   // 로그인 상태 확인 로직을 useEffect로 이동
   // 컴포넌트 렌더링 후 실행되어 안전하며, 의존성 배열로 불필요한 재실행 방지
@@ -50,6 +91,9 @@ const MemberCreate = () => {
   };
 
   const sendVerificationEmail = async () => {
+    // isKakaoLogin이 true일 때 함 수 미실행;
+    if (isKakaoLogin) return;
+
     console.log('이메일 인증 버튼이 클릭됨!');
     let currentErrors = {};
 
@@ -102,6 +146,9 @@ const MemberCreate = () => {
 
   // ✅ verifyEmailCode 함수: 오류 메시지를 TextField의 helperText로 표시하도록 통일
   const verifyEmailCode = async () => {
+    //  카카오 로그인일경우 함수실행 막음
+    if (isKakaoLogin) return;
+
     let currentErrors = {};
 
     // 인증 코드가 비어있는지 검사
@@ -201,7 +248,7 @@ const MemberCreate = () => {
       // trim()으로 공백 제거 후 확인
       newErrors.email = '이메일을 입력해주세요.';
       isValid = false;
-    } else if (!isEmailVerified) {
+    } else if (!isEmailVerified && isKakaoLogin) {
       newErrors.email = '이메일 인증을 완료해주세요.'; // 이메일 형식이 아니라 '인증 여부'를 확인
       isValid = false;
     }
@@ -317,6 +364,7 @@ const MemberCreate = () => {
                 helperText={errors.nickName} // errors.nickName의 값 표시
                 fullWidth
                 margin='normal'
+                readOnly={isKakaoLogin} // 카카오 로그인 시 읽기 전용용
                 required
               />
               {/* 이메일 필드와 인증 버튼 */}
@@ -337,7 +385,7 @@ const MemberCreate = () => {
                   required
                   error={Boolean(errors.email)}
                   helperText={errors.email}
-                  disabled={isEmailVerified} // 이메일 인증 완료 시 수정 불가
+                  disabled={isEmailVerified || isKakaoLogin} // 이메일 인증 완료 시 수정 불가
                   sx={{
                     '& .MuiInputBase-root': {
                       backgroundColor: isEmailVerified ? '#f5f5f5' : 'inherit', // 인증 완료 시 배경색 변경
@@ -348,7 +396,7 @@ const MemberCreate = () => {
                   variant='outlined'
                   onClick={sendVerificationEmail}
                   sx={{ mb: 1, minWidth: '60px' }}
-                  disabled={emailSendLoading || isEmailVerified} // 로딩 중이거나 인증 완료 시 버튼 비활성화
+                  disabled={emailSendLoading || isEmailVerified || isKakaoLogin} // 로딩 중이거나 인증 완료 시 버튼 비활성화
                 >
                   {emailSendLoading
                     ? '발송중...'
@@ -358,31 +406,33 @@ const MemberCreate = () => {
                 </Button>
               </Box>
               {/* 인증 코드 입력 필드 (이메일 발송 후, 아직 인증 전일 때만 표시) */}
-              {isEmailSent && !isEmailVerified && (
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
-                  <TextField
-                    label='인증 코드'
-                    value={verificationCode}
-                    onChange={(e) => {
-                      setVerificationCode(e.target.value);
-                      clearError('verificationCode'); // ✅ 인증 코드 입력 시 에러 초기화
-                    }}
-                    fullWidth
-                    margin='normal'
-                    placeholder='이메일로 받은 인증 코드를 입력하세요'
-                    error={Boolean(errors.verificationCode)} // ✅ errors.verificationCode가 존재하면 true
-                    helperText={errors.verificationCode} // ✅ errors.verificationCode의 값 표시
-                  />
-                  <Button
-                    variant='outlined'
-                    onClick={verifyEmailCode}
-                    disabled={!verificationCode.trim() || verifyLoading} // 코드 없거나 로딩 중일 때 비활성화
-                    sx={{ mb: 1, minWidth: '60px' }}
-                  >
-                    {verifyLoading ? '확인중...' : '확인'}
-                  </Button>
-                </Box>
-              )}
+              {isEmailSent &&
+                !isEmailVerified &&
+                isKakaoLogin(
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
+                    <TextField
+                      label='인증 코드'
+                      value={verificationCode}
+                      onChange={(e) => {
+                        setVerificationCode(e.target.value);
+                        clearError('verificationCode'); // ✅ 인증 코드 입력 시 에러 초기화
+                      }}
+                      fullWidth
+                      margin='normal'
+                      placeholder='이메일로 받은 인증 코드를 입력하세요'
+                      error={Boolean(errors.verificationCode)} // ✅ errors.verificationCode가 존재하면 true
+                      helperText={errors.verificationCode} // ✅ errors.verificationCode의 값 표시
+                    />
+                    <Button
+                      variant='outlined'
+                      onClick={verifyEmailCode}
+                      disabled={!verificationCode.trim() || verifyLoading} // 코드 없거나 로딩 중일 때 비활성화
+                      sx={{ mb: 1, minWidth: '60px' }}
+                    >
+                      {verifyLoading ? '확인중...' : '확인'}
+                    </Button>
+                  </Box>,
+                )}
               <TextField
                 label='비밀번호'
                 type='password'

@@ -23,9 +23,9 @@ public class KakaoController {
     private KaKaoLoginService loginService;
 
     @GetMapping("")
-   public ResponseEntity<KakaoUserInfoResponseDto> doLogin(@RequestParam("code") String code) {
+   public ResponseEntity<Map<String, Object>> doLogin(@RequestParam("code") String code) {
 
-        KakaoUserInfoResponseDto user = loginService.login(code);
+        Map<String, Object> user = loginService.login(code);
 
         return new ResponseEntity<>(user, HttpStatus.OK);
 

@@ -34,6 +34,8 @@ public class UserSaveReqDto {
     @NotNull(message = "가입자 권한을 설정해주세요.(리뷰작성자, 사업자)")
     private Role role;
 
+    private String kakaoId;
+
     // dto가 자기가 가지고 있는 필드 정보를 토대로 User Entity를 생성해서 리턴하는 메서드
     public User toEntity(PasswordEncoder encoder) {
         Role roleFilter = (this.role == Role.ADMIN) ? Role.USER : this.role;
@@ -43,6 +45,7 @@ public class UserSaveReqDto {
                 .email(this.email)
                 .profileImage(this.profileImageUrl)
                 .password(encoder.encode(this.password))
+                .kakaoId(this.kakaoId)
                 .role(roleFilter)
                 .build();
     }
