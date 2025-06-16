@@ -18,6 +18,6 @@ public class UserResDto {
     private String profileImage;
     private int point;
     private Boolean isBlack;
-    private String KakaoId;
+    private Long KakaoId;
     private Role role;
 }

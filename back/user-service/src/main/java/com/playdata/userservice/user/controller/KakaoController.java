@@ -22,6 +22,7 @@ public class KakaoController {
     @Autowired
     private KaKaoLoginService loginService;
 
+
     @GetMapping("")
    public ResponseEntity<Map<String, Object>> doLogin(@RequestParam("code") String code) {
 

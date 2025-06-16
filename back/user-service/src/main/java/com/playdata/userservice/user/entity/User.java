@@ -27,7 +27,7 @@ public class User extends BaseTimeEntity {
     @Setter
     private String nickName;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255, nullable = true)
     @Setter
     private String password;
 
@@ -54,7 +54,7 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = true)
     @Setter
-    private String kakaoId; //카카오 회원번호 저장
+    private Long kakaoId; //카카오 회원번호 저장
 
     // DTO에 Entity 변환 메서드가 있는 거처럼
     // Entity에도 응답용 DTO 변환 메서드를 세팅해서 언제든 변환이 자유롭도록 작성.

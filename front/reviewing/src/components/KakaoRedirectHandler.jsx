@@ -53,15 +53,16 @@ const KakaoRedirectHandler = () => {
             case 'LOGIN_SUCCESS':
               console.log('기존 카카오 계정 로그인 성공:', message);
               if (onLogin && token && userInfo) {
-                onLogin(
-                  token,
-                  userInfo.id,
-                  userInfo.nickName,
-                  userInfo.role,
-                  userInfo.badge,
-                  userInfo.profileImage,
-                );
+                onLogin({
+                  token: token,
+                  id: userInfo.id,
+                  nickName: userInfo.nickName,
+                  role: userInfo.role,
+                  profileImage: userInfo.profileImage,
+                });
               }
+              console.log('userInfo.token: ' + token);
+              console.log('userInfo.id: ' + userInfo.id);
               navigate('/', { replace: true }); // 로그인 성공 후 history에 남기지 않기 위해 replace: true 사용
               break;
 

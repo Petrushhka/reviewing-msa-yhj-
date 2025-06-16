@@ -48,6 +48,7 @@ public class SecurityConfig {
                             "/user-service/find-password",
                             "/user-service/verify-code",
                             "/user-service/reset-password",
+                            "/user-service/user/link-kakao",
                             "/actuator/**").permitAll()
                     .anyRequest().authenticated();
         });

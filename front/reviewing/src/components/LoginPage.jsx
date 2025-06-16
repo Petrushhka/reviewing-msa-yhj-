@@ -27,7 +27,7 @@ const LoginPage = () => {
   const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
 
   const kakaoAuth = async () => {
-    const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}`;
+    const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&prompt=login`;
 
     window.location.href = kakaoUrl;
   };
@@ -98,44 +98,50 @@ const LoginPage = () => {
                 required
               />
 
-              {/* 로그인 및 비밀번호 찾기 버튼 (badge 브랜치에서 가져옴) */}
-              <Grid container spacing={2} sx={{ mt: 2 }}>
-                {' '}
-                {/* marginTop 조정 */}
-                <Grid item xs={6}>
+              <Grid
+                container
+                spacing={1}
+                justifyContent='center'
+                alignItems='center'
+                sx={{ mt: 2 }}
+              >
+                {/* 비밀번호 찾기 버튼 */}
+                <Grid item xs={4}>
+                  {' '}
+                  {/* 12칸 중 4칸 할당 (3개 버튼이므로 12/3=4) */}
                   <Button
                     color='secondary'
-                    fullWidth
+                    fullWidth // Grid item 내에서 버튼을 꽉 채움
                     onClick={() => navigate('/find-password')}
+                    sx={{ height: 40 }} // 높이 통일
                   >
                     비밀번호 찾기
                   </Button>
                 </Grid>
-                <Grid item xs={6}>
+
+                {/* 로그인 버튼 */}
+                <Grid item xs={4}>
                   <Button
                     type='submit'
                     color='primary'
                     variant='contained'
-                    sx={{ background: 'peru' }}
-                    fullWidth
+                    sx={{ background: 'peru', height: 40 }} // 높이 통일
+                    fullWidth // Grid item 내에서 버튼을 꽉 채움
                   >
                     로그인
                   </Button>
                 </Grid>
-              </Grid>
 
-              {/* 카카오 로그인 이미지 (HEAD 브랜치에서 가져옴, 별도 Grid Item으로) */}
-              <Grid container justifyContent='center' sx={{ mt: 2 }}>
-                {' '}
-                {/* marginTop 조정 */}
-                <Grid item>
+                {/* 카카오 로그인 버튼 (이미지) */}
+                <Grid item xs={4}>
                   <Box
                     onClick={kakaoAuth}
                     component='img'
                     src={kakaoImg}
                     alt='카카오 로그인'
                     sx={{
-                      height: 40,
+                      height: 40, // 높이 통일
+                      width: '100%', // Grid item 내에서 너비를 꽉 채움
                       objectFit: 'contain',
                       cursor: 'pointer',
                     }}

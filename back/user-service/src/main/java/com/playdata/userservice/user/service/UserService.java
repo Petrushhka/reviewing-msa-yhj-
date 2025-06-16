@@ -1,6 +1,7 @@
 package com.playdata.userservice.user.service;
 
 
+import com.ctc.wstx.util.StringUtil;
 import com.playdata.userservice.user.dto.*;
 import com.playdata.userservice.common.config.AwsS3Config;
 import com.playdata.userservice.user.entity.User;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -59,6 +61,7 @@ public class UserService {
 
 
     public UserResDto createUser(UserSaveReqDto dto) {
+
         Optional<User> foundEmail
                 = userRepository.findByEmail(dto.getEmail());
 
@@ -66,12 +69,48 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 이메일 입니다!");
         }
 
-        User user = dto.toEntity(encoder);
-        User saved = userRepository.save(user);
+        String finalEncodedPassword;
+
+        if (dto.getKakaoId() != null) {
+            finalEncodedPassword = encoder.encode(java.util.UUID.randomUUID().toString());
+
+            User newUser = User.builder()
+                    .nickName(dto.getNickName())
+                    .email(dto.getEmail())
+                    .password(finalEncodedPassword)
+                    .kakaoId(dto.getKakaoId())
+                    .role(dto.getRole())
+                    .isBlack(false)
+                    .point(0)
+                    .build();
+
+            User userF = userRepository.save(newUser);
+            return userF.toDto();
+
+        } else {
+            if (!StringUtils.hasText(dto.getPassword())) { // 비밀번호가 입력되지 않았다면
+                throw new IllegalArgumentException("비밀번호는 필수입니다."); // 프론트엔드 유효성 검사를 보조
+            }
+            // 비번 길이 검사
+            if (dto.getPassword().length() < 8) {
+                throw new IllegalArgumentException("...");
+            }
+            finalEncodedPassword = encoder.encode(dto.getPassword());
 
 
+            User newUser = User.builder()
+                    .nickName(dto.getNickName())
+                    .email(dto.getEmail())
+                    .password(finalEncodedPassword) // 최종 인코딩된 비밀번호 설정
+                    .kakaoId(dto.getKakaoId())
+                    .role(dto.getRole())
+                    .isBlack(false)
+                    .point(0)
+                    .build();
 
-        return saved.toDto();
+            User userF = userRepository.save(newUser);
+            return userF.toDto();
+        }
     }
 
     public UserResDto login(UserLoginReqDto dto) {
