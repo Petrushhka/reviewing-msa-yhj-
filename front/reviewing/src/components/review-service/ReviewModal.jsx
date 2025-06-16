@@ -11,7 +11,7 @@ const ReviewModal = ({
   handleCancelBtnClick,
   onReviewSubmitted,
   isModify = false,
-  modifyingInfo = null,
+  modifyingInfo = {},
   restaurantName,
 }) => {
   const [reviewImages, setReviewImages] = useState([]);
@@ -234,7 +234,6 @@ const ReviewModal = ({
                     >
                       <span>X</span>
                     </button>
-                    ;
                     <img src={value} style={{ width: '70px' }} />
                   </>
                 );
