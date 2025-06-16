@@ -383,45 +383,45 @@ const MemberCreate = () => {
         role,
       };
 
-      try {
-        const res = await fetch(`${API_BASE_URL}${USER_SERVICE}/users/signup`, {
-          method: 'POST',
-          headers: {
-            'Content-type': 'application/json',
-          },
-          body: JSON.stringify(registData),
-        });
+      // try {
+      //   const res = await fetch(`${API_BASE_URL}${USER_SERVICE}/users/signup`, {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-type': 'application/json',
+      //     },
+      //     body: JSON.stringify(registData),
+      //   });
 
-        // ✅ HTTP 응답이 성공(2xx) 상태인지 먼저 확인
-        // 백엔드에서 4xx 에러가 발생하면 res.ok는 false가 됨
-        if (res.ok) {
-          const data = await res.json();
-          if (data.statusCode === 201) {
-            // 백엔드에서 정의한 성공 상태 코드 확인
-            alert(`${data.result}님 환영합니다!`);
-            navigate('/'); // 성공 시 메인 페이지로 이동
-          } else {
-            // 백엔드에서 정의한 논리적 오류 (예: 중복된 이메일) 처리
-            alert(data.statusMessage || '회원가입에 실패했습니다.');
-            // 특정 필드 에러를 백엔드에서 넘겨준다면 setErrors(data) 형태로 처리 가능
-          }
-        } else {
-          // HTTP 에러 상태 (4xx, 5xx) 처리
-          const errorData = await res.json(); // 에러 응답 본문을 JSON으로 파싱
-          console.error('회원가입 HTTP 오류:', res.status, errorData);
-          // 백엔드에서 각 필드별 에러 메시지를 보낼 경우 setErrors(errorData) 사용
-          // 현재는 statusMessage를 alert으로 띄우는 방식으로 처리
-          alert(
-            errorData.statusMessage ||
-              `회원가입 실패: 서버 오류 (상태코드: ${res.status})`,
-          );
-          // 만약 백엔드에서 { nickName: "...", email: "..." } 형태로 에러를 준다면,
-          // setErrors(errorData)를 사용하여 각 TextField에 에러를 표시할 수 있습니다.
-        }
-      } catch (error) {
-        console.error('회원가입 API 통신 오류:', error);
-        alert('서버와의 통신에 문제가 발생했습니다.');
-      }
+      //   // ✅ HTTP 응답이 성공(2xx) 상태인지 먼저 확인
+      //   // 백엔드에서 4xx 에러가 발생하면 res.ok는 false가 됨
+      //   if (res.ok) {
+      //     const data = await res.json();
+      //     if (data.statusCode === 201) {
+      //       // 백엔드에서 정의한 성공 상태 코드 확인
+      //       alert(`${data.result}님 환영합니다!`);
+      //       navigate('/'); // 성공 시 메인 페이지로 이동
+      //     } else {
+      //       // 백엔드에서 정의한 논리적 오류 (예: 중복된 이메일) 처리
+      //       alert(data.statusMessage || '회원가입에 실패했습니다.');
+      //       // 특정 필드 에러를 백엔드에서 넘겨준다면 setErrors(data) 형태로 처리 가능
+      //     }
+      //   } else {
+      //     // HTTP 에러 상태 (4xx, 5xx) 처리
+      //     const errorData = await res.json(); // 에러 응답 본문을 JSON으로 파싱
+      //     console.error('회원가입 HTTP 오류:', res.status, errorData);
+      //     // 백엔드에서 각 필드별 에러 메시지를 보낼 경우 setErrors(errorData) 사용
+      //     // 현재는 statusMessage를 alert으로 띄우는 방식으로 처리
+      //     alert(
+      //       errorData.statusMessage ||
+      //         `회원가입 실패: 서버 오류 (상태코드: ${res.status})`,
+      //     );
+      //     // 만약 백엔드에서 { nickName: "...", email: "..." } 형태로 에러를 준다면,
+      //     // setErrors(errorData)를 사용하여 각 TextField에 에러를 표시할 수 있습니다.
+      //   }
+      // } catch (error) {
+      //   console.error('회원가입 API 통신 오류:', error);
+      //   alert('서버와의 통신에 문제가 발생했습니다.');
+      // }
     }
   };
 
@@ -499,31 +499,33 @@ const MemberCreate = () => {
               {/* 인증 코드 입력 필드 (이메일 발송 후, 아직 인증 전일 때만 표시) */}
               {isEmailSent &&
                 !isEmailVerified &&
-                isKakaoLogin(
+                !isKakaoLogin && ( // <-- 모든 조건이 &&로 연결되고
+                // <-- 소괄호로 렌더링할 JSX를 묶어줍니다.
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
                     <TextField
                       label='인증 코드'
                       value={verificationCode}
                       onChange={(e) => {
                         setVerificationCode(e.target.value);
-                        clearError('verificationCode'); // ✅ 인증 코드 입력 시 에러 초기화
+                        clearError('verificationCode');
                       }}
                       fullWidth
                       margin='normal'
                       placeholder='이메일로 받은 인증 코드를 입력하세요'
-                      error={Boolean(errors.verificationCode)} // ✅ errors.verificationCode가 존재하면 true
-                      helperText={errors.verificationCode} // ✅ errors.verificationCode의 값 표시
+                      error={Boolean(errors.verificationCode)}
+                      helperText={errors.verificationCode}
                     />
                     <Button
                       variant='outlined'
                       onClick={verifyEmailCode}
-                      disabled={!verificationCode.trim() || verifyLoading} // 코드 없거나 로딩 중일 때 비활성화
+                      disabled={!verificationCode.trim() || verifyLoading}
                       sx={{ mb: 1, minWidth: '60px' }}
                     >
                       {verifyLoading ? '확인중...' : '확인'}
                     </Button>
-                  </Box>,
-                )}
+                  </Box>
+                )}{' '}
+              {/* <-- 렌더링할 JSX를 묶는 소괄호 닫기 */}
               <TextField
                 label='비밀번호'
                 type='password'
