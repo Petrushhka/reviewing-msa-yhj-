@@ -24,7 +24,7 @@ jobs:
 
       - name: 여러 서비스 도커 이미지 빌드 & 푸시
         env:
-          ECR_REGISTRY: 123456789012.dkr.ecr.ap-northeast-2.amazonaws.com # ← 본인 정보로 바꿔!
+          ECR_REGISTRY: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com # ← 본인 정보로 바꿔!
         run: |
           SERVICES="config-service discovery-service gateway-service point-service restaurant-service review-service user-service" # ← 올릴 서비스 폴더/이름들! 직접 수정
 
