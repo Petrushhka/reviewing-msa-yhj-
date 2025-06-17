@@ -43,47 +43,70 @@ jobs:
             docker push $ECR_REGISTRY/$SERVICE:latest
             echo "===== $SERVICE 푸시 완료 ====="
           done
-      - name: Config Service application-dev.yml 주입
+      - name: config-service 배포 및 헬스체크
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # 1. yml 파일 주입
             mkdir -p /home/${USER}/config-service-tmp
             cat << 'EOF' > /home/${USER}/config-service-tmp/application-dev.yml
             ${{ secrets.CONFIG_SERVICE_APP_DEV_YML }}
             EOF
 
-      - name: EC2에 배포(최신 이미지 pull & 컨테이너 재실행)
+            # 2. 컨테이너 배포
+            docker rm -f config-service || true
+            docker pull 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/config-service:latest
+            docker run -d --name config-service \
+              -p 8888:8888 \
+              -v /home/${USER}/config-service-tmp/application-dev.yml:/app/application-dev.yml \
+              908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/config-service:latest \
+              --spring.profiles.active=dev
+
+            # 3. 헬스체크 (최대 60초 대기, 2초마다 재시도)
+            for i in {1..30}; do
+              sleep 2
+              curl -sf http://localhost:8888/actuator/health && break
+              echo "Config-service 아직 준비 안됨, 재시도..."
+            done
+            echo "Config-service 정상 기동됨!"
+
+      - name: discovery-service 배포 및 헬스체크
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            aws ecr get-login-password --region ap-northeast-2 | \
-              docker login --username AWS --password-stdin 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com
+            docker rm -f discovery-service || true
+            docker pull 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/discovery-service:latest
+            docker run -d --name discovery-service -p 8761:8761 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/discovery-service:latest
 
-            for SERVICE in config-service discovery-service gateway-service point-service restaurant-service review-service user-service
+            for i in {1..30}; do
+              sleep 2
+              curl -sf http://localhost:8761/actuator/health && break
+              echo "Discovery-service 아직 준비 안됨, 재시도..."
+            done
+            echo "Discovery-service 정상 기동됨!"
+
+      - name: 나머지 서비스 배포
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # gateway-service
+            docker rm -f gateway-service || true
+            docker pull 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/gateway-service:latest
+            docker run -d --name gateway-service -p 8000:8000 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/gateway-service:latest
+
+            # 나머지 서비스들
+            for SERVICE in point-service restaurant-service review-service user-service
             do
-              echo "===== $SERVICE 컨테이너 배포 중 ====="
               docker rm -f $SERVICE || true
               docker pull 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/$SERVICE:latest
-
-              if [ "$SERVICE" = "config-service" ]; then
-                docker run -d --name $SERVICE \
-                  -p 8888:8888 \
-                  -v /home/${USER}/config-service-tmp/application-dev.yml:/app/application-dev.yml \
-                  908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/$SERVICE:latest \
-                  --spring.profiles.active=dev
-              elif [ "$SERVICE" = "discovery-service" ]; then
-                docker run -d --name $SERVICE -p 8761:8761 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/$SERVICE:latest
-              elif [ "$SERVICE" = "gateway-service" ]; then
-                docker run -d --name $SERVICE -p 8000:8000 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/$SERVICE:latest
-              else
-                docker run -d --name $SERVICE 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/$SERVICE:latest
-              fi
-
-              echo "===== $SERVICE 배포 완료 ====="
+              docker run -d --name $SERVICE 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/$SERVICE:latest
             done
