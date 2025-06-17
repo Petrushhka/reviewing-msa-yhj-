@@ -3,12 +3,14 @@
 version: '3.8'
 services:
   config-service:
-    build: ./config-service
+    image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/config-service:latest
     container_name: config-service
     networks:
       - msa-network
     ports:
       - "8888:8888"
+    volumes:
+      - /home/ubuntu/config-service-tmp/application-dev.yml:/app/application-dev.yml
     healthcheck:
       test: ["CMD", "curl", "-f", "http://config-service:8888/actuator/health"]
       interval: 15s
@@ -19,7 +21,7 @@ services:
 
 
   discovery-service:
-    build: ./discovery-service
+    image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/discovery-service:latest
     container_name: discovery-service
     networks:
       - msa-network
@@ -33,7 +35,7 @@ services:
       start_period: 60s
 
   gateway-service:
-    build: ./gateway-service
+    image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/gateway-service:latest
     container_name: gateway-service
     networks:
       - msa-network
@@ -47,7 +49,7 @@ services:
     restart: always
 
   user-service:
-    build: ./user-service
+    image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/user-service:latest
     container_name: user-service
     networks:
       - msa-network
@@ -59,7 +61,7 @@ services:
     restart: always
 
   restaurant-service:
-    build: ./restaurant-service
+    image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/restaurant-service:latest
     container_name: restaurant-service
     networks:
       - msa-network
@@ -71,7 +73,7 @@ services:
     restart: always
 
   review-service:
-    build: ./review-service
+    image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/review-service:latest
     container_name: review-service
     networks:
       - msa-network
@@ -83,7 +85,7 @@ services:
     restart: always
 
   point-service:
-    build: ./point-service
+    image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/point-service:latest
     container_name: point-service
     networks:
       - msa-network

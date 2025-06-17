@@ -43,70 +43,30 @@ jobs:
             docker push $ECR_REGISTRY/$SERVICE:latest
             echo "===== $SERVICE 푸시 완료 ====="
           done
-      - name: config-service 배포 및 헬스체크
+      # 🔥 여기서부터 compose를 통한 전체 서비스 재배포
+      - name: Config Service application-dev.yml 주입
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # 1. yml 파일 주입
-            mkdir -p /home/${USER}/config-service-tmp
-            cat << 'EOF' > /home/${USER}/config-service-tmp/application-dev.yml
+            mkdir -p /home/ubuntu/config-service-tmp
+            cat << 'EOF' > /home/ubuntu/config-service-tmp/application-dev.yml
             ${{ secrets.CONFIG_SERVICE_APP_DEV_YML }}
             EOF
 
-            # 2. 컨테이너 배포
-            docker rm -f config-service || true
-            docker pull 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/config-service:latest
-            docker run -d --name config-service \
-              -p 8888:8888 \
-              -v /home/${USER}/config-service-tmp/application-dev.yml:/app/application-dev.yml \
-              908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/config-service:latest \
-              --spring.profiles.active=dev
-
-            # 3. 헬스체크 (최대 60초 대기, 2초마다 재시도)
-            for i in {1..30}; do
-              sleep 2
-              curl -sf http://localhost:8888/actuator/health && break
-              echo "Config-service 아직 준비 안됨, 재시도..."
-            done
-            echo "Config-service 정상 기동됨!"
-
-      - name: discovery-service 배포 및 헬스체크
+      - name: 전체 서비스 docker-compose로 재배포
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker rm -f discovery-service || true
-            docker pull 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/discovery-service:latest
-            docker run -d --name discovery-service -p 8761:8761 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/discovery-service:latest
+            cd /home/ubuntu/back # ← docker-compose.yml 위치로 이동!
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
 
-            for i in {1..30}; do
-              sleep 2
-              curl -sf http://localhost:8761/actuator/health && break
-              echo "Discovery-service 아직 준비 안됨, 재시도..."
-            done
-            echo "Discovery-service 정상 기동됨!"
-
-      - name: 나머지 서비스 배포
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            # gateway-service
-            docker rm -f gateway-service || true
-            docker pull 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/gateway-service:latest
-            docker run -d --name gateway-service -p 8000:8000 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/gateway-service:latest
-
-            # 나머지 서비스들
-            for SERVICE in point-service restaurant-service review-service user-service
-            do
-              docker rm -f $SERVICE || true
-              docker pull 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/$SERVICE:latest
-              docker run -d --name $SERVICE 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/$SERVICE:latest
-            done
+            # (선택) 상태 확인
+            docker-compose ps
