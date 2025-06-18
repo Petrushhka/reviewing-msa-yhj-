@@ -63,7 +63,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/back # ← docker-compose.yml 위치로 이동!
+            cd /home/ubuntu/reviewing-msa/back # ← docker-compose.yml 위치로 이동!
             docker-compose pull
             docker-compose down
             docker-compose up -d
