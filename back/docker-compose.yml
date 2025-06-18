@@ -9,11 +9,11 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - /home/ubuntu/config-service-tmp/application-dev.yml:/app/application-dev.yml
+      - /home/ubuntu/config-service-tmp/application-dev.yml:/application-dev.yml
     command:
       [
         "--spring.profiles.active=dev",
-        "--spring.config.location=/app/application-dev.yml",
+        "--spring.config.location=/application-dev.yml",
       ]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://config-service:8888/actuator/health"]
