@@ -1,6 +1,5 @@
-
 #Docker Compose 파일 포맷의 버전을 지정합니다.
-version: '3.8'
+version: "3.8"
 services:
   config-service:
     image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/config-service:latest
@@ -11,6 +10,14 @@ services:
       - "8888:8888"
     volumes:
       - /home/ubuntu/config-service-tmp/application-dev.yml:/app/application-dev.yml
+    command:
+      [
+        "java",
+        "-jar",
+        "app.jar",
+        "--spring.profiles.active=dev",
+        "--spring.config.location=/app/application-dev.yml",
+      ]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://config-service:8888/actuator/health"]
       interval: 15s
@@ -18,7 +25,6 @@ services:
       retries: 3
       start_period: 60s
     restart: always
-
 
   discovery-service:
     image: 908027399356.dkr.ecr.ap-northeast-2.amazonaws.com/discovery-service:latest
@@ -28,7 +34,7 @@ services:
     ports:
       - "8761:8761"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://discovery-service:8761" ]
+      test: ["CMD", "curl", "-f", "http://discovery-service:8761"]
       interval: 15s
       timeout: 5s
       retries: 3
