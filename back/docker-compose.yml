@@ -12,9 +12,6 @@ services:
       - /home/ubuntu/config-service-tmp/application-dev.yml:/app/application-dev.yml
     command:
       [
-        "java",
-        "-jar",
-        "app.jar",
         "--spring.profiles.active=dev",
         "--spring.config.location=/app/application-dev.yml",
       ]
