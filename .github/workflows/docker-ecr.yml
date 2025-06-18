@@ -53,7 +53,7 @@ jobs:
           script: |
             mkdir -p /home/ubuntu/config-service-tmp
             cat << 'EOF' > /home/ubuntu/config-service-tmp/application-dev.yml
-            ${{ secrets.CONFIG_SERVICE_APP_DEV_YML }}
+            ${{ secrets.CONFIG_SERVICE_DEV_YML }}
             EOF
 
       - name: 전체 서비스 docker-compose로 재배포
