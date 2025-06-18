@@ -156,5 +156,8 @@ http://reviewing-service2400.s3-website.ap-northeast-2.amazonaws.com/
 ### 전체 시스템 아키텍처
 ![diagram1](/images/diagram1.png)
 
+### 인프라 아키텍처
+![diagram3](/images/diagram3.png)
+
 ### CI/CD 파이프라인 아키텍처
 ![diagram2](/images/diagram2.png)
