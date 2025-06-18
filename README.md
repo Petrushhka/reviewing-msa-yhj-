@@ -56,6 +56,8 @@
 
 ### 1.6 마이크로서비스 구조
 
+- Config 서버
+
 - 사용자 서비스
 
 - 맛집(가게) 서비스
@@ -149,3 +151,10 @@ https://first-viburnum-d12.notion.site/MSA-3-1e58b55c686780978227faec24417dd6
 
 ## 3. 프론트 배포
 http://reviewing-service2400.s3-website.ap-northeast-2.amazonaws.com/
+
+## 4. MSA 아키텍처 설계도
+### 전체 시스템 아키텍처
+![diagram1](/images/diagram1.png)
+
+### CI/CD 파이프라인 아키텍처
+![diagram2](/images/diagram2.png)
