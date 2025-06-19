@@ -2,7 +2,7 @@ name: Multi Docker Image Build and Push to ECR
 
 on:
   push:
-    branches: ["compose-dhlee"]
+    branches: ["compose-dhlee", "main"]
 
 jobs:
   build-and-push:
