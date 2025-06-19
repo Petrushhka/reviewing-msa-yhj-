@@ -10,6 +10,9 @@ spring:
         cors-configurations:
           "[/**]":
             allowed-origins:
+              - "http://review-service-0124.s3-website.ap-northeast-2.amazonaws.com"
+              - "https://www.muzinsa.store"
+              - "http://www.muzinsa.store"
               - "http://localhost:5173"
             allowed-methods:
               - GET
