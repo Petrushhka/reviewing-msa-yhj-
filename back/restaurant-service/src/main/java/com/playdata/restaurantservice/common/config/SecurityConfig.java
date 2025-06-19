@@ -30,7 +30,8 @@ public class SecurityConfig {
         // url 요청 권한 설정
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers("/restaurant-service/restaurants",
-                                "/restaurant-service/restaurant/list").permitAll()
+                                "/restaurant-service/restaurant/list",
+                                "/actuator/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/restaurant-service/restaurants/{id}").permitAll()
                         .anyRequest().authenticated()
         );

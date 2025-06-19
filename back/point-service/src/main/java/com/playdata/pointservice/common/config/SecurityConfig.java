@@ -31,7 +31,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers(
                                 "/icons/**",
-                                "/badges/**"
+                                "/badges/**",
+                                "/actuator/**"
                          ).permitAll()
 
                         .anyRequest().authenticated()

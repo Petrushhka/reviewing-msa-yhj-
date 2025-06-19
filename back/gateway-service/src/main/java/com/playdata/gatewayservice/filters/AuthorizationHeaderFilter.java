@@ -31,6 +31,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
             "/user-service/user/login",
             "/user-service/users/signup",
             "/user-service/user/{userId}/point",
+            "/user-service/email-valid",
+            "/user-service/verify",
             "/badges/**",
             "/icons/**",
             "/review-service/reviews/restaurant/*",
@@ -38,7 +40,16 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
             "/review-service/reviews/stats/restaurant/*",
             "/review-service/reviews/user/*",
             "/restaurant-service/restaurant/list",
-            "/restaurant-service/restaurants/*"
+            "/restaurant-service/restaurants/*",
+            "user-service/add-black",
+            "user-service/user-list",
+            "user-service/change-status",
+            "/user-service/oauth/kakao/**",
+            "/user-service/find-password",
+            "/user-service/verify-code",
+            "/user-service/reset-password",
+            "/user-service/user/link-kakao",
+            "/actuator/**"
     );
 
     @Override

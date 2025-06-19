@@ -4,7 +4,6 @@ import com.playdata.userservice.common.auth.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,13 +33,23 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth
 //                    .requestMatchers("/user/list").hasRole("ROLE_ADMIN")
+                    .requestMatchers("/user-service/add-black", "user-service/user-list", "user-service/change-status").hasRole("ADMIN")
                     .requestMatchers("/user-service/users/signup",
                             "/user-service/user/login",
                             "/user-service/user/refresh",
                             "/user-service/user/{userId}/point",
                             "/user-service/users",
                             "/badges/user/{userId}/progress",
-                            "/user-service/users/point").permitAll()
+                            "/user-service/users/point",
+                            "/user-service/health-check",
+                            "/user-service/email-valid",
+                            "/user-service/verify",
+                            "/user-service/oauth/kakao/**",
+                            "/user-service/find-password",
+                            "/user-service/verify-code",
+                            "/user-service/reset-password",
+                            "/user-service/user/link-kakao",
+                            "/actuator/**").permitAll()
                     .anyRequest().authenticated();
         });
 

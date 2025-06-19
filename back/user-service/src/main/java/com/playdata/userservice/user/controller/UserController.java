@@ -9,12 +9,13 @@ import com.playdata.userservice.user.dto.UserSaveReqDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.external.client.BadgeClient;
 import com.playdata.userservice.user.dto.*;
+import com.playdata.userservice.user.service.KaKaoLoginService;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.HEAD;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +39,9 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, Object> redisTemplate;
     private final BadgeClient badgeClient;
+    private final KaKaoLoginService kakaoLoginService;
 
+    private final Environment env;
 
     @PostMapping("/users/signup")
     public ResponseEntity<?> createUser(
@@ -131,6 +133,114 @@ public class UserController {
                 "Login Success", loginInfo);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
+
+    // 유효한 이메일인지 검증 요청
+    @PostMapping("/email-valid")
+    public ResponseEntity<?> emailValid(@RequestBody Map<String, String> map) {
+        String email = map.get("email");
+        log.info("이메일 인증 요청! email: {}", email);
+        try {
+            String authNum = userService.mailCheck(email);
+            // 성공: 200 + 인증번호
+            return ResponseEntity.ok(
+                    new CommonResDto(
+                        HttpStatus.OK,
+                        "인증 코드 발송 성공",
+                        authNum
+                    )
+            );
+        } catch (IllegalArgumentException ex) {
+            // 중복 이메일 또는 차단 상태
+            return ResponseEntity
+                    .badRequest()
+                    .body(new CommonResDto(
+                        HttpStatus.BAD_REQUEST,
+                        ex.getMessage(),
+                        null
+                    ));
+        } catch (RuntimeException ex) {
+            // 메일 전송 실패 등
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CommonResDto(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "이메일 전송 과정 중 문제 발생!",
+                        null
+                    ));
+        }
+
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> map) {
+        log.info("인증 코드 검증! map: {}", map);
+        Map<String, String> result
+                = userService.verifyEmail(map);
+
+        return ResponseEntity.ok().body("Success");
+    }
+
+    @PostMapping("/find-password")
+    public ResponseEntity<Void> sendVerificationCode(@Valid @RequestBody FindPwDto dto) {
+        userService.sendPasswordResetCode(dto.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<CommonResDto> verifyCode(@Valid @RequestBody VerifyCodeDto dto) {
+
+        try {
+            userService.verifyResetCode( dto.getEmail(), dto.getCode());
+            return ResponseEntity.ok(
+                    new CommonResDto(
+                        HttpStatus.OK,
+                        "인증 코드가 일치합니다.",
+                        null
+                    )
+            );
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new CommonResDto(
+                            HttpStatus.BAD_REQUEST,
+                            ex.getMessage(),
+                            null
+                    ));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<CommonResDto> resetPassword(@Valid @RequestBody ResetPasswordDto dto) {
+        try {
+            userService.resetPassword(dto.getEmail(), dto.getCode(), dto.getNewPassword());
+            return ResponseEntity.ok(
+                    new CommonResDto(
+                            HttpStatus.OK,
+                            "비밀번호 재설정이 완료되었습니다.",
+                            null
+                    )
+            );
+        } catch (IllegalArgumentException ex) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(new CommonResDto(
+                            HttpStatus.BAD_REQUEST,
+                            ex.getMessage(),
+                            null
+                    ));
+        } catch (Exception ex) {
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CommonResDto(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "서버 에러가 발생했습니다. 다시 시도해주세요.",
+                            null
+                    ));
+        }
+    }
+
 
 
     @GetMapping("user/profileImage/{userId}")
@@ -228,6 +338,82 @@ public class UserController {
         return ResponseEntity.ok().body(userResDto);
     };
 
+    @GetMapping("/health-check")
+    public String healthCheck() {
+        String msg = "";
+        msg += "token.exp_time:" + env.getProperty("token.expiration_time") +"\n";
+        return msg;
+    }
 
+    @PostMapping("/add-black")
+    public ResponseEntity<String> addBlack(@RequestBody UserBlackReqDto blackReqDto) {
+        String userNickName = userService.addBlackUser(blackReqDto.getUserEmail(), blackReqDto.getIsBlack());
+        return ResponseEntity.ok().body(userNickName);
+    }
 
+    @GetMapping("/user-list")
+    public ResponseEntity<List<UserResDto>> getUserList() {
+        List<UserResDto> allUsers = userService.findAll();
+
+        return ResponseEntity.ok().body(allUsers);
+    }
+
+    @PatchMapping("/change-status")
+    public ResponseEntity<Boolean> changeStatus(@RequestBody UserBlackReqDto statusReqDto) {
+        Boolean currentStatus = userService.changeStatus(statusReqDto.getUserEmail());
+        return ResponseEntity.ok().body(currentStatus);
+    }
+
+    // ⭐⭐⭐ 새로운 컨트롤러 엔드포인트: 카카오 계정 연동 ⭐⭐⭐
+    @PostMapping("/user/link-kakao") // 프론트엔드에서 호출할 새로운 API 엔드포인트
+    public ResponseEntity<?> linkKakaoAccount(@RequestBody UserKakaoLinkReqDto dto) {
+        try {
+            // 카카오 ID 업데이트 및 사용자 정보 조회
+            UserResDto linkedUser = kakaoLoginService.linkKakaoAccount(dto.getEmail(), dto.getKakaoId(), dto.getNickName(), dto.getProfileImage());
+
+            // ⭐ 연동 완료 후 바로 로그인 처리 (JWT 토큰 발급) ⭐
+            String token = jwtTokenProvider.createToken(linkedUser.getEmail(), linkedUser.getRole().toString());
+            // 필요한 경우 리프레시 토큰도 발급 및 Redis에 저장
+
+            Map<String, Object> loginInfo = new HashMap<>();
+            loginInfo.put("token", token);
+            loginInfo.put("id", linkedUser.getId());
+            loginInfo.put("nickName", linkedUser.getNickName());
+            loginInfo.put("role", linkedUser.getRole().toString());
+            // loginInfo.put("badge", badgeClient.getUserBadge(linkedUser.getId())); // 배지 정보 필요하면 호출
+            loginInfo.put("profileImage", linkedUser.getProfileImage());
+
+            CommonResDto resDto = new CommonResDto(
+                    HttpStatus.OK,
+                    "카카오 계정 연동 및 로그인 성공",
+                    loginInfo
+            );
+            return new ResponseEntity<>(resDto, HttpStatus.OK);
+
+        } catch (EntityNotFoundException e) {
+            log.error("카카오 연동 실패: 사용자 없음 - {}", dto.getEmail(), e);
+            CommonResDto resDto = new CommonResDto(
+                    HttpStatus.NOT_FOUND,
+                    "연동할 사용자를 찾을 수 없습니다.",
+                    null
+            );
+            return new ResponseEntity<>(resDto, HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            log.error("카카오 연동 실패: 유효성 문제 - {}", e.getMessage(), e);
+            CommonResDto resDto = new CommonResDto(
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage(),
+                    null
+            );
+            return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            log.error("카카오 연동 중 알 수 없는 오류 발생", e);
+            CommonResDto resDto = new CommonResDto(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "계정 연동 중 서버 오류가 발생했습니다.",
+                    null
+            );
+            return new ResponseEntity<>(resDto, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

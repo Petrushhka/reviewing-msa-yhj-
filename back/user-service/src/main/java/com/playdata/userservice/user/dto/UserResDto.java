@@ -17,5 +17,7 @@ public class UserResDto {
     private String nickName;
     private String profileImage;
     private int point;
+    private Boolean isBlack;
+    private Long KakaoId;
     private Role role;
 }
